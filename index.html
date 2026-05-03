@@ -3,148 +3,183 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Screener IA Live</title>
+    <title>Screener PEA - IA</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-gray-100 p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <h1 class="text-3xl font-bold text-blue-400 mb-2">Mon Dashboard PEA - Analyse IA</h1>
-        <p class="text-gray-400 mb-6">Mise à jour automatique via MammouthAI</p>
-        <div class="overflow-x-auto shadow-2xl rounded-lg">
-            <table class="w-full text-left border-collapse bg-gray-800">
+<body class="bg-gray-900 text-gray-100 p-2 md:p-6">
+    <div class="max-w-full mx-auto">
+        <h1 class="text-3xl font-bold text-blue-400 mb-2">Screener PEA - Analyse IA Multi-Marchés</h1>
+        <p class="text-gray-400 mb-6 text-sm">Priorité Marchés : Francfort > Xetra > Paris</p>
+        
+        <div class="overflow-x-auto shadow-2xl rounded-xl border border-gray-700">
+            <table class="w-full text-left border-collapse bg-gray-800 table-auto">
                 <thead>
-                    <tr class="bg-gray-700 text-blue-300 uppercase text-sm">
-                        <th class="p-4">Action</th>
-                        <th class="p-4">Prix</th>
-                        <th class="p-4">Analyse Expert IA</th>
+                    <tr class="bg-gray-700 text-blue-200 text-xs uppercase tracking-wider">
+                        <th class="p-3 border-r border-gray-600">Ticker</th>
+                        <th class="p-3 border-r border-gray-600">Nom</th>
+                        <th class="p-3 border-r border-gray-600">ISIN</th>
+                        <th class="p-3 border-r border-gray-600 text-center">Prix</th>
+                        <th colspan="3" class="p-3 text-center bg-blue-900/30 text-blue-300">Analyse Expert IA</th>
+                    </tr>
+                    <tr class="bg-gray-750 text-[10px] text-gray-400 uppercase">
+                        <th colspan="4" class="border-r border-gray-600"></th>
+                        <th class="p-2 border-r border-gray-700 w-1/4">Santé Fondamentale</th>
+                        <th class="p-2 border-r border-gray-700 w-1/4">Tendance Chartiste</th>
+                        <th class="p-2 w-1/4">Conseil & Entrée</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-700">
 
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">MC.PA</td>
-            <td class="p-4 text-green-400">451.4€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, secteur du luxe résilient.  
-Tendance : Croissance stable, bonne performance à long terme.  
-Conseil : Attendre une correction vers 430€ avant achat.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">MC.PA</td>
+            <td class="p-3 text-white text-sm font-medium">LVMH Moët Hennessy - Louis Vuitton, Société Européenne</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">451.4€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide croissance modérée avec valorisation juste.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Perspectives haussières à moyen terme.</td>
+            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, prix d'entrée idéal vers 430€.</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">OR.PA</td>
-            <td class="p-4 text-green-400">366.05€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé: Solide, leader du secteur défensif.  
-Tendance: Croissance stable mais valorisation élevée.  
-Conseil: Attendre, prix d'entrée idéal <340€.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">OR.PA</td>
+            <td class="p-3 text-white text-sm font-medium">L'Oréal S.A.</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">366.05€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide avec potentiel stable.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Haussière modérée à long terme.</td>
+            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, prix d'entrée < 345€.</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">RMS.PA</td>
-            <td class="p-4 text-green-400">1623.5€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide avec marque de luxe, mais PER élevé.  
-Tendance : Haussière, soutenue par la demande.  
-Conseil : Attendre, prix d'entrée idéal vers 1500-1550€.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">RMS.PA</td>
+            <td class="p-3 text-white text-sm font-medium">Hermès International Société en commandite par actions</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">1623.5€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide, profitabilité élevée mais valorisation exigeante.  
+TENDANCE: Croissance soutenue avec résilience sectorielle.  
+CONSEIL: Attendre + entrée <1500€.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
+            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">TTE.PA</td>
-            <td class="p-4 text-green-400">79.29€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Bilan solide, rendement attractif.  
-Tendance : Stable, potentiel haussier avec la transition énergétique.  
-Conseil : Achat si <78€, viser profits à moyen terme.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">TTE.PA</td>
+            <td class="p-3 text-white text-sm font-medium">TotalEnergies SE</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">79.29€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide avec un PER raisonnable dans le secteur énergétique.  
+TENDANCE: Haussière grâce à la demande énergétique mondiale croissante.  
+CONSEIL: Achat à ≤ 77€.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
+            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">SAN.PA</td>
-            <td class="p-4 text-green-400">79.82€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé solide, position forte dans le secteur. Tendance haussière malgré un PER modéré. Attendre une entrée vers 75-76€ pour maximiser le potentiel.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">SAN.PA</td>
+            <td class="p-3 text-white text-sm font-medium">Sanofi</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">79.82€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide position dans le secteur Healthcare avec croissance stable.  
+TENDANCE: Valo modérée; surveiller contexte économique et résultats à venir.  
+CONSEIL: Attendre à ~75€.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
+            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">AIR.PA</td>
-            <td class="p-4 text-green-400">174.88€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, leader aéronautique.  
-Tendance : Haussière, soutien des commandes.  
-Conseil : Achat sur repli vers 165€ pour potentielle croissance long terme.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">AIR.F</td>
+            <td class="p-3 text-white text-sm font-medium">Airbus SE</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">175.64€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide avec potentiel de croissance long terme.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Phase haussière mais proche de résistance.</td>
+            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, entrée vers 160-165€.</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">AI.PA</td>
-            <td class="p-4 text-green-400">183.08€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide mais PER élevé, signal d'évaluation élevée.  
-Tendance : Hausse récente, pourrait ralentir.  
-Conseil : Attendre, prix d'entrée conseillé <175€.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">AI.PA</td>
+            <td class="p-3 text-white text-sm font-medium">L'Air Liquide S.A.</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">183.08€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Stabilité modérée, PER élevé limite attractivité.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Croissance potentielle avec risques liés au secteur matières premières.</td>
+            <td class="p-3 text-xs font-bold text-yellow-400">Attendre + entrée à 170€.</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">BNP.PA</td>
-            <td class="p-4 text-green-400">89.23€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, bénéfices stables, PER faible.  
-Tendance : Haussière depuis plusieurs mois, proche des sommets.  
-Conseil : Attendre repli vers 85€ avant entrée.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">BNP.F</td>
+            <td class="p-3 text-white text-sm font-medium">BNP Paribas SA</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">89.18€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Rentabilité solide, PER attractif pour le secteur financier.  
+TENDANCE: Stabilité à la hausse, potentiel long-terme dans un marché favorable.  
+CONSEIL: Achat, prix d'entrée idéal à 87-89€.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
+            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">DG.PA</td>
-            <td class="p-4 text-green-400">128.5€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : PER solide, valorisation correcte dans le secteur industriel.  
-Tendance : Stable avec potentiel modéré à court terme.  
-Conseil : Attendre, entrée vers 120-122€.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">DG.PA</td>
+            <td class="p-3 text-white text-sm font-medium">Vinci SA</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">128.5€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide avec PER attractif dans son secteur.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Croissance modérée prévue.</td>
+            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, prix d'entrée sous 125€.</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">KER.PA</td>
-            <td class="p-4 text-green-400">232.65€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Résilient mais absence de PER limite la visibilité.  
-Tendance : Léger recul, sous pression macroéconomique.  
-Conseil : Attendre. Prix d'entrée idéal : ~220-225€.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">KER.PA</td>
+            <td class="p-3 text-white text-sm font-medium">Kering SA</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">232.65€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Situation financière peu claire, absence de PER.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Volatilité élevée dans le secteur cyclique.</td>
+            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, surveiller évolution prix sous 220€.</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">OR.PA</td>
-            <td class="p-4 text-green-400">366.05€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, position leader défensive.  
-Tendance : Croissance soutenue, visibilité stable.  
-Conseil : Attendre, prix élevé. Entrée idéale vers 330-340€.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">CDI.PA</td>
+            <td class="p-3 text-white text-sm font-medium">Christian Dior SE</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">425.2€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Rentabilité solide mais vigilance sur la valorisation actuelle.  
+TENDANCE: Croissance stable dans un secteur cyclique.  
+CONSEIL: Attendre, prix d'entrée conseillé sous 400€.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
+            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">CDI.PA</td>
-            <td class="p-4 text-green-400">425.2€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide avec PER modéré, secteur cyclique.  
-Tendance : Léger potentiel haussier mais volatilité possible.  
-Conseil : Attendre, entrée idéale vers 400-410€.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">EL.PA</td>
+            <td class="p-3 text-white text-sm font-medium">EssilorLuxottica Société anonyme</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">181.25€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Secteur stable avec demande croissante.  
+TENDANCE: Valorisation élevée mais potentiel de croissance.  
+CONSEIL: Attendre, prix d'entrée recommandé 160€.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
+            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">EL.PA</td>
-            <td class="p-4 text-green-400">181.25€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, secteur défensif.  
-Tendance : Haussière mais valuation élevée.  
-Conseil : Attendre correction, prix d’entrée idéal <170€.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">SAP.F</td>
+            <td class="p-3 text-white text-sm font-medium">SAP SE</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">144.24€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide, demandes technologiques stables.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Croissance modérée, dépendance marchés numériques.</td>
+            <td class="p-3 text-xs font-bold text-green-400">Achat, prix d'entrée <140€.</td>
         </tr>
         
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">ASML.AS</td>
-            <td class="p-4 text-green-400">1222.4€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Bonne, leader des systèmes lithographiques.  
-Tendance : Croissance robuste, mais valorisation élevée.  
-Conseil : Attendre, prix d'entrée idéal vers 1000-1100€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">SAP.DE</td>
-            <td class="p-4 text-green-400">145.5€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide avec PER modéré pour le secteur technologique.  
-Tendance : Croissance stable soutenue par la demande en logiciels d'entreprise.  
-Conseil : Attendre, entrée idéale vers 140€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 transition-colors">
-            <td class="p-4 font-bold text-white">SIE.DE</td>
-            <td class="p-4 text-green-400">252.55€</td>
-            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Stable, solides fondamentaux.  
-Tendance : Léger potentiel haussier à moyen terme.  
-Conseil : Attendre, entrée vers 240€ pour meilleure marge.</td>
+        <tr class="hover:bg-gray-750 border-b border-gray-700">
+            <td class="p-3 font-mono text-blue-300 text-sm font-bold">SIE.F</td>
+            <td class="p-3 text-white text-sm font-medium">Siemens Aktiengesellschaft</td>
+            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
+            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">252.5€</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide grâce à un secteur stable et diversifié.</td>
+            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Légère surévaluation, croissance modérée attendue.</td>
+            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, entrée potentielle sous 240€.</td>
         </tr>
         
                 </tbody>
