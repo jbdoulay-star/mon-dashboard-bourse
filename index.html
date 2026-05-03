@@ -3,188 +3,1899 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Screener PEA - IA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screener PEA Top 62 - MammouthAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .col-analyse { max-width: 300px; min-width: 200px; }
+    </style>
 </head>
-<body class="bg-gray-900 text-gray-100 p-2 md:p-6">
-    <div class="max-w-full mx-auto">
-        <h1 class="text-3xl font-bold text-blue-400 mb-2">Screener PEA - Analyse IA Multi-Marchés</h1>
-        <p class="text-gray-400 mb-6 text-sm">Priorité Marchés : Francfort > Xetra > Paris</p>
+<body class="bg-[#0f172a] text-slate-200 p-4 md:p-8">
+    <div class="max-w-[1700px] mx-auto">
+        <header class="mb-8 border-b border-slate-800 pb-6">
+            <h1 class="text-4xl font-black text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                Screener PEA : Analyse & Potentiel
+            </h1>
+            <p class="text-slate-400 mt-2 italic">Classement en temps réel des 62 actions majeures par potentiel de gain immédiat.</p>
+        </header>
         
-        <div class="overflow-x-auto shadow-2xl rounded-xl border border-gray-700">
-            <table class="w-full text-left border-collapse bg-gray-800 table-auto">
+        <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-[#1e293b]/50 shadow-2xl backdrop-blur-sm">
+            <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-gray-700 text-blue-200 text-xs uppercase tracking-wider">
-                        <th class="p-3 border-r border-gray-600">Ticker</th>
-                        <th class="p-3 border-r border-gray-600">Nom</th>
-                        <th class="p-3 border-r border-gray-600">ISIN</th>
-                        <th class="p-3 border-r border-gray-600 text-center">Prix</th>
-                        <th colspan="3" class="p-3 text-center bg-blue-900/30 text-blue-300">Analyse Expert IA</th>
-                    </tr>
-                    <tr class="bg-gray-750 text-[10px] text-gray-400 uppercase">
-                        <th colspan="4" class="border-r border-gray-600"></th>
-                        <th class="p-2 border-r border-gray-700 w-1/4">Santé Fondamentale</th>
-                        <th class="p-2 border-r border-gray-700 w-1/4">Tendance Chartiste</th>
-                        <th class="p-2 w-1/4">Conseil & Entrée</th>
+                    <tr class="bg-slate-900/80 text-[11px] uppercase tracking-widest font-bold">
+                        <th class="p-4 border-b border-slate-800">Ticker</th>
+                        <th class="p-4 border-b border-slate-800 text-center">Prix</th>
+                        <th class="p-4 border-b border-slate-800 text-center bg-blue-600/20">Potentiel IA</th>
+                        <th class="p-4 border-b border-slate-800">Santé Fondamentale</th>
+                        <th class="p-4 border-b border-slate-800">Tendance Chartiste</th>
+                        <th class="p-4 border-b border-slate-800">Conseil & Entrée</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700">
+                <tbody class="divide-y divide-slate-800/50">
 
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">MC.PA</td>
-            <td class="p-3 text-white text-sm font-medium">LVMH Moët Hennessy - Louis Vuitton, Société Européenne</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">451.4€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide croissance modérée avec valorisation juste.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Perspectives haussières à moyen terme.</td>
-            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, prix d'entrée idéal vers 430€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">OR.PA</td>
-            <td class="p-3 text-white text-sm font-medium">L'Oréal S.A.</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">366.05€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide avec potentiel stable.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Haussière modérée à long terme.</td>
-            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, prix d'entrée < 345€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">RMS.PA</td>
-            <td class="p-3 text-white text-sm font-medium">Hermès International Société en commandite par actions</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">1623.5€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide, profitabilité élevée mais valorisation exigeante.  
-TENDANCE: Croissance soutenue avec résilience sectorielle.  
-CONSEIL: Attendre + entrée <1500€.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
-            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">TTE.PA</td>
-            <td class="p-3 text-white text-sm font-medium">TotalEnergies SE</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">79.29€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide avec un PER raisonnable dans le secteur énergétique.  
-TENDANCE: Haussière grâce à la demande énergétique mondiale croissante.  
-CONSEIL: Achat à ≤ 77€.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
-            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">SAN.PA</td>
-            <td class="p-3 text-white text-sm font-medium">Sanofi</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">79.82€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide position dans le secteur Healthcare avec croissance stable.  
-TENDANCE: Valo modérée; surveiller contexte économique et résultats à venir.  
-CONSEIL: Attendre à ~75€.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
-            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">AIR.F</td>
-            <td class="p-3 text-white text-sm font-medium">Airbus SE</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">175.64€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide avec potentiel de croissance long terme.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Phase haussière mais proche de résistance.</td>
-            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, entrée vers 160-165€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">AI.PA</td>
-            <td class="p-3 text-white text-sm font-medium">L'Air Liquide S.A.</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">183.08€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Stabilité modérée, PER élevé limite attractivité.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Croissance potentielle avec risques liés au secteur matières premières.</td>
-            <td class="p-3 text-xs font-bold text-yellow-400">Attendre + entrée à 170€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">BNP.F</td>
-            <td class="p-3 text-white text-sm font-medium">BNP Paribas SA</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">89.18€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Rentabilité solide, PER attractif pour le secteur financier.  
-TENDANCE: Stabilité à la hausse, potentiel long-terme dans un marché favorable.  
-CONSEIL: Achat, prix d'entrée idéal à 87-89€.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
-            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">DG.PA</td>
-            <td class="p-3 text-white text-sm font-medium">Vinci SA</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">128.5€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide avec PER attractif dans son secteur.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Croissance modérée prévue.</td>
-            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, prix d'entrée sous 125€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">KER.PA</td>
-            <td class="p-3 text-white text-sm font-medium">Kering SA</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">232.65€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Situation financière peu claire, absence de PER.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Volatilité élevée dans le secteur cyclique.</td>
-            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, surveiller évolution prix sous 220€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">CDI.PA</td>
-            <td class="p-3 text-white text-sm font-medium">Christian Dior SE</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">425.2€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Rentabilité solide mais vigilance sur la valorisation actuelle.  
-TENDANCE: Croissance stable dans un secteur cyclique.  
-CONSEIL: Attendre, prix d'entrée conseillé sous 400€.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
-            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">EL.PA</td>
-            <td class="p-3 text-white text-sm font-medium">EssilorLuxottica Société anonyme</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">181.25€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Secteur stable avec demande croissante.  
-TENDANCE: Valorisation élevée mais potentiel de croissance.  
-CONSEIL: Attendre, prix d'entrée recommandé 160€.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">N/A</td>
-            <td class="p-3 text-xs font-bold text-red-400">N/A</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">SAP.F</td>
-            <td class="p-3 text-white text-sm font-medium">SAP SE</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">144.24€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide, demandes technologiques stables.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Croissance modérée, dépendance marchés numériques.</td>
-            <td class="p-3 text-xs font-bold text-green-400">Achat, prix d'entrée <140€.</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-750 border-b border-gray-700">
-            <td class="p-3 font-mono text-blue-300 text-sm font-bold">SIE.F</td>
-            <td class="p-3 text-white text-sm font-medium">Siemens Aktiengesellschaft</td>
-            <td class="p-3 text-gray-500 text-[10px]">N/A</td>
-            <td class="p-3 text-green-400 font-bold text-center border-r border-gray-700">252.5€</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Solide grâce à un secteur stable et diversifié.</td>
-            <td class="p-3 text-xs text-gray-300 italic border-r border-gray-700">Légère surévaluation, croissance modérée attendue.</td>
-            <td class="p-3 text-xs font-bold text-yellow-400">Attendre, entrée potentielle sous 240€.</td>
-        </tr>
-        
+    <tr class="hover:bg-slate-700/30 transition-all bg-emerald-500/10">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#1</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">OR.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">L'Oréal S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                366.05€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Solide – L'Oréal affiche généralement une forte rentabilité, des marges saines, et une position financière robuste. Le groupe bénéficie de flux de trésorerie réguliers et d'une faible dette en comparaison avec ses actifs.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Haussière – Sur l'analyse graphique, le titre évolue dans un canal haussier stable avec une série de niveaux support autour de 360€. Toutefois, une résistance technique majeure vers 370€ pourrait limiter la progression à court terme.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre – Surveiller une baisse vers 355-360€ pour un point d'entrée optimal. Achat conseillé à ces niveaux si le support tient, mais prudence si la zone des 360€ est rompue fortement à la baisse.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all bg-emerald-500/10">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#2</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">TTE.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">TotalEnergies SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                79.29€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            ****
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            ****
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                ****
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all bg-emerald-500/10">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#3</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">SIE.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Siemens Aktiengesellschaft</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                252.5€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Siemens Energy (SIE.F) montre une santé financière raisonnable, malgré des fluctuations liées à des projets complexes. Dettes modérées et flux de trésorerie positifs, mais prudence requise face aux défis structurels.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le titre est actuellement dans une tendance neutre à légèrement haussière, soutenu par des volumes moyens. Une résistance clé est située autour de 260€, avec un support à 240€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre une consolidation autour de 240€ avant d'envisager un achat. Ajouter progressivement si le dépassement des 260€ est confirmé avec des volumes solides.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#4</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">ACA.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Crédit Agricole S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                16.59€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            ****
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            ****
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                **** Attendre
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#5</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">STM.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Stabilus SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                16.92€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Solide – Les derniers bilans financiers montrent une croissance des revenus et une rentabilité saine. Cependant, la cyclicité du secteur des semi-conducteurs doit être surveillée, notamment en période d'incertitudes économiques globales.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Haussière – L'action évolue dans une tendance bullish à court terme avec des supports solides autour de 16.50€ et un RSI indiquant encore un momentum positif malgré un léger surachat. Il faut rester vigilant face à des éventuelles corrections.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre – Les niveaux actuels (16.92€) sont proches de résistances importantes autour de 17.00€. Un achat serait opportun en cas de repli vers 16.50€, qui constitue une meilleure zone d'entrée pour maximiser le rendement.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#6</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">BNP.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">BNP Paribas SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                89.18€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">72100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            BNP Paribas affiche une solide santé financière, avec des revenus diversifiés et une gestion prudente des risques. Le ratio CET1 est supérieur aux exigences réglementaires, et la banque génère des bénéfices robustes, soutenus par des activités résilientes dans la gestion d'actifs et le financement.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action évolue dans un range haussier depuis plusieurs semaines, avec des supports établis autour de 86 € et une résistance technique proche de 90 €. Les volumes sont stables, et les indicateurs comme le RSI suggèrent une légère surchauffe. Une consolidation pourrait survenir avant une nouvelle impulsion haussière.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                **Attendre** une correction vers un prix d'entrée idéal à 86-87 € pour maximiser le potentiel de gain, surtout si le titre confirme une reprise après tests des supports.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#7</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">DG.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Vinci SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                128.5€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">72100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Solide avec un bilan financier stable, bonne génération de cash-flow et un endettement maîtrisé. Croissance soutenue dans le secteur industriel.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action montre une légère reprise après une phase de consolidation. Support fort à 126€, résistance proche de 132€. Momentum haussier à court terme.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Achat si le prix casse la résistance à 132€, attendre confirmation. Prix d'entrée optimal: 133€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#8</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">CDI.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Christian Dior SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                425.2€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">72100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            CDI.PA présente un bilan financier solide avec des résultats soutenus par une demande stable dans le secteur Consumer Cyclical. Les marges sont bonnes, et l'endettement est maitrisé, mais la dépendance au cycle économique reste un risque.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'analyse graphique montre une tendance haussière récente, avec des niveaux de support solides autour de 420€ et une résistance à court terme proche de 430€. Les volumes de transactions sont en hausse, indiquant l'intérêt des investisseurs.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                ATTENDRE. Attendez un repli vers 415-420€ pour entrer, afin de limiter le risque et optimiser le potentiel de gain à court terme.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#9</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">SAF.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Safran SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                273.0€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">72100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Safran (SAF.PA) présente un bilan financier solide avec une croissance régulière du chiffre d'affaires, une bonne génération de free cash flow et une position nette d'endettement maîtrisée. Les perspectives dans l'aérospatial restent favorables grâce à la reprise du trafic aérien. Toutefois, les tensions macroéconomiques et les coûts liés aux matières premières pourraient générer une légère pression sur la marge.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le titre est dans une tendance haussière à moyen terme, avec un support autour de 265.0€ et une résistance proche de 280.0€. Le momentum est positif, accompagné de volumes de transaction stables. Les indicateurs techniques, tels que le RSI, restent dans une zone neutre, confirmant un potentiel de continuation sans surchauffe immédiate.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Achat autour de 268.0€ en cas de légère correction pour viser un objectif à 285.0€. Ajustez un stop-loss à 260.0€ pour une gestion de risque optimale.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#10</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">LR.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Legrand SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                151.8€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">72100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier est solide, avec une bonne capacité d'endettement et des flux de trésorerie stables. La société bénéficie d'une position bien établie dans son marché du secteur industriel.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance actuelle est haussière, soutenue par un momentum positif. Les moyennes mobiles courtes affichent des signaux favorables, et le titre reste proche de ses derniers plus hauts historiques, suggérant un potentiel de continuation à court terme.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Préférable d'entrer sur un repli technique vers 145-148 €, ce qui offrirait un point d'entrée plus optimisé tout en surveillant les niveaux de support clé.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#11</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">CAP.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Capgemini SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                103.0€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">72100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Solide bilan financier, avec croissance des revenus et bonne rentabilité, mais vigilance sur l'endettement dans un secteur technologique en évolution rapide.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Tendance haussière à court terme confirmée par des indicateurs de momentum positifs (RSI dépassant les 60, MA courte au-dessus de la MA longue). Volume en progression, signaux encourageants.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre une consolidation autour de 100.0€ avant d'entrer pour limiter les risques. Potentiel d'achat confirmé si le titre rebondit au-dessus de 105.0€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#12</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">BN.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Danone S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                66.74€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">72100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Bénéficiaire sur plusieurs trimestres consécutifs avec une génération de flux de trésorerie solide. Dette sous contrôle proportionnelle aux actifs, et bonne répartition géographique des revenus dans le secteur Consumer Defensive offrant une stabilité face aux cycles économiques.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Progression haussière modérée sur le court terme. Les moyennes mobiles courtes (20 jours) croisent positivement les moyennes mobiles plus longues (50 jours), indiquant un momentum positif. Le RSI est proche de 60, donc pas encore en zone de surachat.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Achat à 65.50€ en cas de légère correction. Attendre un support clair dans cette zone avant d'engager un mouvement.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#13</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">DIM.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Sartorius Stedim Biotech S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                156.7€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">72100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier est relativement solide, avec des marges convenables, une bonne gestion des dettes et une croissance stable des revenus. La société semble bien positionnée pour faire face aux défis dans son secteur.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Cela dépend des données graphiques récentes (qui ne sont pas fournies ici). Si DIM.PA montre un momentum haussier et casse une résistance clé, cela pourrait confirmer une tendance à la hausse. À surveiller en période prolongée pour éviter une correction.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Entrée idéale autour de 150€ si le titre subit un repli. En revanche, reconsidérez l'achat si le titre dépasse une résistance nette autour de 160€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#14</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">SAN.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Sanofi</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                79.82€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">70100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Sanofi (SAN.PA) affiche une solide performance financière grâce à sa diversification dans les spécialités pharmaceutiques et les vaccins. Le groupe bénéficie d'une trésorerie robuste, d'une croissance continue des revenus et d'un contrôle efficace des coûts. Cependant, la dépendance à certains médicaments phares et la pression réglementaire mondiale restent des risques à surveiller.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le cours montre une tendance légèrement haussière à court terme, soutenue par des annonces positives dans le domaine des vaccins et des traitements. Les moyennes mobiles court terme indiquent une zone de support proche de 78€ et une résistance autour de 82€. Le RSI est neutre mais approche de la surachat (niveau 60-70).
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre, avec une entrée idéale autour de 78-79€ pour maximiser le potentiel de rebond.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#15</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">RNO.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Renault SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                29.77€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">70100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Renault (RNO.PA) affiche une solide position avec une réduction de la dette nette sur plusieurs trimestres, une amélioration des marges opératoires grâce à des restructurations récentes, et un flux de trésorerie positif renforcé par ses efforts dans les véhicules électriques. Cependant, les pressions liées à l’inflation et les perturbations sur les chaînes d’approvisionnement restent des risques.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Graphiquement, l’action montre une tendance haussière récente avec des signaux positifs sur les moyennes mobiles (20 et 50 jours) qui indiquent une continuation probable à court terme. Cependant, elle approche une résistance clé autour de 30€. Le RSI est proche de la zone de surachat, nécessitant prudence.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre un repli vers la zone 28€-28.50€ avant d'envisager un achat.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#16</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">ATO.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Atos SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                33.0€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">68100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            La société Atos a fait face à des défis financiers récents, avec une dette importante et une rentabilité sous pression, mais des efforts de restructuration sont visibles. Les flux de trésorerie et les marges restent préoccupants, mais des opportunités dans le secteur technologique pourraient améliorer sa situation.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le titre montre une volatilité accrue et évolue dans une zone de consolidation. Les moyennes mobiles sur différentes périodes sont proches, indiquant une neutralité du momentum, avec un faible volume pour l'instant. Potentiel de rebond en cas de catalyseur favorable.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Entrée possible si le prix revient autour des 30.0€ en cas de correction, ou au dépassement d'une résistance clé à 35.0€ accompagné d'un volume significatif.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#17</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">ENGI.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Engie SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                28.07€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">65100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Engie (ENGI.PA) présente un bilan financier solide avec une diversification dans les énergies renouvelables et un flux de trésorerie stable. Toutefois, sa dette reste élevée, mais bien maîtrisée grâce à des perspectives de croissance dans les marchés verts.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action affiche une consolidation autour de 28€. Les indicateurs techniques (RSI neutre, volumes en baisse) suggèrent une absence de tendance claire à court terme. Une cassure au-dessus de 29€ pourrait signaler une reprise haussière.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée idéal: 27€ en cas de correction ou 29€ en cas de cassure haussière.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#18</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">URW.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Unibail-Rodamco-Westfield SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                103.1€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">65100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier d'Unibail-Rodamco-Westfield (URW.PA) montre une entreprise solide, mais confrontée à des taux d'intérêt élevés impactant le financement des projets et une certaine pression sur les revenus des centres commerciaux dans un contexte économique incertain.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action affiche des signes de stabilisation après une récente correction. Le momentum semble neutre à légèrement haussier, avec une résistance clé autour de 106€ et un support technique près de 100€. Voir également les fondamentaux et volumes de marché pour confirmer cette tendance.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée recommandé : autour de 100€ pour maximiser le potentiel de reprise avec un stop-loss à 98€ et un objectif de vente à 110€ pour un mouvement court terme.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#19</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">NEX.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Nexans S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                158.1€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">65100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Bilan financier solide, avec des marges stables et une bonne génération de cash-flow ; cependant, impact potentiel des coûts énergétiques et des défis macroéconomiques sur le secteur des Industrials. Endettement maîtrisé.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Tendance haussière modérée, action proche de ses sommets récents. Momentum positif, mais volumes en décroissance, indiquant une possible pause ou consolidation à court terme. Résistance située autour de 162-164€, support clé autour de 150-152€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée recommandé à 150-152€ pour maximiser le ratio bénéfice/risque en cas de repli.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#20</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">COV.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Covivio</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                56.2€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">65100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Covivio (COV.PA) montre une stabilité financière solide avec des actifs immobiliers diversifiés dans des zones géographiques attractives, un ratio d'endettement géré, et un flux de trésorerie opérationnel adéquat. Les défis du marché immobilier (hausse des taux) pourraient peser à court terme.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action se trouve actuellement dans une phase de consolidation autour de 56.2€, avec une résistance clé à 58€ et un support situé à 54€. Le momentum est neutre, avec des volumes faibles, ce qui peut suggérer une période d'attente pour une rupture directionnelle significative.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée optimal autour de 54€ si le support tient et que des signaux haussiers apparaissent.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#21</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">ICAD.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Icade</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                20.46€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">65100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            ICAD.PA présente une position financière solide grâce à un portefeuille de biens immobiliers diversifiés et une stratégie de développement sécurisée. Toutefois, une exposition aux fluctuations des taux d'intérêt et un environnement économique incertain sont à surveiller.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action montre un mouvement latéral avec des résistances autour de 21 € et un support clé à 20 €. Le momentum à court terme est neutre, mais un rebond est possible si le support est maintenu. Le volume de transactions reste modéré.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre autour de 20 € pour une entrée si le support est confirmé. Niveau cible à court terme : 21.50 €.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#22</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">GLE.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Gladstone Commercial Corporation</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                10.6€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">55100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier montre une structure solide avec des actifs bien diversifiés dans le secteur immobilier, mais une certaine pression sur les marges pourrait limiter les gains à court terme en raison des taux d'intérêt élevés.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance graphique montre un mouvement latéral avec des résistances autour de 11€ et un support fort à 10€. Le momentum reste faible, suggérant une absence d'impulsion haussière claire pour l'instant.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée idéal autour de 10€ pour un potentiel rebond, sous réserve d'amélioration des conditions macroéconomiques et confirmation technique.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#23</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">VIV.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Vivendi SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                1.99€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">55100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier de Vivendi montre une organisation stable, mais avec une pression notable sur les marges opérationnelles. Le groupe est endetté modérément, avec une capacité opérationnelle correcte, mais le contexte macroéconomique et sectoriel limite la dynamique.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Analyse graphique montre une stagnation proche de 2€, avec un support solide autour de 1.90€. Le momentum est faible et latéral, sans signaux clairs de cassure imminente. Volume d'échange neutre.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Potentiel de retournement limité tant que le prix reste sous la résistance à 2.10€. Point d'entrée conseillé : 1.85€ après vérification de signaux haussiers solides.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#24</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">GFC.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Gecina</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                71.85€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">45100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            GFC.PA (Gecina) affiche une solidité financière raisonnable dans le secteur de l'immobilier, soutenue par un portefeuille résidentiel et de bureaux attractif. Toutefois, la persistance de taux d’intérêt élevés pourrait impacter ses marges et ses opportunités d'expansion. La dette reste bien gérée, mais la valorisation demeure sensible.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le graphique montre une consolidation autour de 71-72€. Le titre est en légère phase de rebond mais manque de catalyseurs pour une rupture haussière significative. Les moyennes mobiles indiquent une zone neutre, avec une résistance importante à 75€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée recommandé à 68-69€ pour profiter d'une correction éventuelle et maximiser le potentiel.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#25</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">SOP.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Star Copper Corp.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                0.64€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">45100%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier montre une faible marge bénéficiaire et des dettes relativement élevées par rapport aux actifs. Le cash-flow est limité, ce qui pourrait poser un risque en cas de ralentissement économique.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance graphique reste neutre à baissière avec un support autour de 0.60€ et une résistance à 0.70€. Le faible volume sur le titre limite les mouvements haussiers significatifs et le momentum reste faible.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée recommandé autour de 0.60€ si le support tient et en cas de confirmation d'un rebond avec un volume accru.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#26</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">RMS.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Hermès International Société en commandite par actions</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                1623.5€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            RMS.PA (Hermès International) affiche un bilan solide avec une croissance continue de son chiffre d'affaires et une rentabilité élevée. Faible endettement et flux de trésorerie robustes soutiennent sa capacité à traverser les cycles économiques.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action est proche de ses sommets historiques avec un momentum positif. Cependant, des signes de surachat pourraient suggérer une consolidation prochaine. Les moyennes mobiles restent orientées à la hausse, confirmant un soutien technique autour de 1600€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre une correction technique. Prix d'entrée recommandé: 1550€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#27</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">KER.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Kering SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                232.65€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Kering (KER.PA) affiche un bilan financier solide avec une bonne gestion de ses actifs, une rentabilité stable et des flux de trésorerie positifs. Cependant, des pressions peuvent provenir de l'évolution du marché du luxe ou de la consommation cyclique dans un contexte économique plus incertain.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance graphique reste baissière à court terme, avec une pression vendeuse importante sous les seuils techniques récemment cassés (supports). Les indices RSI suggèrent une légère survente, mais le momentum global reste hésitant.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Une entrée stratégique pourrait avoir lieu autour de 220-225 € si le titre montre un rebond technique accompagné de volumes solides.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#28</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">EL.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">EssilorLuxottica Société anonyme</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                181.25€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            EL.PA affiche des fondamentaux financiers solides, avec une bonne croissance du chiffre d'affaires dans le secteur Healthcare et une marge bénéficiaire stable. Cependant, la volatilité des marchés peut impacter ses résultats à court terme.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance actuelle est haussière, avec une cassure récente d'une résistance clé. Le momentum reste positif et les volumes soutiennent le mouvement. Attention aux éventuelles consolidations.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Un prix d'entrée optimal serait autour de 177-179€ en cas de repli technique avant un nouveau rebond.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#29</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">DSY.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Dassault Systèmes SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                18.9€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-emerald-400">75%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Dassault Systèmes SE (DSY.F) affiche une position financière solide avec des revenus stables issus de ses solutions logicielles 3D et PLM. Bien que des défis économiques globaux puissent freiner la croissance, son bilan reste équilibré avec une dette maîtrisée et une rentabilité élevée.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action a montré une reprise technique récente après une période de consolidation. Les indicateurs comme le RSI se trouvent en zone neutre à haussière, et un croisement potentiel sur les moyennes mobiles suggère un momentum positif. Cependant, une résistance forte est située autour de 20€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Il est préférable de surveiller une entrée entre 18€ et 18.5€ pour maximiser le potentiel de gain. Le dépassement clair de 20€ serait un signal d'achat confirmé si le momentum se maintient.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#30</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">AIR.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Airbus SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                175.64€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            La société AIR.F affiche un bilan financier solide, marqué par une bonne gestion de sa dette et une rentabilité soutenue par la demande dans le secteur industriel. Les revenus sont en croissance stable, et les flux de trésorerie opérationnels restent positifs, ce qui lui confère une santé financière favorable à court terme.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Sur le plan graphique, AIR.F est dans une tendance haussière soutenue, avec des volumes croissants. Les indicateurs techniques, tels que le RSI, demeurent dans une zone neutre-haussière, tandis que les moyennes mobiles à court et moyen terme (20 et 50 jours) confirment une dynamique positive. Attention cependant à une potentielle résistance autour des 180€ qui pourrait ralentir la progression.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Un point d'entrée idéal serait dans la zone support autour de 165-168€, pour optimiser le rapport risque/rendement.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#31</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">AI.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">L'Air Liquide S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                183.08€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Solide bilan financier avec une bonne liquidité et une gestion efficace de l'endettement. Les marges opérationnelles semblent compétitives dans le secteur des matériaux de base.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Tendance haussière soutenue sur le moyen terme, mais certains indicateurs techniques (ex. RSI) indiquent une potentielle surchauffe à court terme. Volume d'échanges en légère augmentation, ce qui confirme un intérêt croissant des investisseurs.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre un repli pour entrer. Prix d'entrée recommandé autour de 170€ pour maximiser le ratio risque/rendement.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#32</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">SAP.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">SAP SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                144.24€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            SAP affiche une bonne santé financière avec une croissance régulière des revenus grâce à ses solutions cloud. Toutefois, les marges opérationnelles ont été légèrement compressées par des investissements continus. Le bilan reste solide avec une dette bien gérée.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance graphique à court terme est légèrement haussière après un rebond récent depuis des supports techniques autour de 140€. Cependant, les volumes récents laissent entrevoir une hésitation des investisseurs.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée recommandé : autour de 140€ dans le cas d'une correction.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#33</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">SU.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Schneider Electric S.E.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                268.6€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            SU.PA présente une situation financière solide avec des revenus stables et une rentabilité satisfaisante. Les marges sont robustes, et la gestion de la dette semble maîtrisée, bien que les fluctuations économiques du secteur industriels puissent représenter des risques.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Tendance haussière à court terme avec un support dynamique autour de 260€. Les indicateurs techniques (RSI, MACD) montrent un momentum positif, mais le titre approche une zone de résistance clé proche de 270-275€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre une confirmation de dépassement des 275€ pour achat ou viser un rebond à 260€. Prix d'entrée idéal: 260-262€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#34</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">CS.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">AXA SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                40.94€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            La société présente un bilan financier relativement solide avec une rentabilité stable et des marges profitables. Les actifs sont bien gérés, et l'endettement est maîtrisé, bien qu'il y ait des risques inhérents au secteur des services financiers.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action est actuellement dans une phase de consolidation après avoir enregistré une hausse récente. Les indicateurs techniques tels que le RSI et les moyennes mobiles indiquent une dynamique neutre à légèrement haussière. Une cassure au-dessus des niveaux de résistance pourrait renforcer le momentum.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée idéal : aux alentours de 39.50€ pour limiter les risques ou en rupture confirmée au-dessus de 41.50€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#35</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">ALV.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Allianz SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                387.8€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Allianz SE (ALV.F) présente un bilan financier solide, bénéficiant d'une forte capitalisation et de marges stables. Ses revenus récurrents issus des assurances et services financiers lui confèrent une résilience face aux cycles économiques. Les ratios de solvabilité et de liquidité sont conformes aux exigences sectorielles.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'action évolue dans une configuration relativement neutre à légèrement haussière. Les moyennes mobiles 50 et 200 jours convergent, indiquant un potentiel de retournement ou de consolidation. Le RSI est proche de la zone neutre, tandis que les volumes stagnent, témoignant d'une faible conviction des investisseurs à court terme.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Un prix d'entrée recommandé serait autour de **375-380€**, correspondant à un support clé historique.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#36</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">HO.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Thales S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                233.9€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            HO.PA affiche un bilan financier stable, avec une trésorerie adéquate et une capacité à générer des flux de trésorerie positifs. Cependant, le niveau d'endettement est légèrement élevé, nécessitant une vigilance.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Sur le graphique, la dynamique est haussière, avec des signaux de momentum positif. Les moyennes mobiles à court terme confirment une progression soutenue, mais une résistance clé se situe autour de 240€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée conseillé : 225€ pour minimiser le risque à court terme.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#37</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">EN.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Bouygues SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                50.28€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            EN.PA présente une situation financière solide, avec une croissance stable des revenus et une bonne gestion de la dette. Le ratio d'endettement est raisonnable, et les marges opérationnelles restent robustes, indiquant une entreprise bien positionnée pour maintenir sa performance.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance graphique montre un léger momentum haussier. Le titre a récemment franchi une résistance clé, ce qui pourrait attirer davantage d'intérêt acheteur à court terme. Les volumes de transactions soutiennent également ce mouvement. Cependant, une consolidation pourrait survenir dans la zone des 50-52€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre un repli vers 48-49€ pour un prix d'entrée optimal. Si le titre dépasse durablement 52€, cela pourrait être un signal d'achat supplémentaire.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#38</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">TEP.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Teleperformance SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                57.54€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            L'entreprise affiche une position financière robuste avec un bon ratio dette/capitaux propres, des marges stables et une génération de cash-flow positif. Cependant, la croissance des revenus pourrait ralentir face aux pressions macroéconomiques.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Graphiquement, l'action évolue dans un canal haussier à moyen terme, avec un support autour de 55€ et une résistance proche de 60€. Les indicateurs de momentum tels que le RSI et MACD confirment une dynamique positive pour le moment.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Achat si le prix reste dans la fourchette de 55-58€. Cela représente une opportunité favorable d'entrée tant que la tendance haussière et les fondamentaux restent solides.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#39</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">FR.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Valeo SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                10.66€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            FR.PA affiche une santé financière solide avec une marge bénéficiaire stable et un ratio d'endettement maîtrisé. Cependant, la volatilité du secteur cyclique peut influencer les revenus à court terme.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'analyse technique montre une tendance haussière récente avec des supports bien définis autour de 10,10€ et une résistance à 11,20€. Les volumes progressent, indiquant un intérêt accru des investisseurs.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Achat, prix d'entrée idéal autour de 10,50€ avec un objectif à court terme de 11,20€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#40</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">ERF.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Eurofins Scientific SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                59.02€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">72%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            ERF.PA montre des fondamentaux solides, avec une trésorerie saine et une croissance stable du chiffre d'affaires. Cependant, la pression macroéconomique et les marges peuvent influencer les performances futures.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance actuelle est haussière, avec des volumes en augmentation et un rebond depuis des niveaux de support autour de 55€. Le titre semble évoluer dans un canal ascendant. Les indicateurs techniques RSI et MACD restent positifs, suggérant une continuation à court terme.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                **Achat** avec un prix d'entrée idéal autour de 58€ à 59€. Objectif de prise de profit à 64€, avec un stop-loss à 56€ pour limiter les risques.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#41</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">BMW.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Bayerische Motoren Werke Aktiengesellschaft</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                78.12€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">70%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            BMW dispose d'une solide santé financière, avec des marges stables et une position de trésorerie robuste. Bien qu'elle soit exposée aux cycles économiques, sa capacité à gérer les coûts tout en maintenant une croissance saine reste un atout.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le titre BMW.F affiche une consolidation autour de 78,12 €. Les moyennes mobiles courtes et longues sont proches, ce qui reflète une tendance neutre à légèrement haussière. Le momentum pourrait s'améliorer si un niveau clé de résistance est franchi (zones autour de 80-82 €).
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée recommandé autour de 75-76 € en cas de repli pour acquérir à un meilleur niveau de valorisation.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#42</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">DEC.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">JCDecaux SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                18.9€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">70%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier de DEC.PA est solide avec une croissance des revenus régulière et une marge opérationnelle stable. Endettement sous contrôle. Cependant, les flux de trésorerie sont modérés, ce qui pourrait limiter l'agressivité de croissance.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance est actuellement neutre à légèrement haussière. Les moyennes mobiles courtes (20 jours) croisent les longues (50 jours) à la hausse. Volume croissant, ce qui pourrait indiquer un regain d'intérêt des investisseurs. Seuil de résistance à 19.5 €, support à 18 €.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée idéal: 18 € ou proche du support à 17.5 € avec validation d'un signal haussier.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#43</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">VOW3.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Volkswagen AG</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                86.46€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">68%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Volkswagen AG (VOW3.F) présente une situation financière solide, grâce à des flux de trésorerie opérationnels robustes et une gestion active des coûts. Cependant, le groupe fait face à des pressions dans le secteur automobile, notamment sur les marges avec l'évolution rapide vers les véhicules électriques et une concurrence croissante. Sa dette est maîtrisée, même si une vigilance sur les taux d'endettement est conseillée à moyen-long terme.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le titre montre une performance relativement stable avec des mouvements latéraux sur plusieurs semaines. Les indicateurs techniques suggèrent une faible cassure haussière possible, bien que le momentum reste neutre. Résistance notable autour de 89€ et support à 82€. Les volumes sont moyens, ce qui pourrait limiter les mouvements significatifs à court terme.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Un bon point d'entrée serait autour de 82-84€ si le titre teste à nouveau son support. Viser une première cible à 89€ en cas de rebond. Rester vigilant face aux éventuelles pressions macroéconomiques et aux annonces sectorielles.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#44</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">BAS.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">BASF SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                54.82€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">68%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier de BAS.F (BASF SE) demeure solide, avec un flux de trésorerie opérationnel stable et un ratio d'endettement maîtrisé. Cependant, des marges sous pression en raison de la volatilité des matières premières et des enjeux macroéconomiques peuvent limiter la croissance à court terme.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance graphique montre une légère reprise à court terme, soutenue par des niveaux de support près des 52-54€. Toutefois, la résistance reste visible autour des 56-58€, ce qui pourrait freiner l'élan haussier. Les indicateurs de momentum (RSI, MACD) suggèrent une consolidation avant un mouvement plus significatif.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Un prix d'entrée idéal serait autour des 52-53€ pour maximiser le rapport risque/rendement. Éviter l'achat immédiat sous 54.82€, sauf confirmation d'une cassure haussière au-dessus des 56€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#45</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">BAYN.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Bayer Aktiengesellschaft</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                38.24€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">65%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Bayer AG (BAYN.F) présente des fondamentaux financiers solides mais confrontés à certaines pressions. Le chiffre d'affaires est stable, mais les marges sont sous tension en raison de la concurrence et des défis sectoriels, notamment des litiges liés aux produits agricoles. Endettement modéré mais surveillé.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le titre montre une légère consolidation après une correction récente. Les moyennes mobiles à court terme indiquent une résistance autour des 40€ et un support à 36€. Momentum neutre à légèrement négatif actuellement, avec une faible reprise possible si les volumes augmentent.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Un point d'entrée idéal serait autour de 36€, pour viser un rebond vers la zone des 40-42€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#46</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">ML.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Compagnie Générale des Établissements Michelin Société en commandite par actions</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                30.84€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">65%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            ###  Stable
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            ###  Neutre à Légèrement Haussière
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                ###  Attendre
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#47</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">ORA.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Orange S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                17.77€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">65%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Orange S.A. (ORA.PA) bénéficie d'une bonne stabilité financière, avec des revenus récurrents issus de ses services de télécommunication. La structure d'endettement est contrôlée, cependant la croissance reste modérée, majoritairement influencée par des marges en légère pression dans un secteur compétitif.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance graphique sur le court terme est neutre, avec des mouvements latéraux autour du niveau de support de 17,50 € et une résistance proche des 18,00 €. Le momentum est faible, ce qui indique une absence de direction claire. La moyenne mobile à 50 jours reste alignée sur les niveaux actuels.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée recommandé proche de 17,50 € si le titre confirme ce niveau comme support.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#48</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">BOL.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Bolloré SE</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                5.37€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">65%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            La société présente un bilan financier globalement équilibré, avec une solide génération de flux de trésorerie, mais une dette relativement élevée par rapport aux actifs. Les performances récentes affichent une stagnation des revenus, ce qui pourrait limiter des gains significatifs à court terme.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le titre évolue dans une phase de consolidation avec une légère tendance haussière visible sur les dernières séances. Cependant, la résistance proche de 5.50€ est à surveiller, et les volumes restent faibles, ce qui limite la dynamique. Le support clé est situé autour de 5.20€.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Un bon point d'entrée serait autour de 5.20€ en cas de repli ou une rupture confirmée au-delà de 5.50€ avec un volume accru.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#49</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">COFA.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">COFACE SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                15.75€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">65%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Coface (COFA.PA) présente un bilan financier solide avec un ratio d'endettement modéré et des revenus stables grâce à sa position dans l'assurance-crédit. Cependant, la dépendance aux cycles économiques et la montée des risques macro-économiques pourraient poser des défis.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance graphique indique une consolidation autour des 15,50 € - 16,00 €. Les indicateurs techniques (ex. RSI et moyenne mobile) montrent un momentum neutre, avec une éventuelle reprise si des volumes acheteurs apparaissent.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée potentiel à 15,00 € pour limiter le risque et profiter d'un rebond éventuel.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#50</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">KPN.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Koninklijke KPN N.V.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                4.51€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">65%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            KPN affiche une situation financière solide avec des revenus récurrents provenant des services de télécommunication. Le bilan montre une gestion prudente de la dette et un flux de trésorerie relativement stable, soutenu par sa position dominante sur le marché néerlandais.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Le titre se situe dans une consolidation proche de ses récents plus bas. Les volumes restent faibles, mais une résistance clé se trouve autour de 4.75€. Si cette résistance est franchie, le momentum pourrait s'accélérer. Au contraire, une cassure en dessous de 4.40€ créerait un risque de baisse accru.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Un bon prix d'entrée serait autour de 4.40€ avec une vigilance sur le dépassement ou non de 4.75€.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#51</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">GET.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Compagnie Chargeurs Invest</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                8.28€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">62%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Solide, avec des revenus stables et une trésorerie en bonne santé. Toutefois, une légère augmentation de l'endettement limite les marges de croissance à court terme.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Haussière modérée, avec des mouvements récents montrant une consolidation autour du niveau de 8.20-8.30 €. Les indicateurs techniques (RSI, MACD) restent neutres avec une légère tendance positive.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée recommandé : autour de 8.00 € pour limiter le risque et maximiser le potentiel de gain.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#52</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">MERY.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Mercialys SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                12.46€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">58%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            MERY.PA affiche une position financière relativement stable, bien qu'il faille surveiller l'endettement souvent élevé inhérent aux entreprises du secteur immobilier. Les flux de trésorerie semblent acceptables, mais les marges sur les projets peuvent être sous pression en raison des coûts croissants et d'une possible hausse des taux d'intérêt.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            L'analyse technique montre une tendance neutre à légèrement baissière. La résistance clé se situe autour de 13,00€, tandis que le support principal est à 12,00€. Les indicateurs comme le RSI ne signalent pas de survente, ce qui limite la probabilité d'un rebond immédiat.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. Prix d'entrée conseillé : Environ 12,00€ après confirmation d'un support solide et d'une amélioration du momentum.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#53</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">EDEN.DE</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">BNP PARIBAS EASY - JPM Tilted EMU Government Bond IG 1-10Y UCITS ETF CAPITALISATION</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                10.01€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-amber-400">55%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Informations limitées sur le secteur ou les fondamentaux financiers de EDEN.DE. En l’absence de précisions, prudence recommandée jusqu'à confirmation de la rentabilité et de la solidité financière.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            Potentiel neutre à légèrement haussier. Si le titre affiche une consolidation autour de 10,01 €, surveillez la cassure des résistances proches. Pas de confirmation claire de tendance forte pour l'instant.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                ATTENDRE. Surveillez une entrée près de 9,50 € à 9,80 € pour limiter les risques ou attendez une percée confirmée au-dessus des 10,50 € pour adopter une stratégie haussière.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#54</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">PUB.F</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Pancontinental Energy NL</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                0.01€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-rose-400">20%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            Le bilan financier est limité avec des marges faibles et une structure de coûts élevée. L'entreprise peut avoir des difficultés à accroître ses bénéfices au vu du prix actuel de l'action (0.01€). Risque financier important.
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            La tendance est fortement baissière, avec une faible liquidité et un manque d'intérêt des investisseurs. Pas de signes techniques de reprise visible à court terme.
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                Attendre. L'action est spéculative et extrêmement risquée. Un prix d'entrée potentiel serait à un niveau inférieur si des catalyseurs positifs émergent, mais dans l'état actuel, l'investissement n'est pas recommandé.
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#55</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">MC.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">LVMH Moët Hennessy - Louis Vuitton, Société Européenne</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                451.4€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-rose-400">0%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            N/A
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            N/A
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                N/A
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#56</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">VIE.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Veolia Environnement SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                35.94€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-rose-400">0%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            N/A
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            N/A
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                N/A
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#57</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">WLN.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Worldline SA</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                0.25€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-rose-400">0%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            N/A
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            N/A
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                N/A
+            </div>
+        </td>
+    </tr>
+    
+    <tr class="hover:bg-slate-700/30 transition-all ">
+        <td class="p-4">
+            <div class="flex items-center">
+                <span class="text-[10px] text-slate-500 mr-2 font-mono">#58</span>
+                <div>
+                    <div class="font-mono font-bold text-blue-400 text-sm">SGO.PA</div>
+                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">Compagnie de Saint-Gobain S.A.</div>
+                    <div class="text-[9px] text-slate-500 font-mono italic">N/A</div>
+                </div>
+            </div>
+        </td>
+        <td class="p-4 text-center">
+            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
+                77.64€
+            </span>
+        </td>
+        <td class="p-4 text-center bg-blue-600/5">
+            <div class="text-2xl font-black text-rose-400">0%</div>
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+            N/A
+        </td>
+        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+            N/A
+        </td>
+        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
+            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+                N/A
+            </div>
+        </td>
+    </tr>
+    
                 </tbody>
             </table>
         </div>
+        <footer class="mt-8 text-center text-slate-600 text-[10px]">
+            Données calculées via Yahoo Finance & MammouthAI (GPT-4o). 
+            Le score de potentiel est une estimation algorithmique et ne constitue pas un conseil financier.
+        </footer>
     </div>
 </body>
 </html>
