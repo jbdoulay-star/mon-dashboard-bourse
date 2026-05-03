@@ -13,7 +13,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Install Libs
-        run: pip install yfinance openai
+        run: pip install yfinance openai pytz matplotlib
       - name: Run Script
         env:
           MAMMOUTH_API_KEY: ${{ secrets.MAMMOUTH_API_KEY }}
