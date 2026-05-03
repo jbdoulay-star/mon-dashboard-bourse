@@ -28,12 +28,12 @@ def analyze_stock(symbol, price, info):
     
     try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini", # Ou un autre modèle disponible sur Mammouth
+            model="gpt-4o", # Ou un autre modèle disponible sur Mammouth
             messages=[{"role": "user", "content": prompt}]
         )
         return response.choices[0].message.content
-    except:
-        return "Analyse indisponible pour le moment."
+    except Exception as e:
+        return f"Erreur IA : {str(e)}"
 
 # Génération de la page HTML
 html_header = """
