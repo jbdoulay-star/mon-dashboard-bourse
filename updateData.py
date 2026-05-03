@@ -1,14 +1,15 @@
 import os
 import yfinance as yf
 from openai import OpenAI
+import re
 
-# Connexion à MammouthAI
+# Configuration API
 client = OpenAI(
     api_key=os.getenv("MAMMOUTH_API_KEY"),
     base_url="https://api.mammouth.ai/v1"
 )
 
-# Liste exhaustive des 62 actions PEA (Tickers racines)
+# Liste exhaustive des 62 actions
 base_tickers = [
     "MC", "OR", "RMS", "TTE", "SAN", "AIR", "AI", "BNP", "DG", "KER",
     "CDI", "EL", "ASML", "SAP", "SIE", "SU", "CS", "ALV", "BMW", "VOW3",
@@ -19,148 +20,149 @@ base_tickers = [
     "KPN", "AD.AS"
 ]
 
+def get_isin(ticker_obj):
+    """Récupère l'ISIN de manière robuste"""
+    try:
+        isin = ticker_obj.isin
+        if isin and isin != "-" and len(isin) > 5:
+            return isin
+        # Fallback si l'attribut .isin échoue
+        return ticker_obj.info.get('isin', 'N/A')
+    except:
+        return 'N/A'
+
 def get_best_ticker(base):
-    # Logique de priorité : Francfort (.F) > Xetra (.DE) > Paris (.PA)
     for suffix in [".F", ".DE", ".PA"]:
         t = yf.Ticker(base + suffix)
         try:
-            price = t.fast_info['last_price']
-            if price and price > 0:
+            if t.fast_info['last_price'] > 0:
                 return t, base + suffix
         except:
             continue
     return yf.Ticker(base + ".PA"), base + ".PA"
 
 def analyze_stock(symbol, price, info):
-    prompt = f"""Analyse professionnelle pour {symbol} ({price}€).
-    Secteur: {info.get('sector', 'Inconnu')}.
-    Réponds strictement sous ce format :
-    SCORE: [Note de 0 à 100 du potentiel de gain à court terme]
-    SANTE: [Bilan financier court]
-    TENDANCE: [Analyse graphique/momentum]
-    CONSEIL: [Achat/Vente/Attendre + prix d'entrée]"""
+    prompt = f"""Analyse financière pour {symbol} au prix de {price}€.
+    Secteur: {info.get('sector', 'N/A')}.
+    Tu dois impérativement répondre en suivant ce schéma précis :
+    SCORE: [Note de 0 à 100 uniquement le chiffre]
+    SANTE: [Analyse santé fondamentale]
+    TENDANCE: [Analyse tendance chartiste]
+    CONSEIL: [Conseil achat et prix d'entrée]"""
     
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[{"role": "user", "content": prompt}]
-        )
-        res = response.choices[0].message.content
-        
-        # Initialisation
-        score, sante, tendance, conseil = 0, "N/A", "N/A", "N/A"
-        
-        for line in res.split('\n'):
-            if "SCORE:" in line: 
-                try: score = int(''.join(filter(str.isdigit, line)))
-                except: score = 0
-            elif "SANTE:" in line: sante = line.replace("SANTE:", "").strip()
-            elif "TENDANCE:" in line: tendance = line.replace("TENDANCE:", "").strip()
-            elif "CONSEIL:" in line: conseil = line.replace("CONSEIL:", "").strip()
-            
-        return score, sante, tendance, conseil
-    except:
-        return 0, "Analyse indisponible", "Analyse indisponible", "Analyse indisponible"
+        ).choices[0].message.content
 
-# Collecte des données pour les 62 actions
+        # Extraction robuste par Regex
+        score_match = re.search(r"SCORE:\s*(\d+)", response)
+        sante_match = re.search(r"SANTE:(.*?)(?=TENDANCE:|$)", response, re.DOTALL)
+        tendance_match = re.search(r"TENDANCE:(.*?)(?=CONSEIL:|$)", response, re.DOTALL)
+        conseil_match = re.search(r"CONSEIL:(.*)", response, re.DOTALL)
+
+        return {
+            "score": int(score_match.group(1)) if score_match else 0,
+            "sante": sante_match.group(1).strip() if sante_match else "Analyse indisponible",
+            "tendance": tendance_match.group(1).strip() if tendance_match else "Analyse indisponible",
+            "conseil": conseil_match.group(1).strip() if conseil_match else "Attendre signal"
+        }
+    except:
+        return {"score": 0, "sante": "Erreur", "tendance": "Erreur", "conseil": "Erreur"}
+
 all_data = []
-print(f"Début de l'analyse de {len(base_tickers)} actions...")
+print(f"Lancement de l'analyse sur {len(base_tickers)} actions...")
 
 for base in base_tickers:
+    ticker_obj, full_ticker = get_best_ticker(base)
     try:
-        stock_obj, full_ticker = get_best_ticker(base)
-        price = stock_obj.fast_info['last_price']
-        info = stock_obj.info
+        price = round(ticker_obj.fast_info['last_price'], 2)
+        info = ticker_obj.info
+        nom = info.get('longName', base)
+        isin = get_isin(ticker_obj)
         
-        score, sante, tendance, conseil = analyze_stock(full_ticker, round(price, 2), info)
+        analysis = analyze_stock(full_ticker, price, info)
         
         all_data.append({
             "ticker": full_ticker,
-            "nom": info.get('longName', base),
-            "isin": info.get('isin', 'N/A'),
-            "prix": round(price, 2),
-            "score": score,
-            "sante": sante,
-            "tendance": tendance,
-            "conseil": conseil
+            "nom": nom,
+            "isin": isin,
+            "prix": price,
+            "score": analysis['score'],
+            "sante": analysis['sante'],
+            "tendance": analysis['tendance'],
+            "conseil": analysis['conseil']
         })
-        print(f"Analysé : {full_ticker} (Score: {score})")
-    except Exception as e:
+        print(f"Analysé : {full_ticker} - Score : {analysis['score']}")
+    except:
         continue
 
-# CLASSEMENT PAR POTENTIEL DÉCROISSANT
+# TRI PAR POTENTIEL (DÉCROISSANT)
 all_data.sort(key=lambda x: x['score'], reverse=True)
 
-# Génération du HTML
+# Génération HTML
 html_header = """
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screener PEA Top 62 - MammouthAI</title>
+    <title>Screener PEA - Top 62</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .col-analyse { max-width: 300px; min-width: 200px; }
+        body { background-color: #0f172a; color: white; }
+        .col-analyse { min-width: 250px; }
     </style>
 </head>
-<body class="bg-[#0f172a] text-slate-200 p-4 md:p-8">
-    <div class="max-w-[1700px] mx-auto">
-        <header class="mb-8 border-b border-slate-800 pb-6">
-            <h1 class="text-4xl font-black text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-                Screener PEA : Analyse & Potentiel
-            </h1>
-            <p class="text-slate-400 mt-2 italic">Classement en temps réel des 62 actions majeures par potentiel de gain immédiat.</p>
-        </header>
+<body class="p-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-black mb-2 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent italic">
+            SCREENER PEA : ANALYSE & POTENTIEL
+        </h1>
+        <p class="text-slate-400 text-sm mb-8 italic">Classement en temps réel des 62 actions majeures par potentiel de gain immédiat.</p>
         
-        <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-[#1e293b]/50 shadow-2xl backdrop-blur-sm">
-            <table class="w-full text-left border-collapse">
+        <div class="overflow-hidden rounded-xl border border-slate-800 shadow-2xl">
+            <table class="w-full text-left border-collapse bg-slate-900/50">
                 <thead>
-                    <tr class="bg-slate-900/80 text-[11px] uppercase tracking-widest font-bold">
-                        <th class="p-4 border-b border-slate-800">Ticker</th>
-                        <th class="p-4 border-b border-slate-800 text-center">Prix</th>
-                        <th class="p-4 border-b border-slate-800 text-center bg-blue-600/20">Potentiel IA</th>
-                        <th class="p-4 border-b border-slate-800">Santé Fondamentale</th>
-                        <th class="p-4 border-b border-slate-800">Tendance Chartiste</th>
-                        <th class="p-4 border-b border-slate-800">Conseil & Entrée</th>
+                    <tr class="bg-slate-800/50 text-[10px] uppercase tracking-widest text-slate-400">
+                        <th class="p-4">Ticker & ISIN</th>
+                        <th class="p-4 text-center">Prix</th>
+                        <th class="p-4 text-center">Potentiel IA</th>
+                        <th class="p-4">Santé Fondamentale</th>
+                        <th class="p-4 border-l border-slate-800">Tendance Chartiste</th>
+                        <th class="p-4 border-l border-slate-800">Conseil & Entrée</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-800/50">
+                <tbody class="divide-y divide-slate-800">
 """
 
 html_rows = ""
 for i, data in enumerate(all_data):
-    score_color = "text-emerald-400" if data['score'] >= 75 else "text-amber-400" if data['score'] >= 50 else "text-rose-400"
-    rank_style = "bg-emerald-500/10" if i < 3 else "" # Mise en avant du Top 3
+    # Gestion des couleurs de score
+    score_color = "text-emerald-400" if data['score'] > 70 else "text-yellow-400" if data['score'] > 40 else "text-rose-400"
+    rank_style = "bg-blue-500/10" if i < 3 else ""
     
     html_rows += f"""
-    <tr class="hover:bg-slate-700/30 transition-all {rank_style}">
+    <tr class="hover:bg-slate-800/40 transition-colors {rank_style}">
         <td class="p-4">
-            <div class="flex items-center">
-                <span class="text-[10px] text-slate-500 mr-2 font-mono">#{i+1}</span>
-                <div>
-                    <div class="font-mono font-bold text-blue-400 text-sm">{data['ticker']}</div>
-                    <div class="text-[11px] text-white font-semibold truncate max-w-[150px]">{data['nom']}</div>
-                    <div class="text-[9px] text-slate-500 font-mono italic">{data['isin']}</div>
-                </div>
+            <div class="flex flex-col">
+                <span class="text-blue-400 font-bold text-sm">{data['ticker']}</span>
+                <span class="text-white text-xs font-medium truncate max-w-[180px]">{data['nom']}</span>
+                <span class="text-[10px] text-slate-500 font-mono mt-1 uppercase">{data['isin']}</span>
             </div>
         </td>
+        <td class="p-4 text-center font-bold text-emerald-500">{data['prix']}€</td>
         <td class="p-4 text-center">
-            <span class="px-2 py-1 bg-slate-900 rounded border border-slate-700 font-bold text-emerald-500 text-sm">
-                {data['prix']}€
-            </span>
+            <div class="text-xl font-black {score_color}">{data['score']}%</div>
         </td>
-        <td class="p-4 text-center bg-blue-600/5">
-            <div class="text-2xl font-black {score_color}">{data['score']}%</div>
-        </td>
-        <td class="p-4 text-xs text-slate-300 italic col-analyse leading-relaxed">
+        <td class="p-4 text-[11px] text-slate-300 leading-relaxed col-analyse italic">
             {data['sante']}
         </td>
-        <td class="p-4 text-xs text-slate-300 italic col-analyse border-l border-slate-800/50 leading-relaxed">
+        <td class="p-4 text-[11px] text-slate-300 leading-relaxed col-analyse border-l border-slate-800/50 italic">
             {data['tendance']}
         </td>
-        <td class="p-4 text-xs font-bold border-l border-slate-800/50">
-            <div class="bg-slate-900/50 p-2 rounded border border-slate-800/50 text-blue-300">
+        <td class="p-4 text-xs border-l border-slate-800/50">
+            <div class="bg-slate-900/80 p-2 rounded text-blue-200 font-medium">
                 {data['conseil']}
             </div>
         </td>
@@ -171,10 +173,6 @@ html_footer = """
                 </tbody>
             </table>
         </div>
-        <footer class="mt-8 text-center text-slate-600 text-[10px]">
-            Données calculées via Yahoo Finance & MammouthAI (GPT-4o). 
-            Le score de potentiel est une estimation algorithmique et ne constitue pas un conseil financier.
-        </footer>
     </div>
 </body>
 </html>
