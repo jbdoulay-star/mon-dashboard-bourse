@@ -3,154 +3,153 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Screener PEA - IA Live</title>
+    <title>Screener IA Live</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-gray-100 p-8">
-    <h1 class="text-3xl font-bold mb-6 text-blue-400">Mon Dashboard PEA - Mise à jour IA</h1>
-    <p class="mb-4 text-gray-400">Actualisé automatiquement à 7h, 12h et 17h via MammouthAI.</p>
-    <table class="w-full text-left border-collapse bg-gray-800 rounded-lg overflow-hidden">
-        <thead>
-            <tr class="bg-gray-700 text-blue-300">
-                <th class="p-4">Action</th>
-                <th class="p-4">Prix</th>
-                <th class="p-4">Analyse Expert (IA)</th>
-            </tr>
-        </thead>
-        <tbody>
+<body class="bg-gray-900 text-gray-100 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-blue-400 mb-2">Mon Dashboard PEA - Analyse IA</h1>
+        <p class="text-gray-400 mb-6">Mise à jour automatique via MammouthAI</p>
+        <div class="overflow-x-auto shadow-2xl rounded-lg">
+            <table class="w-full text-left border-collapse bg-gray-800">
+                <thead>
+                    <tr class="bg-gray-700 text-blue-300 uppercase text-sm">
+                        <th class="p-4">Action</th>
+                        <th class="p-4">Prix</th>
+                        <th class="p-4">Analyse Expert IA</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
 
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">MC.PA</td>
-        <td class="p-4">451.4€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                          |
-|------------------------------------|------------------------------------|---------------------------------------|
-| PER raisonnable pour le secteur, reflétant une entreprise solide et rentable. | Tendance haussière modérée avec supports solides autour de 440-450 €. | **Attendre** : Prix d'entrée optimal à ~440 €.</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">OR.PA</td>
-        <td class="p-4">366.05€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)**        | **Conseil**               |
-|----------------------------------|----------------------------------------|---------------------------|
-| PER élevé : valorisation chère. Secteur défensif stable, bon historique. | Tendance haussière mais proche résistance clé à ~370€. | **Attendre** : Prix d'entrée optimal < 350€. |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">RMS.PA</td>
-        <td class="p-4">1623.5€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                       |
-|-----------------------------------|-----------------------------------|------------------------------------|
-| PER élevé à 37.7 : chère, mais marque premium solide. | Tendance haussière avec résistances proches. | **Attendre** : Entrée optimale vers 1550€. |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">TTE.PA</td>
-        <td class="p-4">79.29€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                      |
-|----------------------------------|-----------------------------------|-------------------------------------
-| PER raisonnable, secteur solide, bénéfices stables. | Tendance haussière avec support autour de 75-76€. | **Attendre**, prix d'entrée optimal : 76€.       |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">SAN.PA</td>
-        <td class="p-4">79.82€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale** | **Analyse Chartiste** | **Conseil**                     |  
-|---------------------------|-----------------------|----------------------------------|  
-| Secteur défensif solide, PER raisonnable pour le secteur. Croissance stable. | Tendance haussière mais proche de résistance à ~80€. | **Attendre**, prix d'entrée optimal ≤ 75€. |  </td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">AIR.PA</td>
-        <td class="p-4">174.88€</td>
-        <td class="p-4 text-sm text-gray-300">| Analyse Fondamentale (Santé) | Analyse Chartiste (Tendance) | Conseil : Achat/Attendre/Vente + Prix d'entrée optimal |
-|------------------------------|------------------------------|-------------------------------------------------------|
-| PER élevé : valorisation chère, couverture solide dans les industriels | Tendance haussière avec supports clés vers 170€ | **Attendre** - Entrée optimale proche de 170€ pour un meilleur risque/rendement. |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">AI.PA</td>
-        <td class="p-4">183.08€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                                                                                              |
-|-------------------------------------|-----------------------------------|----------------------------------------------------------------------------------------------------------|
-| PER élevé (30.11) indique une valorisation exigeante, croissance à surveiller dans le secteur cyclique des matériaux. | Tendance actuelle : haussière mais surveiller les résistances proches. | **Attendre**. Prix d'entrée optimal : Entre 175€ et 178€ après consolidation.                                                            |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">BNP.PA</td>
-        <td class="p-4">89.23€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                        |
-|----------------------------------|------------------------------------|------------------------------------|
-| PER faible (8.29), valorisation attractive, solide position financière et secteur résilient. | Tendance haussière, support proche de 85€, résistance vers 90-92€. | **Attendre**. Prix d'entrée optimal : autour de 85€. |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">DG.PA</td>
-        <td class="p-4">128.5€</td>
-        <td class="p-4 text-sm text-gray-300">1. **Analyse Fondamentale (Santé)**  
-   PER modéré (14.85) indique une valorisation raisonnable dans le secteur industriel, bonne santé relative.  
-
-2. **Analyse Chartiste (Tendance)**  
-   Tendance neutre à haussière; support technique autour de 125€, résistance proche de 130€.  
-
-3. **Conseil**  
-   **Attendre**. Prix d'entrée optimal : ≈ 125€ pour limiter le risque.  </td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">KER.PA</td>
-        <td class="p-4">232.65€</td>
-        <td class="p-4 text-sm text-gray-300">1. **Analyse Fondamentale (Santé)** : Absence de PER indique des bénéfices non disponibles ou atypiques. Secteur cyclique, dépendant de la consommation discrétionnaire et des conditions macroéconomiques. À surveiller.  
-   
-2. **Analyse Chartiste (Tendance)** : Vérifier si des supports techniques se trouvent autour de 230€ ou si l'action est en tendance baissière. Récupération possible si résistance cassée.  
-
-3. **Conseil** : **Attendre**. Prix d'entrée optimal : autour de 225€ (si le support tient).</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">OR.PA</td>
-        <td class="p-4">366.05€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                     |
-|----------------------------------|----------------------------------|---------------------------------|
-| Valorisation élevée (PER 31.94), secteur défensif stable, solide rentabilité. | Tendance haussière long terme, consolidation possible autour de 360€. | **Attendre** : Privilégier un point d'entrée autour de 350-355€. |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">CDI.PA</td>
-        <td class="p-4">425.2€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                     |
-|--------------------------------|----------------------------------|--------------------------------|
-| PER modéré, valorisation correcte pour le secteur. Croissance viable dans le cycle conso. | Tendance haussière mais proche d'une résistance clé. | **Attendre**, Prix d'entrée optimal : ~400-410€. |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">EL.PA</td>
-        <td class="p-4">181.25€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale**         | **Analyse Chartiste**         | **Conseil**            |
-|-----------------------------------|--------------------------------|------------------------|
-| Secteur défensif, PER élevé (36.4) indique une valorisation exigeante, dépend de croissance future solide. | Tendance haussière, maintien au-dessus des moyennes mobiles clé avec support vers 175€. | **Attendre**, prix d’entrée optimal : ≤175€. | </td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">ASML.AS</td>
-        <td class="p-4">1222.4€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                         |
-|-----------------------------------|-----------------------------------|-------------------------------------|
-| Solide avec croissance, PER élevé indiquant valorisation exigeante. | Hausse long terme, ralentissement récent près d'un sommet. | **Attendre** : Prix d'entrée optimal vers ~1100€. |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">SAP.DE</td>
-        <td class="p-4">145.5€</td>
-        <td class="p-4 text-sm text-gray-300">| **Analyse Fondamentale (Santé)** | **Analyse Chartiste (Tendance)** | **Conseil**                              |
-|-----------------------------------|-----------------------------------|------------------------------------------|
-| Solide, PER raisonnable pour le secteur, croissance stable dans la tech. | Haussière avec résistances à surveiller. | **Attendre**, prix d'entrée optimal : 140€. |</td>
-    </tr>
-    
-    <tr class="border-b border-gray-700 hover:bg-gray-750">
-        <td class="p-4 font-bold">SIE.DE</td>
-        <td class="p-4">252.55€</td>
-        <td class="p-4 text-sm text-gray-300">| Analyse Fondamentale (Santé) | Analyse Chartiste (Tendance) | Conseil : "Achat", "Attendre" ou "Vente" + Prix d'entrée optimal |
-|----------------------------|---------------------------|--------------------------------------------------------|
-| Bonne santé financière mais PER élevé indiquant une valorisation potentiellement trop optimiste | Tendance haussière avec supports solides autour de 240€ | Attendre, prix d'entrée optimal vers 240€ |</td>
-    </tr>
-    </tbody></table></body></html>
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">MC.PA</td>
+            <td class="p-4 text-green-400">451.4€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, secteur du luxe résilient.  
+Tendance : Croissance stable, bonne performance à long terme.  
+Conseil : Attendre une correction vers 430€ avant achat.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">OR.PA</td>
+            <td class="p-4 text-green-400">366.05€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé: Solide, leader du secteur défensif.  
+Tendance: Croissance stable mais valorisation élevée.  
+Conseil: Attendre, prix d'entrée idéal <340€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">RMS.PA</td>
+            <td class="p-4 text-green-400">1623.5€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide avec marque de luxe, mais PER élevé.  
+Tendance : Haussière, soutenue par la demande.  
+Conseil : Attendre, prix d'entrée idéal vers 1500-1550€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">TTE.PA</td>
+            <td class="p-4 text-green-400">79.29€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Bilan solide, rendement attractif.  
+Tendance : Stable, potentiel haussier avec la transition énergétique.  
+Conseil : Achat si <78€, viser profits à moyen terme.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">SAN.PA</td>
+            <td class="p-4 text-green-400">79.82€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé solide, position forte dans le secteur. Tendance haussière malgré un PER modéré. Attendre une entrée vers 75-76€ pour maximiser le potentiel.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">AIR.PA</td>
+            <td class="p-4 text-green-400">174.88€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, leader aéronautique.  
+Tendance : Haussière, soutien des commandes.  
+Conseil : Achat sur repli vers 165€ pour potentielle croissance long terme.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">AI.PA</td>
+            <td class="p-4 text-green-400">183.08€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide mais PER élevé, signal d'évaluation élevée.  
+Tendance : Hausse récente, pourrait ralentir.  
+Conseil : Attendre, prix d'entrée conseillé <175€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">BNP.PA</td>
+            <td class="p-4 text-green-400">89.23€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, bénéfices stables, PER faible.  
+Tendance : Haussière depuis plusieurs mois, proche des sommets.  
+Conseil : Attendre repli vers 85€ avant entrée.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">DG.PA</td>
+            <td class="p-4 text-green-400">128.5€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : PER solide, valorisation correcte dans le secteur industriel.  
+Tendance : Stable avec potentiel modéré à court terme.  
+Conseil : Attendre, entrée vers 120-122€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">KER.PA</td>
+            <td class="p-4 text-green-400">232.65€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Résilient mais absence de PER limite la visibilité.  
+Tendance : Léger recul, sous pression macroéconomique.  
+Conseil : Attendre. Prix d'entrée idéal : ~220-225€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">OR.PA</td>
+            <td class="p-4 text-green-400">366.05€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, position leader défensive.  
+Tendance : Croissance soutenue, visibilité stable.  
+Conseil : Attendre, prix élevé. Entrée idéale vers 330-340€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">CDI.PA</td>
+            <td class="p-4 text-green-400">425.2€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide avec PER modéré, secteur cyclique.  
+Tendance : Léger potentiel haussier mais volatilité possible.  
+Conseil : Attendre, entrée idéale vers 400-410€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">EL.PA</td>
+            <td class="p-4 text-green-400">181.25€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide, secteur défensif.  
+Tendance : Haussière mais valuation élevée.  
+Conseil : Attendre correction, prix d’entrée idéal <170€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">ASML.AS</td>
+            <td class="p-4 text-green-400">1222.4€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Bonne, leader des systèmes lithographiques.  
+Tendance : Croissance robuste, mais valorisation élevée.  
+Conseil : Attendre, prix d'entrée idéal vers 1000-1100€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">SAP.DE</td>
+            <td class="p-4 text-green-400">145.5€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Solide avec PER modéré pour le secteur technologique.  
+Tendance : Croissance stable soutenue par la demande en logiciels d'entreprise.  
+Conseil : Attendre, entrée idéale vers 140€.</td>
+        </tr>
+        
+        <tr class="hover:bg-gray-750 transition-colors">
+            <td class="p-4 font-bold text-white">SIE.DE</td>
+            <td class="p-4 text-green-400">252.55€</td>
+            <td class="p-4 text-sm text-gray-300 leading-relaxed">Santé : Stable, solides fondamentaux.  
+Tendance : Léger potentiel haussier à moyen terme.  
+Conseil : Attendre, entrée vers 240€ pour meilleure marge.</td>
+        </tr>
+        
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
