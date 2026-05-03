@@ -1,27 +1,37 @@
-name: Mise a jour IA
+name: Mise à jour IA - Quotidienne
+
 on:
   schedule:
-    - cron: '0 6,11,16 * * 1-5' # 7h, 12h, 17h (Heure Paris)
-  workflow_dispatch: # Permet de le lancer à la main pour tester
+    # 21:30 UTC correspond à 23:30 heure de Paris (en été)
+    # S'exécute du lundi au vendredi (1-5)
+    - cron: '30 21 * * 1-5'
+  workflow_dispatch: # Permet de lancer la mise à jour manuellement si besoin
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Install Python
-        uses: actions/setup-python@v4
+      - name: Récupération du code
+        uses: actions/checkout@v2
+
+      - name: Installation de Python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-      - name: Install Libs
-        run: pip install yfinance openai pytz matplotlib
-      - name: Run Script
+
+      - name: Installation des dépendances
+        run: |
+          pip install yfinance openai matplotlib pytz
+
+      - name: Exécution de l'analyse IA
         env:
           MAMMOUTH_API_KEY: ${{ secrets.MAMMOUTH_API_KEY }}
         run: python updateData.py
-      - name: Save Result
+
+      - name: Sauvegarde des changements
         run: |
-          git config --global user.name 'Robot-IA'
-          git config --global user.email 'bot@bot.com'
+          git config --global user.name 'ScreenerBot'
+          git config --global user.email 'bot@screener.com'
           git add index.html
-          git commit -m "Mise à jour automatique" || echo "Rien à changer"
+          git commit -m "Mise à jour analyse quotidienne 23:30" || exit 0
           git push
