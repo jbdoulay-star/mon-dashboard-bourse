@@ -14,23 +14,20 @@ client = OpenAI(
     base_url="https://api.mammouth.ai/v1"
 )
 
-# Liste des actions (vous pouvez en ajouter jusqu'à 60+)
+# Liste corrigée avec les bons marchés (Frankfurt .DE, Amsterdam .AS)
 base_tickers = [
-    "MC", "OR", "RMS", "TTE", "SAN", "AIR", "AI", "BNP", "DG", "KER",
-    "CDI", "EL", "ASML", "SAP", "SIE", "SU", "CS", "ALV", "BMW", "VOW3",
-    "BAS", "BAYN", "SAF", "ENGI", "RNO", "GLE", "ACA", "ML", "VIE", "STM",
-    "ORA", "LR", "CAP", "DSY", "PUB", "BN", "URW", "VIV", "EDEN"
+    "MC.PA", "OR.PA", "RMS.PA", "TTE.PA", "SAN.PA", "AIR.PA", "AI.PA", "BNP.PA", "DG.PA", "KER.PA",
+    "ASML.AS", "SAP.DE", "SIE.DE", "SU.PA", "CS.PA", "ALV.DE", "BMW.DE", "VOW3.DE",
+    "BAS.DE", "BAYN.DE", "SAF.PA", "ENGI.PA", "RNO.PA", "GLE.PA", "ACA.PA", "ML.PA", "VIE.PA", "STM.PA",
+    "ORA.PA", "CAP.PA", "DSY.PA", "PUB.PA", "BN.PA", "URW.PA", "VIV.PA", "EDEN.PA"
 ]
 
-def generate_sparkline(ticker_obj):
+def generate_sparkline(hist):
     try:
-        hist = ticker_obj.history(period="6mo")
         if hist.empty: return ""
         prices = hist['Close']
         plt.figure(figsize=(3, 1), dpi=80)
         plt.plot(prices.values, color='#3b82f6', linewidth=2)
-        plt.axhline(y=prices.max(), color='#10b981', linestyle='--', alpha=0.3)
-        plt.axhline(y=prices.min(), color='#ef4444', linestyle='--', alpha=0.3)
         plt.axis('off')
         buf = io.BytesIO()
         plt.savefig(buf, format='png', transparent=True, bbox_inches='tight', pad_inches=0)
@@ -39,23 +36,33 @@ def generate_sparkline(ticker_obj):
     except: return ""
 
 data_list = []
-for t in base_tickers:
-    symbol = t if "." in t else f"{t}.PA"
-    print(f"Analyse approfondie de {symbol}...")
+for symbol in base_tickers:
+    print(f"Analyse de {symbol}...")
     try:
         tk = yf.Ticker(symbol)
         info = tk.info
-        name = info.get('longName', t)
-        isin = info.get('isin', 'N/A')
-        price = info.get('regularMarketPrice') or info.get('previousClose', 0)
+        hist = tk.history(period="6mo")
         
-        # PROMPT AMÉLIORÉ : On force l'utilisation de balises pour ne plus se tromper
-        prompt = f"""Analyse l'action {name} ({symbol}). 
-        Réponds strictement avec ce format :
-        [SANTE]: (ton analyse fondamentale ici)
-        [TENDANCE]: (ton analyse graphique ici)
-        [CONSEIL]: (ton conseil d'achat et prix d'entrée ici)
-        [SCORE]: (donne un chiffre entre 0 et 100 uniquement)"""
+        name = info.get('longName', symbol)
+        isin = info.get('isin', 'N/A')
+        curr_price = info.get('regularMarketPrice') or info.get('previousClose', 0)
+        
+        # On prépare des données réelles pour "forcer" l'IA à analyser
+        stats_contexte = f"""
+        Données actuelles pour {name}:
+        - Prix: {curr_price}€
+        - Plus haut 52 sem: {info.get('fiftyTwoWeekHigh')}€
+        - Plus bas 52 sem: {info.get('fiftyTwoWeekLow')}€
+        - PER: {info.get('trailingPE', 'N/A')}
+        - Variation 6 mois: {round(((hist['Close'][-1]/hist['Close'][0])-1)*100, 2) if not hist.empty else 0}%
+        """
+        
+        prompt = f"""Tu es un expert financier. Analyse l'action {name} ({symbol}) avec ces données : {stats_contexte}.
+        Réponds STRICTEMENT avec ce format (pas d'introduction) :
+        [SANTE]: Ton analyse fondamentale courte.
+        [TENDANCE]: Ton analyse technique courte.
+        [CONSEIL]: Ton conseil d'achat et prix d'entrée précis.
+        [SCORE]: Un chiffre entre 0 et 100 uniquement."""
         
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -63,74 +70,64 @@ for t in base_tickers:
         )
         full_text = response.choices[0].message.content
         
-        # Extraction intelligente par balises
+        # Extraction robuste
         sante = re.search(r"\[SANTE\]:(.*?)\[", full_text, re.S)
         tendance = re.search(r"\[TENDANCE\]:(.*?)\[", full_text, re.S)
         conseil = re.search(r"\[CONSEIL\]:(.*?)\[", full_text, re.S)
         score_find = re.search(r"\[SCORE\]:\s*(\d+)", full_text)
 
-        # Nettoyage et valeurs par défaut si l'IA oublie une balise
-        sante_txt = sante.group(1).strip() if sante else "Analyse indisponible."
-        tendance_txt = tendance.group(1).strip() if tendance else "Tendance neutre."
-        # Si [CONSEIL] est la dernière balise, le regex au dessus peut échouer, on gère :
-        if not conseil:
-             conseil_txt = full_text.split("[CONSEIL]:")[-1].split("[SCORE]")[0].strip()
-        else:
-             conseil_txt = conseil.group(1).strip()
-        
-        score_val = int(score_find.group(1)) if score_find else 50
-
         data_list.append({
-            'ticker': symbol, 'nom': name, 'isin': isin, 'prix': price,
-            'score': score_val, 'sante': sante_txt, 'tendance': tendance_txt,
-            'conseil': conseil_txt, 'chart': generate_sparkline(tk)
+            'ticker': symbol, 'nom': name, 'isin': isin, 'prix': curr_price,
+            'score': int(score_find.group(1)) if score_find else 50,
+            'sante': sante.group(1).strip() if sante else "Analyse en cours...",
+            'tendance': tendance.group(1).strip() if tendance else "Tendance neutre.",
+            'conseil': conseil.group(1).strip() if conseil else full_text.split("[CONSEIL]:")[-1].strip(),
+            'chart': generate_sparkline(hist)
         })
-    except Exception as e:
-        print(f"Erreur sur {symbol}: {e}")
+    except Exception as e: print(f"Erreur {symbol}: {e}")
 
-# --- TRI DES ACTIONS PAR POTENTIEL (Du plus haut au plus bas) ---
+# Tri par potentiel
 data_list.sort(key=lambda x: x['score'], reverse=True)
 
-# Génération HTML
+# Génération HTML avec colonnes fixes et égales
 date_now = datetime.now(pytz.timezone('Europe/Paris')).strftime("%d/%m/%Y %H:%M")
 html_header = f"""
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Screener PEA Live - Expert</title>
+    <title>Screener PEA Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {{ background: #020617; color: white; font-family: 'Inter', sans-serif; }}
-        .glass {{ background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }}
-        .score-badge {{ background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }}
+        .table-fixed-layout {{ table-layout: fixed; width: 100%; }}
+        .col-action {{ width: 180px; }}
+        .col-chart {{ width: 140px; }}
+        .col-price {{ width: 100px; }}
+        .col-score {{ width: 100px; }}
+        .col-flexible {{ width: calc((100% - 520px) / 3); }}
     </style>
 </head>
-<body class="p-4 md:p-8 text-[13px]">
-    <div class="max-w-[1750px] mx-auto">
-        <header class="mb-8 flex justify-between items-center">
+<body class="p-8">
+    <div class="max-w-[1800px] mx-auto">
+        <header class="mb-10 flex justify-between items-end">
             <div>
-                <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">SCREENER PEA : TOP OPPORTUNITÉS</h1>
-                <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">Mise à jour : {date_now} • <span id="live-status" class="text-emerald-500">Synchronisation Live...</span></p>
-            </div>
-            <div class="text-right hidden md:block">
-                <span class="text-slate-500 text-[10px] block">TRIÉ PAR</span>
-                <span class="text-blue-400 font-bold">MEILLEUR POTENTIEL</span>
+                <h1 class="text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 uppercase">Screener PEA : Analyse & Potentiel</h1>
+                <p class="text-slate-500 font-bold text-xs mt-2 uppercase tracking-widest">Mise à jour : {date_now} • <span id="live-status">Synchro live...</span></p>
             </div>
         </header>
 
-        <div class="glass rounded-3xl overflow-hidden shadow-2xl">
-            <table class="w-full text-left">
+        <div class="bg-slate-900/50 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+            <table class="table-fixed-layout">
                 <thead>
-                    <tr class="bg-slate-900/50 text-slate-400 text-[10px] uppercase tracking-widest border-b border-white/5">
-                        <th class="p-5">Action</th>
-                        <th class="p-5 text-center">Tendance 6M</th>
-                        <th class="p-5 text-center">Prix Live</th>
-                        <th class="p-5 text-center">Potentiel</th>
-                        <th class="p-5">Analyse Fondamentale</th>
-                        <th class="p-5">Analyse Chartiste</th>
-                        <th class="p-5">Conseil d'Entrée</th>
+                    <tr class="bg-slate-800/40 text-slate-400 text-[10px] uppercase tracking-[0.2em] border-b border-white/5">
+                        <th class="p-5 col-action">Action</th>
+                        <th class="p-5 col-chart text-center">Tendance 6M</th>
+                        <th class="p-5 col-price text-center">Prix</th>
+                        <th class="p-5 col-score text-center">Potentiel</th>
+                        <th class="p-5 col-flexible">Santé Fondamentale</th>
+                        <th class="p-5 col-flexible">Tendance Chartiste</th>
+                        <th class="p-5 col-flexible">Conseil & Entrée</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
@@ -138,31 +135,24 @@ html_header = f"""
 
 rows_html = ""
 for d in data_list:
-    # Couleur du score
-    color = "text-emerald-400" if d['score'] > 70 else "text-blue-400" if d['score'] > 50 else "text-slate-400"
-    
     rows_html += f"""
     <tr class="hover:bg-white/[0.02] transition-colors">
         <td class="p-5">
             <div class="flex flex-col">
-                <span class="text-blue-400 font-black text-[11px]">{d['ticker']}</span>
-                <span class="text-[16px] font-bold tracking-tight">{d['nom']}</span>
-                <span class="text-[10px] text-slate-500 font-mono mt-1">{d['isin']}</span>
+                <span class="text-blue-400 font-black text-[10px]">{d['ticker']}</span>
+                <span class="text-[15px] font-bold truncate">{d['nom']}</span>
+                <span class="text-[11px] text-slate-500 font-mono mt-1">{d['isin']}</span>
             </div>
         </td>
         <td class="p-5 text-center">
-            <img src="data:image/png;base64,{d['chart']}" class="w-32 h-auto mx-auto brightness-110" alt="Chart">
+            <img src="data:image/png;base64,{d['chart']}" class="w-full h-auto opacity-80" alt="Chart">
         </td>
-        <td class="p-5 text-center">
-            <div class="text-lg font-black price-tag" data-symbol="{d['ticker']}">{d['prix']}€</div>
-        </td>
-        <td class="p-5 text-center">
-            <div class="text-3xl font-black {color} italic">{d['score']}%</div>
-        </td>
-        <td class="p-5 text-slate-300 leading-relaxed italic max-w-xs">{d['sante']}</td>
-        <td class="p-5 text-slate-300 leading-relaxed italic border-l border-white/5 max-w-xs">{d['tendance']}</td>
+        <td class="p-5 text-center font-black text-[16px] price-tag" data-symbol="{d['ticker']}">{d['prix']}€</td>
+        <td class="p-5 text-center font-black text-3xl italic text-emerald-400">{d['score']}%</td>
+        <td class="p-5 text-slate-300 text-[13px] leading-relaxed italic">{d['sante']}</td>
+        <td class="p-5 text-slate-300 text-[13px] leading-relaxed italic border-l border-white/5">{d['tendance']}</td>
         <td class="p-5 border-l border-white/5">
-            <div class="bg-blue-500/5 p-4 rounded-xl border border-blue-500/10 text-blue-100 font-medium">
+            <div class="bg-blue-500/10 p-4 rounded-xl border border-blue-500/20 text-blue-200 text-[13px]">
                 {d['conseil']}
             </div>
         </td>
@@ -186,7 +176,7 @@ html_footer = """
                 if (p) tag.innerText = p.toFixed(2) + '€';
             } catch (e) {}
         }
-        document.getElementById('live-status').innerText = 'Prix en Direct Synchronisés';
+        document.getElementById('live-status').innerHTML = '<span class="text-emerald-500">● PRIX SYNCHRONISÉS</span>';
     }
     window.onload = updatePrices;
     </script>
