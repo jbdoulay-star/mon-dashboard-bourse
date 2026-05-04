@@ -1,9 +1,8 @@
 # ============================================================
-#  Screener PEA Pro — v2.3
-#  - Liste complète des tickers (CAC40 + mid-caps + ETFs PEA)
-#  - ISIN récupéré via yfinance
-#  - Analyses IA enrichies (3 lignes + prix d'entrée)
-#  - Gestion robuste des erreurs IA
+#  Screener PEA Pro — v2.4
+#  - Santé fondamentale enrichie :
+#    + Scénario défavorable (risque principal)
+#    + Scénario favorable (catalyseur principal)
 # ============================================================
 
 import os
@@ -224,20 +223,23 @@ def fetch_ticker(symbol: str) -> Optional[dict]:
 
         score = pre_score(rsi, perf_6m, vol_ratio)
 
-        log.info(f"  {'🟢' if perf_6m >= 0 else '🔴'} {symbol} | Prix: {price} | RSI: {rsi} | ISIN: {isin}")
+        log.info(
+            f"  {'🟢' if perf_6m >= 0 else '🔴'} {symbol} | "
+            f"Prix: {price} | RSI: {rsi} | ISIN: {isin}"
+        )
 
         return {
-            "symbol":     symbol,
-            "name":       name,
-            "isin":       isin,
-            "price":      price,
-            "perf_6m":    perf_6m,
-            "rsi":        rsi,
-            "vol_ratio":  vol_ratio,
-            "ma20":       ma20,
-            "ma50":       ma50,
-            "pre_score":  score,
-            "closes":     closes[-130:],
+            "symbol":    symbol,
+            "name":      name,
+            "isin":      isin,
+            "price":     price,
+            "perf_6m":   perf_6m,
+            "rsi":       rsi,
+            "vol_ratio": vol_ratio,
+            "ma20":      ma20,
+            "ma50":      ma50,
+            "pre_score": score,
+            "closes":    closes[-130:],
         }
     except Exception as e:
         log.error(f"❌ {symbol} : {e}")
@@ -277,6 +279,8 @@ def make_sparkline(closes: list, perf: float) -> str:
 def _default_result(d: dict) -> dict:
     return {
         "sante":       "Analyse momentanément indisponible.",
+        "risque":      "Indisponible.",
+        "catalyseur":  "Indisponible.",
         "tendance":    "Analyse momentanément indisponible.",
         "conseil":     "Veuillez réessayer ultérieurement.",
         "prix_entree": str(d.get("price", "N/A")) + "€",
@@ -307,14 +311,17 @@ def build_prompt_batch(batch: list) -> str:
         "Tu es un analyste financier expert en bourse européenne et PEA français.\n"
         "Analyse les actions suivantes et réponds UNIQUEMENT dans ce format exact pour chaque action :\n\n"
         "SYMBOL: <ticker>\n"
-        "SANTE: <1 phrase sur la santé fondamentale>\n"
-        "TENDANCE: <1 phrase sur la tendance technique/chartiste>\n"
-        "CONSEIL: <1 phrase de conseil opérationnel>\n"
+        "SANTE: <1 phrase synthétique sur la santé fondamentale : rentabilité, valorisation, bilan>\n"
+        "RISQUE: <1 phrase sur le principal risque ou scénario défavorable>\n"
+        "CATALYSEUR: <1 phrase sur le principal catalyseur ou scénario très favorable>\n"
+        "TENDANCE: <1 phrase sur la tendance technique/chartiste : momentum, supports, résistances>\n"
+        "CONSEIL: <1 phrase de conseil opérationnel précis>\n"
         "PRIX_ENTREE: <prix d'entrée recommandé en euros, ex: 145.50€>\n"
         "SCORE: <score global de 0 à 100>\n\n"
         "Actions à analyser :\n"
         + "\n".join(lines)
-        + "\n\nRéponds en français. Sois précis et concis."
+        + "\n\nRéponds en français. Sois précis et concis. "
+        + "Respecte scrupuleusement le format ci-dessus pour chaque action."
     )
     return prompt
 
@@ -328,6 +335,8 @@ def parse_batch_response(text: str, batch: list) -> dict:
         symbol = sym_match.group(1).strip().upper()
 
         sante       = _extract_field(block, "SANTE")
+        risque      = _extract_field(block, "RISQUE")
+        catalyseur  = _extract_field(block, "CATALYSEUR")
         tendance    = _extract_field(block, "TENDANCE")
         conseil     = _extract_field(block, "CONSEIL")
         prix_entree = _extract_field(block, "PRIX_ENTREE")
@@ -340,6 +349,8 @@ def parse_batch_response(text: str, batch: list) -> dict:
 
         results[symbol] = {
             "sante":       sante       or "N/A",
+            "risque":      risque      or "N/A",
+            "catalyseur":  catalyseur  or "N/A",
             "tendance":    tendance    or "N/A",
             "conseil":     conseil     or "N/A",
             "prix_entree": prix_entree or "N/A",
@@ -354,7 +365,7 @@ def call_ai_batch(batch: list) -> list:
             model=MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            max_tokens=3000,
+            max_tokens=4000,
         )
         text    = response.choices[0].message.content
         parsed  = parse_batch_response(text, batch)
@@ -404,23 +415,34 @@ def perf_badge(perf: float) -> str:
     )
 
 def build_row(d: dict) -> str:
-    spark   = make_sparkline(d["closes"], d["perf_6m"])
-    sc      = d.get("score", 50)
-    clr     = score_color(sc)
+    spark = make_sparkline(d["closes"], d["perf_6m"])
+    sc    = d.get("score", 50)
+    clr   = score_color(sc)
 
     return """
     <tr>
       <td>
         <div class="stock-name">""" + d["name"] + """</div>
-        <div class="stock-sub">""" + d["symbol"] + """ &nbsp;·&nbsp; <span class="isin">""" + str(d.get("isin","N/A")) + """</span></div>
+        <div class="stock-sub">
+          """ + d["symbol"] + """ &nbsp;·&nbsp;
+          <span class="isin">""" + str(d.get("isin", "N/A")) + """</span>
+        </div>
       </td>
-      <td><img src="data:image/png;base64,""" + spark + """" alt="spark" style="height:36px;"/></td>
+      <td>
+        <img src="data:image/png;base64,""" + spark + """"
+             alt="spark" style="height:36px;"/>
+      </td>
       <td style="text-align:right;">
-        <div style="font-size:1.05rem;font-weight:700;color:#e2e8f0;">""" + str(d["price"]) + """€</div>
+        <div style="font-size:1.05rem;font-weight:700;color:#e2e8f0;">
+          """ + str(d["price"]) + """€
+        </div>
         <div style="margin-top:4px;">""" + perf_badge(d["perf_6m"]) + """</div>
       </td>
       <td style="text-align:center;">
-        <div class="score-circle" style="border-color:""" + clr + """;color:""" + clr + """;">""" + str(sc) + """</div>
+        <div class="score-circle"
+             style="border-color:""" + clr + """;color:""" + clr + """;">
+          """ + str(sc) + """
+        </div>
       </td>
       <td>
         <div class="pill">RSI <b>""" + str(d["rsi"]) + """</b></div>
@@ -428,19 +450,33 @@ def build_row(d: dict) -> str:
         <div class="pill">MA50 <b>""" + str(d["ma50"]) + """€</b></div>
         <div class="pill">Vol× <b>""" + str(d["vol_ratio"]) + """</b></div>
       </td>
-      <td><div class="analysis-text">""" + d.get("sante","N/A") + """</div></td>
-      <td><div class="analysis-text">""" + d.get("tendance","N/A") + """</div></td>
+      <td>
+        <div class="sante-box">
+          <div class="sante-text">""" + d.get("sante", "N/A") + """</div>
+          <div class="scenario-row">
+            <span class="scenario-bad">
+              ⚠️ <b>Risque :</b> """ + d.get("risque", "N/A") + """
+            </span>
+            <span class="scenario-good">
+              🚀 <b>Catalyseur :</b> """ + d.get("catalyseur", "N/A") + """
+            </span>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="analysis-text">""" + d.get("tendance", "N/A") + """</div>
+      </td>
       <td>
         <div class="conseil-box">
-          <div class="prix-entree">🎯 Entrée : """ + d.get("prix_entree","N/A") + """</div>
-          <div class="conseil-text">""" + d.get("conseil","N/A") + """</div>
+          <div class="prix-entree">🎯 Entrée : """ + d.get("prix_entree", "N/A") + """</div>
+          <div class="conseil-text">""" + d.get("conseil", "N/A") + """</div>
         </div>
       </td>
     </tr>"""
 
 def build_html(data_list: list) -> str:
-    update_ts  = datetime.now(pytz.timezone("Europe/Paris")).strftime("%d/%m/%Y %H:%M")
-    rows_html  = "\n".join(build_row(d) for d in data_list)
+    update_ts = datetime.now(pytz.timezone("Europe/Paris")).strftime("%d/%m/%Y %H:%M")
+    rows_html = "\n".join(build_row(d) for d in data_list)
 
     return """<!DOCTYPE html>
 <html lang="fr">
@@ -485,7 +521,7 @@ def build_html(data_list: list) -> str:
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1000px;
+      min-width: 1100px;
     }
     thead th {
       background: #1a1d2e;
@@ -505,7 +541,7 @@ def build_html(data_list: list) -> str:
     tbody tr:hover { background: rgba(255,255,255,0.03); }
     tbody td {
       padding: 14px;
-      vertical-align: middle;
+      vertical-align: top;
     }
 
     /* ── Stock name ── */
@@ -550,7 +586,44 @@ def build_html(data_list: list) -> str:
       white-space: nowrap;
     }
 
-    /* ── Textes d'analyse ── */
+    /* ── Santé fondamentale box ── */
+    .sante-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sante-text {
+      font-size: 0.82rem;
+      color: #a0aec0;
+      line-height: 1.5;
+    }
+    .scenario-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .scenario-bad {
+      font-size: 0.76rem;
+      color: #fc5c7d;
+      background: rgba(252, 92, 125, 0.08);
+      border: 1px solid rgba(252, 92, 125, 0.2);
+      border-radius: 6px;
+      padding: 4px 8px;
+      line-height: 1.45;
+      display: block;
+    }
+    .scenario-good {
+      font-size: 0.76rem;
+      color: #00c896;
+      background: rgba(0, 200, 150, 0.08);
+      border: 1px solid rgba(0, 200, 150, 0.2);
+      border-radius: 6px;
+      padding: 4px 8px;
+      line-height: 1.45;
+      display: block;
+    }
+
+    /* ── Tendance chartiste ── */
     .analysis-text {
       font-size: 0.82rem;
       color: #a0aec0;
@@ -620,7 +693,7 @@ def build_html(data_list: list) -> str:
 
   <div class="footer">
     ⚠️ Les analyses sont générées par IA et ne constituent pas un conseil financier.
-    &nbsp;|&nbsp; Screener PEA Pro v2.3
+    &nbsp;|&nbsp; Screener PEA Pro v2.4
   </div>
 
 </body>
@@ -631,7 +704,7 @@ def build_html(data_list: list) -> str:
 # ─────────────────────────────────────────
 if __name__ == "__main__":
     log.info("═══════════════════════════════════════════")
-    log.info("   Screener PEA Pro v2.3 — Démarrage       ")
+    log.info("   Screener PEA Pro v2.4 — Démarrage       ")
     log.info("═══════════════════════════════════════════")
 
     data_list = load_cache()
