@@ -1,6 +1,9 @@
 # ============================================================
-#  Screener PEA Pro — v2.1
-#  Optimisation coût IA : batch, prompt court, modèle léger
+#  Screener PEA Pro — v2.2
+#  - ISIN récupéré via yfinance
+#  - 5 tickers pour les tests
+#  - Analyses IA enrichies (3 lignes + prix d'entrée obligatoire)
+#  - Gestion robuste des erreurs IA
 # ============================================================
 
 import os
@@ -9,9 +12,10 @@ import logging
 import re
 import io
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Optional
 
 import pytz
 import yfinance as yf
@@ -46,537 +50,654 @@ client = OpenAI(
 
 CACHE_FILE         = "cache_data.json"
 CACHE_EXPIRY_HOURS = 6
-MAX_WORKERS        = 8
+MAX_WORKERS        = 4
+MODEL              = "gpt-4o-mini"   # Modèle léger pour les tests
+BATCH_SIZE         = 5
 
-# ── Modèle utilisé selon le score pré-filtré ──────────────
-# Les actions peu prometteuses → modèle léger (gpt-4o-mini)
-# Les meilleures opportunités  → modèle complet (gpt-4o)
-MODEL_LIGHT  = "gpt-4o-mini"   # ~20x moins cher
-MODEL_FULL   = "gpt-4o"
-SCORE_THRESHOLD = 60            # Seuil pour passer au modèle full
-
-# ── Taille des batches pour l'appel IA groupé ─────────────
-BATCH_SIZE = 6                  # 6 actions par appel = ~6x moins d'appels
-
+# ─────────────────────────────────────────
+#  3. TICKERS — Limité à 5 pour les tests
+# ─────────────────────────────────────────
 BASE_TICKERS = [
-    "MC.PA",   "OR.PA",   "RMS.PA",  "TTE.PA",  "SAN.PA",
-    "AIR.PA",  "AI.PA",   "BNP.PA",  "DG.PA",   "KER.PA",
-    "ASML.AS", "SAP.DE",  "SIE.DE",  "SU.PA",   "CS.PA",
-    "ALV.DE",  "BMW.DE",  "VOW3.DE", "BAS.DE",  "BAYN.DE",
-    "SAF.PA",  "ENGI.PA", "RNO.PA",  "GLE.PA",  "ACA.PA",
-    "ML.PA",   "VIE.PA",  "STM.PA",  "ORA.PA",  "CAP.PA",
-    "DSY.PA",  "PUB.PA",  "BN.PA",   "URW.PA",  "VIV.PA",
-    "EDEN.PA"
+    "CAP.PA",   # Capgemini
+    "OR.PA",    # L'Oréal
+    "TTE.PA",   # TotalEnergies
+    "BNP.PA",   # BNP Paribas
+    "AI.PA",    # Air Liquide
 ]
 
 # ─────────────────────────────────────────
-#  3. CACHE
+#  4. CACHE
 # ─────────────────────────────────────────
-def load_cache() -> list | None:
+def load_cache() -> Optional[list]:
+    if not Path(CACHE_FILE).exists():
+        return None
     try:
-        if not Path(CACHE_FILE).exists():
-            return None
-        with open(CACHE_FILE, encoding="utf-8") as f:
-            cache = json.load(f)
-        age_h = (datetime.now() - datetime.fromisoformat(cache["timestamp"])).seconds / 3600
-        if age_h < CACHE_EXPIRY_HOURS:
-            log.info(f"✅ Cache valide ({age_h:.1f}h) — chargement sans appel IA.")
-            return cache["data"]
-        log.info(f"⏰ Cache expiré ({age_h:.1f}h).")
+        with open(CACHE_FILE, "r", encoding="utf-8") as f:
+            cached = json.load(f)
+        ts = datetime.fromisoformat(cached.get("timestamp", "2000-01-01"))
+        if datetime.now() - ts < timedelta(hours=CACHE_EXPIRY_HOURS):
+            log.info(f"✅ Cache valide ({CACHE_FILE}), skip API calls.")
+            return cached["data"]
+        log.info("⏰ Cache expiré, recalcul...")
     except Exception as e:
         log.warning(f"Cache illisible : {e}")
     return None
 
+def save_cache(data: list):
+    with open(CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump({"timestamp": datetime.now().isoformat(), "data": data}, f, ensure_ascii=False, indent=2)
+    log.info(f"💾 Cache sauvegardé ({len(data)} actions).")
 
-def save_cache(data: list) -> None:
+# ─────────────────────────────────────────
+#  5. RÉCUPÉRATION DONNÉES MARCHÉ + ISIN
+# ─────────────────────────────────────────
+def get_isin(ticker_obj, symbol: str) -> str:
+    """
+    Tente de récupérer l'ISIN via plusieurs méthodes yfinance.
+    """
     try:
-        with open(CACHE_FILE, "w", encoding="utf-8") as f:
-            json.dump({"timestamp": datetime.now().isoformat(), "data": data}, f, ensure_ascii=False, indent=2)
-        log.info(f"💾 Cache sauvegardé ({len(data)} entrées).")
+        info = ticker_obj.info
+
+        # Méthode 1 : champ direct 'isin'
+        if info.get("isin"):
+            return info["isin"]
+
+        # Méthode 2 : yfinance .isin (propriété dédiée)
+        isin_val = ticker_obj.isin
+        if isin_val and isin_val != "-":
+            return isin_val
+
     except Exception as e:
-        log.warning(f"Sauvegarde cache impossible : {e}")
+        log.warning(f"ISIN non trouvé pour {symbol} : {e}")
 
-# ─────────────────────────────────────────
-#  4. INDICATEURS TECHNIQUES
-#     (calculés localement, sans IA)
-# ─────────────────────────────────────────
-def compute_rsi(series, period: int = 14) -> float:
-    delta = series.diff().dropna()
-    gain  = delta.clip(lower=0).rolling(period).mean()
-    loss  = (-delta.clip(upper=0)).rolling(period).mean()
-    rs    = gain / loss.replace(0, float("inf"))
-    rsi   = 100 - (100 / (1 + rs))
-    return round(float(rsi.iloc[-1]), 2) if not rsi.empty else 50.0
+    return "N/A"
 
-
-def compute_macd(series) -> dict:
-    ema12  = series.ewm(span=12, adjust=False).mean()
-    ema26  = series.ewm(span=26, adjust=False).mean()
-    macd   = ema12 - ema26
-    signal = macd.ewm(span=9, adjust=False).mean()
-    histo  = macd - signal
-    return {
-        "macd":   round(float(macd.iloc[-1]),   4),
-        "signal": round(float(signal.iloc[-1]), 4),
-        "histo":  round(float(histo.iloc[-1]),  4),
-    }
-
-
-def compute_sma(series, period: int) -> float:
-    sma = series.rolling(period).mean()
-    return round(float(sma.iloc[-1]), 2) if len(sma) >= period else 0.0
-
-
-def pre_score(rsi: float, macd_histo: float, var_6m: float, per) -> int:
-    """
-    Score pré-IA basé uniquement sur les indicateurs techniques.
-    Permet de décider quel modèle IA utiliser (ou même de passer l'IA).
-    """
-    score = 50
-
-    # RSI
-    if rsi < 30:   score += 15   # Survendu = opportunité
-    elif rsi > 70: score -= 15   # Suracheté = risque
-    elif rsi < 45: score += 5
-
-    # MACD
-    if macd_histo > 0: score += 10
-    else:              score -= 10
-
-    # Momentum 6 mois
-    if var_6m > 10:    score += 10
-    elif var_6m > 0:   score += 5
-    elif var_6m < -15: score -= 10
-    else:              score -= 5
-
-    # PER
+def fetch_ticker_data(symbol: str) -> Optional[dict]:
     try:
-        p = float(per)
-        if 10 < p < 20:  score += 10
-        elif p > 40:     score -= 10
-        elif p < 0:      score -= 5
-    except (TypeError, ValueError):
-        pass
+        ticker = yf.Ticker(symbol)
+        info   = ticker.info
 
-    return max(0, min(100, score))
+        # Prix
+        price = (
+            info.get("currentPrice") or
+            info.get("regularMarketPrice") or
+            info.get("previousClose", 0)
+        )
 
-# ─────────────────────────────────────────
-#  5. COLLECTE DES DONNÉES MARCHÉ
-#     (parallélisée, sans appel IA)
-# ─────────────────────────────────────────
-def fetch_ticker_data(symbol: str) -> dict | None:
-    """Récupère toutes les données marché pour un ticker."""
-    try:
-        tk   = yf.Ticker(symbol)
-        info = tk.info
-        hist = tk.history(period="6mo")
-
-        if not info or hist.empty:
-            log.warning(f"⚠️  {symbol} — données insuffisantes.")
+        # Historique 6 mois pour sparkline + variation
+        hist = ticker.history(period="6mo")
+        if hist.empty:
+            log.warning(f"⚠️ Pas d'historique pour {symbol}")
             return None
 
-        curr_price = info.get("regularMarketPrice") or info.get("previousClose", 0)
-        if curr_price <= 0:
-            log.warning(f"⚠️  {symbol} — prix invalide.")
-            return None
+        prices_6m  = hist["Close"].tolist()
+        variation  = ((prices_6m[-1] - prices_6m[0]) / prices_6m[0] * 100) if prices_6m[0] else 0
 
-        closes    = hist["Close"]
-        rsi       = compute_rsi(closes)
-        macd      = compute_macd(closes)
-        sma20     = compute_sma(closes, 20)
-        sma50     = compute_sma(closes, 50)
-        var_6m    = round(((closes.iloc[-1] / closes.iloc[0]) - 1) * 100, 2)
-        per       = info.get("trailingPE", "N/A")
-        p_score   = pre_score(rsi, macd["histo"], var_6m, per)
+        # RSI (14 périodes)
+        closes = hist["Close"]
+        delta  = closes.diff()
+        gain   = delta.clip(lower=0).rolling(14).mean()
+        loss   = (-delta.clip(upper=0)).rolling(14).mean()
+        rs     = gain / loss
+        rsi    = float((100 - (100 / (1 + rs))).iloc[-1]) if not rs.empty else 50.0
 
-        log.info(f"📥 {symbol} récupéré — pré-score: {p_score} | RSI: {rsi}")
+        # MACD
+        ema12  = closes.ewm(span=12).mean()
+        ema26  = closes.ewm(span=26).mean()
+        macd   = float((ema12 - ema26).iloc[-1])
+
+        # Données fondamentales
+        per    = info.get("trailingPE", None)
+        high52 = info.get("fiftyTwoWeekHigh", price)
+        low52  = info.get("fiftyTwoWeekLow",  price)
+        name   = info.get("longName") or info.get("shortName", symbol)
+        currency = info.get("currency", "EUR")
+
+        # ── ISIN ──────────────────────────────────────────────
+        isin = get_isin(ticker, symbol)
+
+        # Pré-score local (heuristique rapide, sans IA)
+        pre_score = 50
+        if rsi < 35:   pre_score += 15
+        elif rsi > 70: pre_score -= 15
+        if variation > 5:  pre_score += 10
+        elif variation < -10: pre_score -= 10
+        if per and 8 < per < 20: pre_score += 10
+        pre_score = max(0, min(100, pre_score))
+
+        log.info(f"✅ {symbol} | Prix: {price:.2f} | RSI: {rsi:.1f} | ISIN: {isin}")
 
         return {
-            "ticker":    symbol,
-            "nom":       info.get("longName", symbol),
-            "isin":      info.get("isin", "N/A"),
-            "prix":      curr_price,
-            "high52":    info.get("fiftyTwoWeekHigh"),
-            "low52":     info.get("fiftyTwoWeekLow"),
-            "per":       per,
-            "var_6m":    var_6m,
-            "rsi":       rsi,
-            "macd":      macd,
-            "sma20":     sma20,
-            "sma50":     sma50,
-            "pre_score": p_score,
-            "hist":      closes.tolist(),   # Sérialisable pour le cache
-            "chart":     generate_sparkline(hist, rsi),
+            "symbol":     symbol,
+            "name":       name,
+            "isin":       isin,
+            "price":      round(price, 2),
+            "currency":   currency,
+            "variation":  round(variation, 2),
+            "rsi":        round(rsi, 2),
+            "macd":       round(macd, 4),
+            "per":        round(per, 1) if per else None,
+            "high52":     round(high52, 2),
+            "low52":      round(low52, 2),
+            "prices_6m":  [round(p, 2) for p in prices_6m],
+            "pre_score":  pre_score,
+            # Champs IA (remplis après)
+            "sante":      "N/A",
+            "tendance":   "N/A",
+            "conseil":    "N/A",
+            "prix_entree": "N/A",
+            "score":      pre_score,
         }
+
     except Exception as e:
-        log.error(f"❌ Erreur fetch {symbol}: {e}", exc_info=True)
+        log.error(f"❌ Erreur fetch {symbol} : {e}")
         return None
 
-
-def fetch_all_tickers(tickers: list) -> list:
-    """Collecte parallèle des données marché (sans IA)."""
+def fetch_all_tickers(symbols: list) -> list:
     results = []
-    log.info(f"📡 Collecte parallèle de {len(tickers)} tickers...")
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(fetch_ticker_data, s): s for s in tickers}
+        futures = {executor.submit(fetch_ticker_data, s): s for s in symbols}
         for future in as_completed(futures):
-            r = future.result()
-            if r:
-                results.append(r)
-    log.info(f"✅ {len(results)}/{len(tickers)} tickers collectés.")
+            result = future.result()
+            if result:
+                results.append(result)
+    results.sort(key=lambda x: x["pre_score"], reverse=True)
+    log.info(f"📊 {len(results)}/{len(symbols)} tickers récupérés.")
     return results
 
 # ─────────────────────────────────────────
-#  6. SPARKLINE
+#  6. PROMPT IA — Enrichi
 # ─────────────────────────────────────────
-def generate_sparkline(hist, rsi: float = 50) -> str:
-    try:
-        if hist.empty:
-            return ""
-        color = "#ef4444" if rsi > 70 else "#10b981" if rsi < 30 else "#3b82f6"
-        plt.figure(figsize=(3, 1), dpi=80)
-        plt.plot(hist["Close"].values, color=color, linewidth=2)
-        plt.axis("off")
-        buf = io.BytesIO()
-        plt.savefig(buf, format="png", transparent=True, bbox_inches="tight", pad_inches=0)
-        plt.close()
-        return base64.b64encode(buf.getvalue()).decode("utf-8")
-    except Exception as e:
-        log.debug(f"Sparkline error: {e}")
-        return ""
-
-# ─────────────────────────────────────────
-#  7. APPELS IA OPTIMISÉS
-# ─────────────────────────────────────────
-
-# ── 7a. Prompt ultra-compact ──────────────────────────────
-def build_prompt_batch(batch: list[dict]) -> str:
+def build_prompt_batch(batch: list) -> str:
     """
-    Construit un prompt unique pour un batch de N actions.
-    Un seul appel API pour N actions = division du coût par N.
+    Prompt compact mais riche :
+    - Santé fondamentale : 2-3 phrases
+    - Tendance chartiste : 2-3 phrases
+    - Conseil : recommandation qualitative + prix d'entrée obligatoire
+    - Score : 0-100
     """
     lines = []
     for d in batch:
-        rsi_lbl  = "survendu" if d["rsi"] < 30 else "suracheté" if d["rsi"] > 70 else "neutre"
-        macd_lbl = "haussier" if d["macd"]["histo"] > 0 else "baissier"
+        per_str = f"PER={d['per']}" if d['per'] else "PER=N/D"
         lines.append(
-            f"- {d['ticker']} | prix:{d['prix']}€ | 52s:[{d['low52']},{d['high52']}]"
-            f" | PER:{d['per']} | var6m:{d['var_6m']}%"
-            f" | RSI:{d['rsi']}({rsi_lbl}) | MACD:{macd_lbl}"
-            f" | SMA20:{d['sma20']} SMA50:{d['sma50']}"
+            f"#{d['symbol']} | {d['name']} | Prix={d['price']}{d['currency']} | "
+            f"{per_str} | RSI={d['rsi']} | MACD={'↑' if d['macd']>0 else '↓'} | "
+            f"52s=[{d['low52']}-{d['high52']}] | Var6M={d['variation']:+.1f}%"
         )
 
-    tickers_str = ", ".join(d["ticker"] for d in batch)
-    data_block  = "\n".join(lines)
+    actions_str = "\n".join(lines)
 
-    # Prompt minimaliste = moins de tokens
-    return f"""Expert financier. Analyse ces {len(batch)} actions PEA.
-Pour CHAQUE action, réponds avec ce format EXACT (pas d'intro, pas de commentaire) :
+    return f"""Tu es un analyste financier expert en actions européennes éligibles PEA.
+Analyse les {len(batch)} actions suivantes et réponds UNIQUEMENT avec le format demandé.
 
-TICKER|SANTE|TENDANCE|CONSEIL|SCORE
+DONNÉES :
+{actions_str}
 
-Règles :
-- Une ligne par action
-- SANTE, TENDANCE, CONSEIL : max 20 mots chacun
-- SCORE : entier 0-100
-- Séparateur : | (pipe)
+FORMAT DE RÉPONSE OBLIGATOIRE (répète pour chaque action) :
+===SYMBOL===
+[SANTE]: 2 à 3 phrases sur la santé fondamentale : rentabilité, valorisation (PER), forces/faiblesses.
+[TENDANCE]: 2 à 3 phrases sur la tendance chartiste : RSI, MACD, supports/résistances, momentum.
+[CONSEIL]: Une recommandation claire (Acheter / Renforcer / Attendre / Éviter) + la tactique précise (ex: attendre consolidation sur support, valider cassure des X€, renforcer sur repli vers X€). OBLIGATOIRE : terminer par "Prix d'entrée conseillé : X.XX€"
+[SCORE]: Note de 0 à 100 (entier uniquement)
 
-Actions :
-{data_block}
-
-Ordre de réponse : {tickers_str}"""
-
-
-def parse_batch_response(text: str, batch: list[dict]) -> dict:
-    """
-    Parse la réponse batch et retourne un dict {ticker: {sante, tendance, conseil, score}}.
-    Robuste aux lignes malformées.
-    """
-    results = {}
-    ticker_set = {d["ticker"] for d in batch}
-
-    for line in text.strip().splitlines():
-        parts = [p.strip() for p in line.split("|")]
-        if len(parts) < 5:
-            continue
-        ticker = parts[0].upper()
-        if ticker not in ticker_set:
-            continue
-        try:
-            results[ticker] = {
-                "sante":    parts[1],
-                "tendance": parts[2],
-                "conseil":  parts[3],
-                "score":    max(0, min(100, int(re.search(r"\d+", parts[4]).group()))),
-            }
-        except Exception:
-            log.warning(f"Ligne malformée pour {ticker}: {line}")
-
-    # Fallback pour les tickers manquants
-    for d in batch:
-        if d["ticker"] not in results:
-            log.warning(f"⚠️  Pas de réponse IA pour {d['ticker']} — fallback pré-score.")
-            results[d["ticker"]] = {
-                "sante":    "Données insuffisantes.",
-                "tendance": "Analyse indisponible.",
-                "conseil":  "Surveiller avant d'entrer.",
-                "score":    d["pre_score"],
-            }
-    return results
-
-
-def call_ai_batch(batch: list[dict], model: str) -> dict:
-    """Appelle l'IA pour un batch d'actions. Retourne le dict parsé."""
-    prompt = build_prompt_batch(batch)
-    log.info(f"🤖 Appel IA ({model}) — batch de {len(batch)} : {[d['ticker'] for d in batch]}")
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.2,        # Moins de variabilité = réponses plus courtes
-            max_tokens=150 * len(batch),  # Budget tokens proportionnel au batch
-        )
-        raw = response.choices[0].message.content
-        log.debug(f"Réponse brute :\n{raw}")
-        return parse_batch_response(raw, batch)
-    except Exception as e:
-        log.error(f"❌ Erreur appel IA batch: {e}", exc_info=True)
-        return {d["ticker"]: {
-            "sante": "Erreur IA.", "tendance": "N/A",
-            "conseil": "N/A", "score": d["pre_score"]
-        } for d in batch}
-
-
-def run_ai_analysis(market_data: list) -> list:
-    """
-    Stratégie double-modèle :
-      1. Toutes les actions → gpt-4o-mini en batch (pré-tri)
-      2. Top actions (score > SCORE_THRESHOLD) → gpt-4o pour affiner
-    """
-    log.info("═══ Phase 1 : Analyse rapide (modèle léger) ═══")
-
-    # ── Phase 1 : Batch sur modèle léger ──────────────
-    ai_results = {}
-    batches = [market_data[i:i+BATCH_SIZE] for i in range(0, len(market_data), BATCH_SIZE)]
-    for i, batch in enumerate(batches):
-        log.info(f"Batch {i+1}/{len(batches)}...")
-        ai_results.update(call_ai_batch(batch, MODEL_LIGHT))
-
-    # Fusion des données marché + résultats IA phase 1
-    for d in market_data:
-        ai = ai_results.get(d["ticker"], {})
-        d.update({
-            "sante":    ai.get("sante",    "N/A"),
-            "tendance": ai.get("tendance", "N/A"),
-            "conseil":  ai.get("conseil",  "N/A"),
-            "score":    ai.get("score",    d["pre_score"]),
-        })
-
-    # ── Phase 2 : Affinage sur le top (modèle complet) ──
-    top = [d for d in market_data if d["score"] >= SCORE_THRESHOLD]
-    log.info(f"═══ Phase 2 : Affinage top {len(top)} actions (modèle complet) ═══")
-
-    if top:
-        top_batches = [top[i:i+BATCH_SIZE] for i in range(0, len(top), BATCH_SIZE)]
-        top_results = {}
-        for i, batch in enumerate(top_batches):
-            log.info(f"Top-batch {i+1}/{len(top_batches)}...")
-            top_results.update(call_ai_batch(batch, MODEL_FULL))
-
-        # Mise à jour uniquement du top
-        for d in market_data:
-            if d["ticker"] in top_results:
-                ai = top_results[d["ticker"]]
-                d.update({
-                    "sante":    ai["sante"],
-                    "tendance": ai["tendance"],
-                    "conseil":  ai["conseil"],
-                    "score":    ai["score"],
-                })
-                log.info(f"✅ {d['ticker']} affiné — score final: {ai['score']}")
-
-    return sorted(market_data, key=lambda x: x["score"], reverse=True)
-
-# ─────────────────────────────────────────
-#  8. ESTIMATION DU COÛT
-# ─────────────────────────────────────────
-def estimate_cost(n_total: int, n_top: int) -> None:
-    """Affiche une estimation du coût en tokens."""
-    # Approximations : ~200 tokens input + ~150 tokens output par action
-    tokens_light = (n_total * 200 + (n_total // BATCH_SIZE + 1) * 100)
-    tokens_full  = (n_top   * 200 + (n_top  // BATCH_SIZE + 1) * 100)
-    # Prix : gpt-4o-mini $0.15/1M input, $0.60/1M output
-    #        gpt-4o      $5.00/1M input, $15.0/1M output
-    cost_light = (tokens_light / 1_000_000) * 0.15
-    cost_full  = (tokens_full  / 1_000_000) * 5.00
-    log.info(f"💰 Estimation coût — Phase 1 (mini): ~${cost_light:.4f} | Phase 2 (full): ~${cost_full:.4f} | Total: ~${cost_light+cost_full:.4f}")
-
-# ─────────────────────────────────────────
-#  9. GÉNÉRATION HTML (inchangée)
-# ─────────────────────────────────────────
-def rsi_badge(rsi: float) -> str:
-    if rsi > 70:
-        return f'<span class="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-bold">RSI {rsi} ⚠️</span>'
-    if rsi < 30:
-        return f'<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">RSI {rsi} ✅</span>'
-    return f'<span class="px-2 py-0.5 rounded-full bg-slate-600/40 text-slate-400 text-[10px] font-bold">RSI {rsi}</span>'
-
-
-def macd_badge(histo: float) -> str:
-    if histo > 0:
-        return '<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">MACD 📈</span>'
-    return '<span class="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-bold">MACD 📉</span>'
-
-
-def build_html(data_list: list) -> str:
-    date_now = datetime.now(pytz.timezone("Europe/Paris")).strftime("%d/%m/%Y %H:%M")
-
-    header = f"""<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Screener PEA Pro v2.1</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {{ background:#020617; color:white; font-family:'Inter',sans-serif; }}
-        .tbl {{ table-layout:fixed; width:100%; }}
-        .col-action {{ width:180px; }}
-        .col-chart  {{ width:140px; }}
-        .col-price  {{ width:100px; }}
-        .col-score  {{ width:100px; }}
-        .col-indic  {{ width:160px; }}
-        .col-flex   {{ width:calc((100% - 680px) / 3); }}
-    </style>
-</head>
-<body class="p-8">
-<div class="max-w-[1900px] mx-auto">
-    <header class="mb-10 flex justify-between items-end">
-        <div>
-            <h1 class="text-4xl font-black tracking-tighter text-transparent bg-clip-text
-                        bg-gradient-to-r from-blue-400 to-emerald-400 uppercase">
-                Screener PEA : Analyse & Potentiel
-            </h1>
-            <p class="text-slate-500 font-bold text-xs mt-2 uppercase tracking-widest">
-                Mise à jour : {date_now} •
-                <span id="live-status">Synchro live...</span>
-            </p>
-        </div>
-    </header>
-    <div class="bg-slate-900/50 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-    <table class="tbl">
-        <thead>
-            <tr class="bg-slate-800/40 text-slate-400 text-[10px] uppercase
-                       tracking-[0.2em] border-b border-white/5">
-                <th class="p-5 col-action">Action</th>
-                <th class="p-5 col-chart text-center">Tendance 6M</th>
-                <th class="p-5 col-price text-center">Prix</th>
-                <th class="p-5 col-score text-center">Score</th>
-                <th class="p-5 col-indic text-center">Indicateurs</th>
-                <th class="p-5 col-flex">Santé Fondamentale</th>
-                <th class="p-5 col-flex">Tendance Chartiste</th>
-                <th class="p-5 col-flex">Conseil & Entrée</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-white/5">
+RÈGLES :
+- Chaque section = 2-3 phrases maximum, claires et précises
+- Le prix d'entrée DOIT toujours être fourni, même si c'est le prix actuel
+- Pas de markdown, pas de bullet points, texte simple
+- Répondre pour CHAQUE action sans exception
 """
 
-    rows = ""
-    for d in data_list:
-        var_color = "text-emerald-400" if d["var_6m"] >= 0 else "text-red-400"
-        macd_histo = d["macd"]["histo"] if isinstance(d.get("macd"), dict) else d.get("macd_histo", 0)
-        rows += f"""
-        <tr class="hover:bg-white/[0.02] transition-colors">
-            <td class="p-5">
-                <div class="flex flex-col">
-                    <span class="text-blue-400 font-black text-[10px]">{d['ticker']}</span>
-                    <span class="text-[15px] font-bold truncate">{d['nom']}</span>
-                    <span class="text-[11px] text-slate-500 font-mono mt-1">{d['isin']}</span>
-                </div>
-            </td>
-            <td class="p-5 text-center">
-                <img src="data:image/png;base64,{d['chart']}"
-                     class="w-full h-auto opacity-80" alt="Chart">
-                <span class="text-[10px] {var_color} font-bold mt-1 block">
-                    {'▲' if d['var_6m'] >= 0 else '▼'} {abs(d['var_6m'])}%
-                </span>
-            </td>
-            <td class="p-5 text-center font-black text-[16px] price-tag"
-                data-symbol="{d['ticker']}">{d['prix']}€</td>
-            <td class="p-5 text-center font-black text-3xl italic text-emerald-400">
-                {d['score']}
-            </td>
-            <td class="p-5 text-center">
-                <div class="flex flex-col gap-1 items-center">
-                    {rsi_badge(d['rsi'])}
-                    {macd_badge(macd_histo)}
-                    <span class="text-slate-500 text-[10px] mt-1">{d.get('sma_label','')}</span>
-                </div>
-            </td>
-            <td class="p-5 text-slate-300 text-[13px] leading-relaxed italic">
-                {d['sante']}
-            </td>
-            <td class="p-5 text-slate-300 text-[13px] leading-relaxed italic
-                       border-l border-white/5">
-                {d['tendance']}
-            </td>
-            <td class="p-5 border-l border-white/5">
-                <div class="bg-blue-500/10 p-4 rounded-xl border border-blue-500/20
-                            text-blue-200 text-[13px]">
-                    {d['conseil']}
-                </div>
-            </td>
-        </tr>"""
+def parse_batch_response(text: str, batch: list) -> dict:
+    results = {}
+    for d in batch:
+        symbol = d["symbol"]
+        try:
+            # Cherche le bloc de chaque action
+            pattern = rf"===\s*{re.escape(symbol)}\s*===(.*?)(?====|\Z)"
+            match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
 
-    footer = """
-        </tbody>
-    </table>
-    </div>
-</div>
-<script>
-async function updatePrices() {
-    const tags = document.querySelectorAll('.price-tag');
-    for (let tag of tags) {
-        const sym = tag.getAttribute('data-symbol');
-        try {
-            const r = await fetch(
-                `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d`
-            );
-            const j = await r.json();
-            const p = j.chart.result[0].meta.regularMarketPrice;
-            if (p) tag.innerText = p.toFixed(2) + '€';
-        } catch(e) {}
+            if not match:
+                log.warning(f"⚠️ Bloc introuvable pour {symbol}")
+                results[symbol] = _default_result(d)
+                continue
+
+            bloc = match.group(1)
+
+            sante    = _extract(bloc, "SANTE")
+            tendance = _extract(bloc, "TENDANCE")
+            conseil_full = _extract(bloc, "CONSEIL")
+            score_str    = _extract(bloc, "SCORE")
+
+            # Extraire le prix d'entrée du conseil
+            prix_match = re.search(
+                r"[Pp]rix\s+d['']entr[ée]e?\s+conseill[ée]?\s*[:=]?\s*([0-9]+[.,][0-9]+)\s*€?",
+                conseil_full
+            )
+            prix_entree = prix_match.group(1).replace(",", ".") + "€" if prix_match else f"{d['price']}€"
+
+            # Nettoyer le conseil (retirer la ligne prix d'entrée pour éviter doublon)
+            conseil_clean = re.sub(
+                r"[Pp]rix\s+d['']entr[ée]e?\s+conseill[ée]?\s*[:=]?\s*[0-9]+[.,][0-9]+\s*€?\.?",
+                "", conseil_full
+            ).strip()
+
+            try:
+                score = int(re.search(r"\d+", score_str).group())
+                score = max(0, min(100, score))
+            except:
+                score = d["pre_score"]
+
+            results[symbol] = {
+                "sante":       sante    or "Analyse indisponible.",
+                "tendance":    tendance or "Analyse indisponible.",
+                "conseil":     conseil_clean or "Consulter un conseiller.",
+                "prix_entree": prix_entree,
+                "score":       score,
+            }
+
+        except Exception as e:
+            log.error(f"❌ Parse erreur {symbol} : {e}")
+            results[symbol] = _default_result(d)
+
+    return results
+
+def _extract(text: str, key: str) -> str:
+    match = re.search(rf'\[{key}\]\s*:\s*(.*?)(?=\[|$)', text, re.DOTALL | re.IGNORECASE)
+    return match.group(1).strip() if match else ""
+
+def _default_result(d: dict) -> dict:
+    return {
+        "sante":       "Données insuffisantes pour l'analyse.",
+        "tendance":    "Données insuffisantes pour l'analyse.",
+        "conseil":     "Analyse momentanément indisponible.",
+        "prix_entree": f"{d['price']}€",
+        "score":       d["pre_score"],
     }
-    document.getElementById('live-status').innerHTML =
-        '<span class="text-emerald-500">● PRIX SYNCHRONISÉS</span>';
-}
-window.onload = updatePrices;
-</script>
+
+# ─────────────────────────────────────────
+#  7. APPELS IA PAR BATCH
+# ─────────────────────────────────────────
+def call_ai_batch(batch: list) -> dict:
+    prompt = build_prompt_batch(batch)
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+            max_tokens=2000,
+        )
+        text = response.choices[0].message.content
+        log.info(f"🤖 Batch IA reçu ({len(batch)} actions, {len(text)} chars)")
+        return parse_batch_response(text, batch)
+    except Exception as e:
+        log.error(f"❌ Erreur API IA : {e}")
+        return {d["symbol"]: _default_result(d) for d in batch}
+
+def run_ai_analysis(market_data: list) -> list:
+    # Découpage en batches
+    batches = [market_data[i:i+BATCH_SIZE] for i in range(0, len(market_data), BATCH_SIZE)]
+    log.info(f"🤖 {len(batches)} batch(es) IA à traiter...")
+
+    all_results = {}
+    for i, batch in enumerate(batches):
+        log.info(f"  → Batch {i+1}/{len(batches)} : {[d['symbol'] for d in batch]}")
+        results = call_ai_batch(batch)
+        all_results.update(results)
+
+    # Injection des résultats IA dans les données
+    for d in market_data:
+        ai = all_results.get(d["symbol"], _default_result(d))
+        d.update(ai)
+
+    # Tri final par score IA
+    market_data.sort(key=lambda x: x["score"], reverse=True)
+    return market_data
+
+# ─────────────────────────────────────────
+#  8. SPARKLINE
+# ─────────────────────────────────────────
+def generate_sparkline(prices: list, variation: float) -> str:
+    fig, ax = plt.subplots(figsize=(2.5, 0.8))
+    color = "#00c896" if variation >= 0 else "#ff4d6d"
+    ax.plot(prices, color=color, linewidth=1.5)
+    ax.fill_between(range(len(prices)), prices, min(prices), alpha=0.15, color=color)
+    ax.axis("off")
+    fig.patch.set_alpha(0)
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", bbox_inches="tight", transparent=True, dpi=80)
+    plt.close(fig)
+    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+
+# ─────────────────────────────────────────
+#  9. GÉNÉRATION HTML
+# ─────────────────────────────────────────
+def build_html(data_list: list) -> str:
+    paris_tz  = pytz.timezone("Europe/Paris")
+    update_ts = datetime.now(paris_tz).strftime("%d/%m/%Y à %H:%M")
+
+    rows_html = ""
+    for d in data_list:
+        sparkline = generate_sparkline(d["prices_6m"], d["variation"])
+
+        var_color = "#00c896" if d["variation"] >= 0 else "#ff4d6d"
+        var_arrow = "▲" if d["variation"] >= 0 else "▼"
+
+        rsi_color = "#ff4d6d" if d["rsi"] > 70 else ("#00c896" if d["rsi"] < 30 else "#a0aec0")
+        macd_color = "#00c896" if d["macd"] > 0 else "#ff4d6d"
+        macd_label = "▲" if d["macd"] > 0 else "▼"
+
+        score     = d["score"]
+        score_color = "#00c896" if score >= 70 else ("#f6c90e" if score >= 50 else "#ff4d6d")
+
+        per_str = f"PER {d['per']}" if d['per'] else "PER N/D"
+
+        # ISIN badge
+        isin_html = f'<span class="isin-badge">{d["isin"]}</span>' if d["isin"] != "N/A" else '<span class="isin-badge isin-na">ISIN N/D</span>'
+
+        rows_html += f"""
+        <tr>
+          <!-- Colonne Action -->
+          <td class="col-action">
+            <div class="ticker-symbol">{d['symbol']}</div>
+            <div class="ticker-name">{d['name']}</div>
+            {isin_html}
+            <div class="ticker-per">{per_str}</div>
+          </td>
+
+          <!-- Sparkline + variation -->
+          <td class="col-spark">
+            <img src="{sparkline}" alt="trend" class="sparkline"/>
+            <div style="color:{var_color}; font-size:0.78rem; margin-top:2px; font-weight:600;">
+              {var_arrow} {abs(d['variation']):.2f}%
+            </div>
+          </td>
+
+          <!-- Prix -->
+          <td class="col-price">
+            <span class="price-value">{d['price']:.2f}€</span>
+            <div class="price-range">
+              <span style="color:#ff4d6d;">↓{d['low52']:.1f}</span>
+              <span style="color:#718096;"> / </span>
+              <span style="color:#00c896;">↑{d['high52']:.1f}</span>
+            </div>
+          </td>
+
+          <!-- Score -->
+          <td class="col-score">
+            <span class="score-value" style="color:{score_color};">{score}</span>
+            <div class="score-label">/ 100</div>
+          </td>
+
+          <!-- Indicateurs RSI / MACD -->
+          <td class="col-indicators">
+            <span class="badge" style="background:rgba(255,255,255,0.06); color:{rsi_color};">
+              RSI {d['rsi']:.1f}
+            </span>
+            <span class="badge" style="background:rgba(255,255,255,0.06); color:{macd_color};">
+              MACD {macd_label}
+            </span>
+          </td>
+
+          <!-- Santé fondamentale -->
+          <td class="col-sante">
+            <p class="analysis-text">{d['sante']}</p>
+          </td>
+
+          <!-- Tendance chartiste -->
+          <td class="col-tendance">
+            <p class="analysis-text">{d['tendance']}</p>
+          </td>
+
+          <!-- Conseil & Prix d'entrée -->
+          <td class="col-conseil">
+            <div class="conseil-box">
+              <div class="prix-entree">🎯 {d['prix_entree']}</div>
+              <p class="conseil-text">{d['conseil']}</p>
+            </div>
+          </td>
+        </tr>
+        """
+
+    return f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Screener PEA Pro</title>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+    body {{
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0d1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }}
+
+    /* ── Header ── */
+    .header {{
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      padding: 24px 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }}
+    .header h1 {{
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }}
+    .header h1 span {{ color: #00c896; }}
+    .header-meta {{
+      font-size: 0.8rem;
+      color: #718096;
+      margin-top: 4px;
+    }}
+
+    /* ── Table ── */
+    .table-wrapper {{
+      overflow-x: auto;
+      padding: 16px 24px 40px;
+    }}
+    table {{
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+    }}
+    thead th {{
+      background: #161b22;
+      color: #718096;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      text-align: left;
+    }}
+    tbody tr {{
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }}
+    tbody tr:hover {{ background: rgba(255,255,255,0.03); }}
+    td {{
+      padding: 16px 14px;
+      vertical-align: top;
+    }}
+
+    /* ── Colonnes ── */
+    .col-action    {{ min-width: 160px; }}
+    .col-spark     {{ min-width: 120px; text-align: center; }}
+    .col-price     {{ min-width: 100px; text-align: right; }}
+    .col-score     {{ min-width: 80px;  text-align: center; }}
+    .col-indicators{{ min-width: 110px; }}
+    .col-sante     {{ min-width: 200px; max-width: 240px; }}
+    .col-tendance  {{ min-width: 200px; max-width: 240px; }}
+    .col-conseil   {{ min-width: 220px; max-width: 270px; }}
+
+    /* ── Action cell ── */
+    .ticker-symbol {{
+      font-size: 0.72rem;
+      color: #63b3ed;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }}
+    .ticker-name {{
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 5px;
+    }}
+    .isin-badge {{
+      display: inline-block;
+      font-size: 0.68rem;
+      font-family: 'Courier New', monospace;
+      color: #a0aec0;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }}
+    .isin-na {{
+      color: #4a5568;
+      border-color: rgba(255,255,255,0.04);
+    }}
+    .ticker-per {{
+      font-size: 0.72rem;
+      color: #718096;
+    }}
+
+    /* ── Sparkline ── */
+    .sparkline {{ max-width: 110px; }}
+
+    /* ── Prix ── */
+    .price-value {{
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }}
+    .price-range {{
+      font-size: 0.72rem;
+      margin-top: 4px;
+      white-space: nowrap;
+    }}
+
+    /* ── Score ── */
+    .score-value {{
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+    }}
+    .score-label {{
+      font-size: 0.7rem;
+      color: #4a5568;
+      margin-top: 2px;
+    }}
+
+    /* ── Badges RSI/MACD ── */
+    .badge {{
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 4px;
+      padding: 3px 7px;
+      margin: 2px 0;
+      white-space: nowrap;
+    }}
+    .col-indicators {{ display: flex; flex-direction: column; gap: 4px; }}
+
+    /* ── Textes d'analyse ── */
+    .analysis-text {{
+      font-size: 0.82rem;
+      color: #a0aec0;
+      line-height: 1.55;
+    }}
+
+    /* ── Conseil box ── */
+    .conseil-box {{
+      background: rgba(99, 179, 237, 0.06);
+      border: 1px solid rgba(99, 179, 237, 0.15);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }}
+    .prix-entree {{
+      font-size: 1.0rem;
+      font-weight: 700;
+      color: #00c896;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }}
+    .conseil-text {{
+      font-size: 0.8rem;
+      color: #a0aec0;
+      line-height: 1.5;
+    }}
+
+    /* ── Footer ── */
+    .footer {{
+      text-align: center;
+      padding: 20px;
+      font-size: 0.72rem;
+      color: #4a5568;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }}
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>📈 Screener <span>PEA Pro</span></h1>
+    <div class="header-meta">
+      Dernière mise à jour : {update_ts} &nbsp;·&nbsp;
+      {len(data_list)} valeurs analysées &nbsp;·&nbsp;
+      Trié par score IA décroissant
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Tendance 6M</th>
+          <th style="text-align:right;">Prix</th>
+          <th style="text-align:center;">Score</th>
+          <th>Indicateurs</th>
+          <th>Santé Fondamentale</th>
+          <th>Tendance Chartiste</th>
+          <th>Conseil &amp; Entrée</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows_html}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    ⚠️ Les analyses sont générées par IA et ne constituent pas un conseil financier. &nbsp;|&nbsp;
+    Screener PEA Pro v2.2
+  </div>
+
 </body>
 </html>"""
-
-    return header + rows + footer
 
 # ─────────────────────────────────────────
 #  10. POINT D'ENTRÉE
 # ─────────────────────────────────────────
 if __name__ == "__main__":
     log.info("═══════════════════════════════════════════")
-    log.info("   Screener PEA Pro v2.1 — Démarrage       ")
+    log.info("   Screener PEA Pro v2.2 — Démarrage       ")
     log.info("═══════════════════════════════════════════")
 
     data_list = load_cache()
 
     if data_list is None:
-        # Étape 1 : collecte des données marché (parallèle, sans IA)
         market_data = fetch_all_tickers(BASE_TICKERS)
-
-        # Estimation du coût avant d'appeler l'IA
-        n_top = len([d for d in market_data if d["pre_score"] >= SCORE_THRESHOLD])
-        estimate_cost(len(market_data), n_top)
-
-        # Étape 2 : analyses IA optimisées
-        data_list = run_ai_analysis(market_data)
-
+        data_list   = run_ai_analysis(market_data)
         save_cache(data_list)
 
     log.info(f"📊 {len(data_list)} actions prêtes.")
