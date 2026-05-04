@@ -206,81 +206,101 @@ def fetch_all_tickers(symbols: list) -> list:
     return results
 
 # ─────────────────────────────────────────
-#  6. PROMPT IA — Enrichi
+#  6. PROMPT IA — Format simplifié et fiable
 # ─────────────────────────────────────────
 def build_prompt_batch(batch: list) -> str:
-    """
-    Prompt compact mais riche :
-    - Santé fondamentale : 2-3 phrases
-    - Tendance chartiste : 2-3 phrases
-    - Conseil : recommandation qualitative + prix d'entrée obligatoire
-    - Score : 0-100
-    """
     lines = []
     for d in batch:
         per_str = f"PER={d['per']}" if d['per'] else "PER=N/D"
         lines.append(
-            f"#{d['symbol']} | {d['name']} | Prix={d['price']}{d['currency']} | "
-            f"{per_str} | RSI={d['rsi']} | MACD={'↑' if d['macd']>0 else '↓'} | "
-            f"52s=[{d['low52']}-{d['high52']}] | Var6M={d['variation']:+.1f}%"
+            f"- {d['symbol']} | {d['name']} | Prix={d['price']}{d['currency']} | "
+            f"{per_str} | RSI={d['rsi']} | MACD={'positif' if d['macd']>0 else 'negatif'} | "
+            f"52s=[{d['low52']}-{d['high52']}] | Variation6M={d['variation']:+.1f}%"
         )
 
     actions_str = "\n".join(lines)
 
-    return f"""Tu es un analyste financier expert en actions européennes éligibles PEA.
-Analyse les {len(batch)} actions suivantes et réponds UNIQUEMENT avec le format demandé.
+    return f"""Tu es un analyste financier expert PEA France.
+Analyse ces {len(batch)} actions et réponds EXACTEMENT dans le format ci-dessous.
 
-DONNÉES :
+DONNEES:
 {actions_str}
 
-FORMAT DE RÉPONSE OBLIGATOIRE (répète pour chaque action) :
-===SYMBOL===
-[SANTE]: 2 à 3 phrases sur la santé fondamentale : rentabilité, valorisation (PER), forces/faiblesses.
-[TENDANCE]: 2 à 3 phrases sur la tendance chartiste : RSI, MACD, supports/résistances, momentum.
-[CONSEIL]: Une recommandation claire (Acheter / Renforcer / Attendre / Éviter) + la tactique précise (ex: attendre consolidation sur support, valider cassure des X€, renforcer sur repli vers X€). OBLIGATOIRE : terminer par "Prix d'entrée conseillé : X.XX€"
-[SCORE]: Note de 0 à 100 (entier uniquement)
+FORMAT OBLIGATOIRE - répète ce bloc pour chaque action:
 
-RÈGLES :
-- Chaque section = 2-3 phrases maximum, claires et précises
-- Le prix d'entrée DOIT toujours être fourni, même si c'est le prix actuel
-- Pas de markdown, pas de bullet points, texte simple
-- Répondre pour CHAQUE action sans exception
-"""
+DEBUT_{'{'}symbol{'}'}
+SANTE: [2-3 phrases sur rentabilité, PER, solidité financière]
+TENDANCE: [2-3 phrases sur RSI, MACD, supports, momentum]
+CONSEIL: [recommandation: Acheter/Renforcer/Attendre/Eviter + tactique précise + "Prix d'entrée conseillé : X.XX€"]
+SCORE: [nombre entier de 0 à 100]
+FIN_{'{'}symbol{'}'}
+
+EXEMPLE pour CAP.PA:
+DEBUT_CAP.PA
+SANTE: Capgemini affiche une rentabilité solide avec des marges opérationnelles en progression. Le PER de 11.6 reste attractif dans le secteur IT européen. La dette est maîtrisée et la génération de cash-flow est régulière.
+TENDANCE: Le RSI à 55.6 indique une zone neutre sans signal extrême. Le MACD négatif suggère une pression vendeuse à court terme. Le titre évolue sous sa moyenne mobile, avec un support vers 100€.
+CONSEIL: Attendre une stabilisation avant d'entrer en position. Le titre a subi une correction de 17% sur 6 mois, surveiller un rebond confirmé au-dessus de 110€. Prix d'entrée conseillé : 102.00€
+SCORE: 52
+FIN_CAP.PA
+
+Maintenant analyse toutes les actions listées. Sois précis et utilise les données fournies."""
+
 
 def parse_batch_response(text: str, batch: list) -> dict:
     results = {}
+    
+    # Log de debug pour voir la réponse brute
+    log.info(f"=== RÉPONSE IA BRUTE (500 premiers chars) ===")
+    log.info(text[:500])
+    log.info(f"=== FIN RÉPONSE ===")
+
     for d in batch:
         symbol = d["symbol"]
         try:
-            # Cherche le bloc de chaque action
-            pattern = rf"===\s*{re.escape(symbol)}\s*===(.*?)(?====|\Z)"
+            # Nouveau pattern : DEBUT_SYMBOL ... FIN_SYMBOL
+            pattern = rf"DEBUT_{re.escape(symbol)}\s*(.*?)\s*FIN_{re.escape(symbol)}"
             match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
 
             if not match:
-                log.warning(f"⚠️ Bloc introuvable pour {symbol}")
-                results[symbol] = _default_result(d)
-                continue
+                log.warning(f"⚠️ Bloc DEBUT/FIN introuvable pour {symbol}")
+                log.warning(f"   Texte recherché: DEBUT_{symbol}")
+                # Tentative fallback avec l'ancien format ===
+                pattern2 = rf"===\s*{re.escape(symbol)}\s*===(.*?)(?====|\Z)"
+                match2 = re.search(pattern2, text, re.DOTALL | re.IGNORECASE)
+                if match2:
+                    log.info(f"   → Fallback === trouvé pour {symbol}")
+                    bloc = match2.group(1)
+                else:
+                    results[symbol] = _default_result(d)
+                    continue
+            else:
+                bloc = match.group(1)
 
-            bloc = match.group(1)
+            log.info(f"✅ Bloc trouvé pour {symbol} ({len(bloc)} chars)")
 
-            sante    = _extract(bloc, "SANTE")
-            tendance = _extract(bloc, "TENDANCE")
-            conseil_full = _extract(bloc, "CONSEIL")
-            score_str    = _extract(bloc, "SCORE")
+            sante        = _extract_field(bloc, "SANTE")
+            tendance     = _extract_field(bloc, "TENDANCE")
+            conseil_full = _extract_field(bloc, "CONSEIL")
+            score_str    = _extract_field(bloc, "SCORE")
 
-            # Extraire le prix d'entrée du conseil
+            log.info(f"   SANTE: {sante[:60]}..." if sante else "   SANTE: VIDE")
+            log.info(f"   TENDANCE: {tendance[:60]}..." if tendance else "   TENDANCE: VIDE")
+            log.info(f"   CONSEIL: {conseil_full[:60]}..." if conseil_full else "   CONSEIL: VIDE")
+
+            # Extraire le prix d'entrée
             prix_match = re.search(
-                r"[Pp]rix\s+d['']entr[ée]e?\s+conseill[ée]?\s*[:=]?\s*([0-9]+[.,][0-9]+)\s*€?",
+                r"[Pp]rix\s+d[''\u2019]entr[ée]e?\s+conseill[ée]?\s*[:=]?\s*([0-9]+[.,][0-9]+)\s*€?",
                 conseil_full
             )
             prix_entree = prix_match.group(1).replace(",", ".") + "€" if prix_match else f"{d['price']}€"
 
-            # Nettoyer le conseil (retirer la ligne prix d'entrée pour éviter doublon)
+            # Nettoyer le conseil
             conseil_clean = re.sub(
-                r"[Pp]rix\s+d['']entr[ée]e?\s+conseill[ée]?\s*[:=]?\s*[0-9]+[.,][0-9]+\s*€?\.?",
+                r"[Pp]rix\s+d[''\u2019]entr[ée]e?\s+conseill[ée]?\s*[:=]?\s*[0-9]+[.,][0-9]+\s*€?\.?",
                 "", conseil_full
             ).strip()
 
+            # Score
             try:
                 score = int(re.search(r"\d+", score_str).group())
                 score = max(0, min(100, score))
@@ -301,18 +321,17 @@ def parse_batch_response(text: str, batch: list) -> dict:
 
     return results
 
-def _extract(text: str, key: str) -> str:
-    match = re.search(rf'\[{key}\]\s*:\s*(.*?)(?=\[|$)', text, re.DOTALL | re.IGNORECASE)
-    return match.group(1).strip() if match else ""
 
-def _default_result(d: dict) -> dict:
-    return {
-        "sante":       "Données insuffisantes pour l'analyse.",
-        "tendance":    "Données insuffisantes pour l'analyse.",
-        "conseil":     "Analyse momentanément indisponible.",
-        "prix_entree": f"{d['price']}€",
-        "score":       d["pre_score"],
-    }
+def _extract_field(text: str, key: str) -> str:
+    """Extrait un champ du format 'KEY: valeur' jusqu'à la prochaine clé ou fin."""
+    match = re.search(
+        rf'^{key}\s*:\s*(.*?)(?=^(?:SANTE|TENDANCE|CONSEIL|SCORE|FIN_)\b|\Z)',
+        text,
+        re.MULTILINE | re.DOTALL | re.IGNORECASE
+    )
+    if match:
+        return match.group(1).strip()
+    return ""
 
 # ─────────────────────────────────────────
 #  7. APPELS IA PAR BATCH
