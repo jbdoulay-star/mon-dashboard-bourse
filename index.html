@@ -5,198 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Screener PEA Pro</title>
   <style>
-    /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: #0d1117;
       color: #e2e8f0;
       min-height: 100vh;
     }
-
-    /* ── Header ── */
     .header {
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       padding: 24px 32px;
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
-    .header h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.5px;
-    }
-    .header h1 span { color: #00c896; }
-    .header-meta {
-      font-size: 0.8rem;
-      color: #718096;
-      margin-top: 4px;
-    }
-
-    /* ── Table ── */
-    .table-wrapper {
-      overflow-x: auto;
-      padding: 16px 24px 40px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 1200px;
-    }
+    .header h1 { font-size:1.6rem; font-weight:700; color:#fff; letter-spacing:-0.5px; }
+    .header h1 span { color:#00c896; }
+    .header-meta { font-size:0.8rem; color:#718096; margin-top:4px; }
+    .table-wrapper { overflow-x:auto; padding:16px 24px 40px; }
+    table { width:100%; border-collapse:collapse; min-width:1200px; }
     thead th {
-      background: #161b22;
-      color: #718096;
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      text-align: left;
+      background:#161b22; color:#718096;
+      font-size:0.72rem; font-weight:600;
+      text-transform:uppercase; letter-spacing:0.06em;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,0.06);
+      text-align:left;
     }
-    tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      transition: background 0.15s;
-    }
-    tbody tr:hover { background: rgba(255,255,255,0.03); }
-    td {
-      padding: 16px 14px;
-      vertical-align: top;
-    }
-
-    /* ── Colonnes ── */
-    .col-action    { min-width: 160px; }
-    .col-spark     { min-width: 120px; text-align: center; }
-    .col-price     { min-width: 100px; text-align: right; }
-    .col-score     { min-width: 80px;  text-align: center; }
-    .col-indicators{ min-width: 110px; }
-    .col-sante     { min-width: 200px; max-width: 240px; }
-    .col-tendance  { min-width: 200px; max-width: 240px; }
-    .col-conseil   { min-width: 220px; max-width: 270px; }
-
-    /* ── Action cell ── */
-    .ticker-symbol {
-      font-size: 0.72rem;
-      color: #63b3ed;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      margin-bottom: 2px;
-    }
-    .ticker-name {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #e2e8f0;
-      margin-bottom: 5px;
-    }
+    tbody tr { border-bottom:1px solid rgba(255,255,255,0.04); transition:background 0.15s; }
+    tbody tr:hover { background:rgba(255,255,255,0.03); }
+    td { padding:16px 14px; vertical-align:top; }
+    .col-action    { min-width:160px; }
+    .col-spark     { min-width:120px; text-align:center; }
+    .col-price     { min-width:100px; text-align:right; }
+    .col-score     { min-width:80px;  text-align:center; }
+    .col-indicators{ min-width:110px; display:flex; flex-direction:column; gap:4px; }
+    .col-sante     { min-width:200px; max-width:250px; }
+    .col-tendance  { min-width:200px; max-width:250px; }
+    .col-conseil   { min-width:220px; max-width:280px; }
+    .ticker-symbol { font-size:0.72rem; color:#63b3ed; font-weight:700; letter-spacing:0.05em; margin-bottom:2px; }
+    .ticker-name   { font-size:0.95rem; font-weight:600; color:#e2e8f0; margin-bottom:5px; }
     .isin-badge {
-      display: inline-block;
-      font-size: 0.68rem;
-      font-family: 'Courier New', monospace;
-      color: #a0aec0;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 4px;
-      padding: 2px 6px;
-      margin-bottom: 4px;
-      letter-spacing: 0.04em;
+      display:inline-block; font-size:0.68rem;
+      font-family:'Courier New', monospace; color:#a0aec0;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:4px; padding:2px 6px; margin-bottom:4px;
+      letter-spacing:0.04em;
     }
-    .isin-na {
-      color: #4a5568;
-      border-color: rgba(255,255,255,0.04);
-    }
-    .ticker-per {
-      font-size: 0.72rem;
-      color: #718096;
-    }
-
-    /* ── Sparkline ── */
-    .sparkline { max-width: 110px; }
-
-    /* ── Prix ── */
-    .price-value {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #e2e8f0;
-    }
-    .price-range {
-      font-size: 0.72rem;
-      margin-top: 4px;
-      white-space: nowrap;
-    }
-
-    /* ── Score ── */
-    .score-value {
-      font-size: 2rem;
-      font-weight: 800;
-      line-height: 1;
-    }
-    .score-label {
-      font-size: 0.7rem;
-      color: #4a5568;
-      margin-top: 2px;
-    }
-
-    /* ── Badges RSI/MACD ── */
+    .isin-na { color:#4a5568; border-color:rgba(255,255,255,0.04); }
+    .ticker-per  { font-size:0.72rem; color:#718096; }
+    .sparkline   { max-width:110px; }
+    .price-value { font-size:1.1rem; font-weight:700; color:#e2e8f0; }
+    .price-range { font-size:0.72rem; margin-top:4px; white-space:nowrap; }
+    .score-value { font-size:2rem; font-weight:800; line-height:1; }
+    .score-label { font-size:0.7rem; color:#4a5568; margin-top:2px; }
     .badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 600;
-      border-radius: 4px;
-      padding: 3px 7px;
-      margin: 2px 0;
-      white-space: nowrap;
+      display:inline-block; font-size:0.72rem; font-weight:600;
+      border-radius:4px; padding:3px 7px; white-space:nowrap;
     }
-    .col-indicators { display: flex; flex-direction: column; gap: 4px; }
-
-    /* ── Textes d'analyse ── */
-    .analysis-text {
-      font-size: 0.82rem;
-      color: #a0aec0;
-      line-height: 1.55;
-    }
-
-    /* ── Conseil box ── */
+    .analysis-text { font-size:0.82rem; color:#a0aec0; line-height:1.55; }
     .conseil-box {
-      background: rgba(99, 179, 237, 0.06);
-      border: 1px solid rgba(99, 179, 237, 0.15);
-      border-radius: 8px;
-      padding: 10px 12px;
+      background:rgba(99,179,237,0.06);
+      border:1px solid rgba(99,179,237,0.15);
+      border-radius:8px; padding:10px 12px;
     }
     .prix-entree {
-      font-size: 1.0rem;
-      font-weight: 700;
-      color: #00c896;
-      margin-bottom: 6px;
-      letter-spacing: -0.3px;
+      font-size:1.0rem; font-weight:700; color:#00c896;
+      margin-bottom:6px; letter-spacing:-0.3px;
     }
-    .conseil-text {
-      font-size: 0.8rem;
-      color: #a0aec0;
-      line-height: 1.5;
-    }
-
-    /* ── Footer ── */
+    .conseil-text { font-size:0.8rem; color:#a0aec0; line-height:1.5; }
     .footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.72rem;
-      color: #4a5568;
-      border-top: 1px solid rgba(255,255,255,0.04);
+      text-align:center; padding:20px;
+      font-size:0.72rem; color:#4a5568;
+      border-top:1px solid rgba(255,255,255,0.04);
     }
   </style>
 </head>
 <body>
-
   <div class="header">
     <h1>📈 Screener <span>PEA Pro</span></h1>
     <div class="header-meta">
-      Dernière mise à jour : 04/05/2026 à 18:31 &nbsp;·&nbsp;
+      Dernière mise à jour : 04/05/2026 à 18:55 &nbsp;·&nbsp;
       5 valeurs analysées &nbsp;·&nbsp;
       Trié par score IA décroissant
     </div>
   </div>
-
   <div class="table-wrapper">
     <table>
       <thead>
@@ -214,85 +106,18 @@
       <tbody>
         
         <tr>
-          <!-- Colonne Action -->
-          <td class="col-action">
-            <div class="ticker-symbol">AI.PA</div>
-            <div class="ticker-name">L'Air Liquide S.A.</div>
-            <span class="isin-badge">FR0000053951</span>
-            <div class="ticker-per">PER 29.2</div>
-          </td>
-
-          <!-- Sparkline + variation -->
-          <td class="col-spark">
-            <img src="data:image/png;base64,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" alt="trend" class="sparkline"/>
-            <div style="color:#00c896; font-size:0.78rem; margin-top:2px; font-weight:600;">
-              ▲ 5.17%
-            </div>
-          </td>
-
-          <!-- Prix -->
-          <td class="col-price">
-            <span class="price-value">177.64€</span>
-            <div class="price-range">
-              <span style="color:#ff4d6d;">↓154.9</span>
-              <span style="color:#718096;"> / </span>
-              <span style="color:#00c896;">↑189.8</span>
-            </div>
-          </td>
-
-          <!-- Score -->
-          <td class="col-score">
-            <span class="score-value" style="color:#00c896;">75</span>
-            <div class="score-label">/ 100</div>
-          </td>
-
-          <!-- Indicateurs RSI / MACD -->
-          <td class="col-indicators">
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#00c896;">
-              RSI 25.2
-            </span>
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#00c896;">
-              MACD ▲
-            </span>
-          </td>
-
-          <!-- Santé fondamentale -->
-          <td class="col-sante">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
-          </td>
-
-          <!-- Tendance chartiste -->
-          <td class="col-tendance">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
-          </td>
-
-          <!-- Conseil & Prix d'entrée -->
-          <td class="col-conseil">
-            <div class="conseil-box">
-              <div class="prix-entree">🎯 177.64€</div>
-              <p class="conseil-text">Analyse momentanément indisponible.</p>
-            </div>
-          </td>
-        </tr>
-        
-        <tr>
-          <!-- Colonne Action -->
           <td class="col-action">
             <div class="ticker-symbol">TTE.PA</div>
             <div class="ticker-name">TotalEnergies SE</div>
             <span class="isin-badge">NETTOTALOIL1</span>
             <div class="ticker-per">PER 13.7</div>
           </td>
-
-          <!-- Sparkline + variation -->
           <td class="col-spark">
             <img src="data:image/png;base64,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" alt="trend" class="sparkline"/>
-            <div style="color:#00c896; font-size:0.78rem; margin-top:2px; font-weight:600;">
+            <div style="color:#00c896;font-size:0.78rem;margin-top:2px;font-weight:600;">
               ▲ 50.56%
             </div>
           </td>
-
-          <!-- Prix -->
           <td class="col-price">
             <span class="price-value">78.65€</span>
             <div class="price-range">
@@ -301,60 +126,44 @@
               <span style="color:#00c896;">↑81.3</span>
             </div>
           </td>
-
-          <!-- Score -->
           <td class="col-score">
-            <span class="score-value" style="color:#00c896;">70</span>
+            <span class="score-value" style="color:#00c896;">85</span>
             <div class="score-label">/ 100</div>
           </td>
-
-          <!-- Indicateurs RSI / MACD -->
           <td class="col-indicators">
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#a0aec0;">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#a0aec0;">
               RSI 46.6
             </span>
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#00c896;">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#00c896;">
               MACD ▲
             </span>
           </td>
-
-          <!-- Santé fondamentale -->
           <td class="col-sante">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
+            <p class="analysis-text">TotalEnergies affiche une rentabilité robuste avec un PER attractif de 13.7, bien en dessous de la moyenne du marché. La société profite de la hausse des prix de l'énergie et d'une diversification réussie dans les énergies renouvelables.</p>
           </td>
-
-          <!-- Tendance chartiste -->
           <td class="col-tendance">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
+            <p class="analysis-text">Le RSI à 46.59 est neutre, indiquant une absence de surachat ou de survente. Le MACD positif confirme une dynamique haussière, et le titre évolue proche de son plus haut annuel à 81.34€.</p>
           </td>
-
-          <!-- Conseil & Prix d'entrée -->
           <td class="col-conseil">
             <div class="conseil-box">
-              <div class="prix-entree">🎯 78.65€</div>
-              <p class="conseil-text">Analyse momentanément indisponible.</p>
+              <div class="prix-entree">🎯 75.00€</div>
+              <p class="conseil-text">Acheter sur consolidation, car le titre bénéficie d'une forte dynamique sectorielle. Une prise de position autour de 75€ serait idéale pour maximiser le potentiel de hausse.</p>
             </div>
           </td>
         </tr>
-        
         <tr>
-          <!-- Colonne Action -->
           <td class="col-action">
             <div class="ticker-symbol">BNP.PA</div>
             <div class="ticker-name">BNP Paribas SA</div>
             <span class="isin-badge isin-na">ISIN N/D</span>
             <div class="ticker-per">PER 8.1</div>
           </td>
-
-          <!-- Sparkline + variation -->
           <td class="col-spark">
             <img src="data:image/png;base64,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" alt="trend" class="sparkline"/>
-            <div style="color:#00c896; font-size:0.78rem; margin-top:2px; font-weight:600;">
+            <div style="color:#00c896;font-size:0.78rem;margin-top:2px;font-weight:600;">
               ▲ 32.50%
             </div>
           </td>
-
-          <!-- Prix -->
           <td class="col-price">
             <span class="price-value">87.45€</span>
             <div class="price-range">
@@ -363,60 +172,90 @@
               <span style="color:#00c896;">↑97.3</span>
             </div>
           </td>
-
-          <!-- Score -->
           <td class="col-score">
-            <span class="score-value" style="color:#00c896;">70</span>
+            <span class="score-value" style="color:#00c896;">78</span>
             <div class="score-label">/ 100</div>
           </td>
-
-          <!-- Indicateurs RSI / MACD -->
           <td class="col-indicators">
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#a0aec0;">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#a0aec0;">
               RSI 43.6
             </span>
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#00c896;">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#00c896;">
               MACD ▲
             </span>
           </td>
-
-          <!-- Santé fondamentale -->
           <td class="col-sante">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
+            <p class="analysis-text">BNP Paribas affiche une valorisation très attractive avec un PER de 8.1, reflétant une sous-évaluation par rapport à ses pairs. La banque bénéficie d'une solide position financière et d'une bonne diversification géographique.</p>
           </td>
-
-          <!-- Tendance chartiste -->
           <td class="col-tendance">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
+            <p class="analysis-text">Le RSI à 43.63 est en zone neutre, et le MACD positif indique une tendance haussière modérée. Le titre reste dans une dynamique favorable, avec un support solide autour de 80€.</p>
           </td>
-
-          <!-- Conseil & Prix d'entrée -->
           <td class="col-conseil">
             <div class="conseil-box">
-              <div class="prix-entree">🎯 87.45€</div>
-              <p class="conseil-text">Analyse momentanément indisponible.</p>
+              <div class="prix-entree">🎯 82.00€</div>
+              <p class="conseil-text">Renforcer, car le titre reste attractif avec une valorisation faible et un potentiel de hausse. Surveiller une consolidation avant d'augmenter les positions.</p>
             </div>
           </td>
         </tr>
-        
         <tr>
-          <!-- Colonne Action -->
+          <td class="col-action">
+            <div class="ticker-symbol">AI.PA</div>
+            <div class="ticker-name">L'Air Liquide S.A.</div>
+            <span class="isin-badge">FR0000053951</span>
+            <div class="ticker-per">PER 29.2</div>
+          </td>
+          <td class="col-spark">
+            <img src="data:image/png;base64,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" alt="trend" class="sparkline"/>
+            <div style="color:#00c896;font-size:0.78rem;margin-top:2px;font-weight:600;">
+              ▲ 5.17%
+            </div>
+          </td>
+          <td class="col-price">
+            <span class="price-value">177.64€</span>
+            <div class="price-range">
+              <span style="color:#ff4d6d;">↓154.9</span>
+              <span style="color:#718096;"> / </span>
+              <span style="color:#00c896;">↑189.8</span>
+            </div>
+          </td>
+          <td class="col-score">
+            <span class="score-value" style="color:#f6c90e;">68</span>
+            <div class="score-label">/ 100</div>
+          </td>
+          <td class="col-indicators">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#00c896;">
+              RSI 25.2
+            </span>
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#00c896;">
+              MACD ▲
+            </span>
+          </td>
+          <td class="col-sante">
+            <p class="analysis-text">L'Air Liquide est une entreprise solide avec une position de leader dans le secteur des gaz industriels. Le PER de 29.2 reflète une valorisation élevée, mais justifiée par la qualité de ses fondamentaux et sa capacité à générer des revenus récurrents. La société bénéficie d'une bonne résilience financière.</p>
+          </td>
+          <td class="col-tendance">
+            <p class="analysis-text">Le RSI à 25.23 indique une situation de survente, ce qui pourrait signaler un rebond technique à venir. Le MACD positif est un signe encourageant, mais le titre reste proche de son support à 154.86€.</p>
+          </td>
+          <td class="col-conseil">
+            <div class="conseil-box">
+              <div class="prix-entree">🎯 160.00€</div>
+              <p class="conseil-text">Renforcer sur faiblesse, car le titre est dans une zone de survente avec un potentiel de reprise. Surveiller un retour au-dessus de 180€ pour confirmer un rebond.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
           <td class="col-action">
             <div class="ticker-symbol">OR.PA</div>
             <div class="ticker-name">L'Oréal S.A.</div>
             <span class="isin-badge">FR0011149590</span>
             <div class="ticker-per">PER 31.4</div>
           </td>
-
-          <!-- Sparkline + variation -->
           <td class="col-spark">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKsAAABBCAYAAACuN1T9AAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjksIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvJkbTWQAAAAlwSFlzAAAMTgAADE4Bf3eMIwAAC+FJREFUeJztnXm0VVUdxz9bBVFBHqI4pORUgiX6MHtBpqChZYrmXJFpDvnKluZQmcuVQy3TTJOGrS7J0spEpUgclqmhpbFVRAWBnB44AA8fg8BDY3r98d3Hc9599707Dwf2Zy3WvveM+77zPb/z27/fbx9MR0cHgUAa2KzWHQgE8iWINZAaglgDqSGINZAaglgDqSGINZAaglgDqSGINZAatqh1BwLZMc6eAJwJHN/R1PxBrftTDwSx1hnG2SHAWuDbwGHAscDdNe1UnRDEWkcYZw3wCLAe2MkvPpEgViD4rBXDOHuBcXa+cXabAnbbG9gN2B3o45cdaZzdstz9SyNBrJXjRmAweoznyyEZ3/8N9AMeNc5eZpzdpVydSyNBrJVjhW+/XMA+h/r2beB94FJgInAw8BPgkrL1LoUEsVaODb49wji7ba6NjbMHA2OAFhQFOBd4F7gcONJvtkcF+pkaglgrgHG2L9Dgv24LvGmcHdrD9o3Ak2hQ9SQwD5gGRMXG85Cl3aEiHU4JIRrg8SPxi4HZHU3ND5R4uN18ewfQBlwInAVcZJzdG9gKmNvR1LzWb3c6EJ3/4W6O2cYmLtZgWWOGAdcBU4yzC4yzvy/hWIN9uxCYgKziaOPso8CrwEvA0wDG2V7AV4D5KGy1tsvRRBsw0Di7eQn9SjVBrDEjfdsO9AK+YZzdq8hjRZa1FVgHPA80AocDTwGvA43G2d4o8L8DEur/ejhmG3ItehfZp9QTxBoTiXUsGtQAfD3fnY2z+xtntzXO3ghc7xcv8O0zvl0D/BiYAWwODAC+6Nf9M8cp2tD1GpRvnzY2gs8a81k0kGn1/1YCpxhnr+xoau6AD/3a7yPrazuamtf75fsDL2Q5ZiRW59tHgHeAZf77IOAIYDEwK0f/lvh2Z+QybHIEywoYZ3dGYaFZyGdcC0wBhgDjEpueD/wM+BXwuHF2gF8+MrHNS4nPkShnAN8Dfo5CWtHyRmAosrw9uQAgywpxGnaTI1hWEYWVXkksuwk9om8yzk4BfoRG6y3Ai8BxwFTj7HBguN/nq8Bc4FPALnQeLD2Y+ByJ9QTfOnITiXXHPLbdKAliFZGFfC+xbBnwC+BqYBIwClnNy5EgPwBORVmnRhTAn4n80idynG+5bz/j29l59DFyAzbZlGtwA0SDb1dkLJ+Cwk6j0GP6YiRUgHt9ezKwHwpJrcnzfEmfFeTH5mKTt6xBrCKyrJliXU38+H4IeCuxbhYS0BkonDSX/FmW+LwUWJXHPkGste5AndDg2/eyrJsATAf+QJzvB6VCHyeOe+YazSdZnvjciupXc7EaWfntCzjPRkXdidU4e2pPefQKEVnW5VnWvY4GTtn8yt8CtwDfQWGpfFlBLPxFdL4JemIpMLCA89QM42yf3FsVRl2J1Th7NHAXML7Kp842wMqHhcANwKN0nybNxobEuVoL2G8JsH09p1yNs72Ns5OB+cbZsj4F6kasvqL+N/7rCONs3pEK4+wextnHjbPvGGe/VsTpG9DovpoT8yK/dVEB+yxBN1bdihXFoceiwWNzOQ9c89CVcbYfMBrFOgeji7cTcBDwnzz23wa4B8U61wMXAH8qsBsD0CCnmu//jMRaiGVtQ9dsnHF2V+DqKLtWR4wk/m1nGWcfA6Z1NDXn6+p0Sz1Y1vOByeiOXIQqn0ACxjg7wDj7LeNsl74aZ09EF/tANACaCgw3zhaa5WlAfmQ+A51yEV3QhQXss9S3E4ArgS+UtUfloR9yce5FxucpYLpx9jnj7FmlHLgexDo68fkOFFDfgGKbAFcANwNHAxhnBxlnJxlnb0PznNai4P144DH0m44rsA8DUC1AyXd/AbT6871ZwD5LMr5fa5z9aPm6VBb6osjFr4EfINEOQwbl/FIOXFOxemt5IMr8HAfciR7HzwCHG2dHAJEPOsK7DA7NazoT2BX4M3ArKi6Zih7leU/S88UpkRtQTW4GvkvhPmuS/YA5NYie9ERfFGL7APgbcBlKPz8BDDXO9i/2wLW2rEOA/kisc4gzQNf49gHiUM1wNIFudyTOV9GjdGLieEtR7egoL+xuMc5+xDh7EJry3JuuCYFKsxhFEQpxPZJinYAKY7YCvlTGfpVKPyTWJO3IAG1O56Kfgqi1WEf4dmbG8rnAL4Ft0A9fjErpLkTFJjcj63o8XX2+h5AAO1nXLOGet9EfMMoIVduyFkNSrPOBv/vPjTXoSxd8MXkvJM5Mnvft54o9fs3E6kNTp/uvM7Jscgsq9DgG+JdftiVg0R9jLXG9aJIoOH9y4lxjgXbj7GvG2bHG2a0T2x/g25WF/4qqkxTrW+gmXobcgbJjnN3XODvTOLtPnrv09W2mZYW4/LL6ltU4u5m/k4rlCjQf/h4659yTtPt1b/jva9CjsydakfjHGGf7G2cPQa/fiWaH/gVlnCL2920axLqcOLzW4ts5wMdLvBbdcRHwSeRy5EPkeq3Osm4NSk9n+t15U5RY/SP1NuAeP+Gt0P37opHh68jvWpdjl/vRY+RM8qtsug+5AuNRIco65EKcg/zT6xLbDvNtGsS6Hgl2JfFFn4ueOMO62acU3vXtkDy378myggrQr+lmXU5KcQN6oUzFnUXsexL6YZPIL8XZimaAPpNrQ8+DaDR6GrJEF6F43wwk2iTRRU6DzwqaPvMC8Q0+x7fPGmcn5hpYFsh2vh2Y5zu7IrFms6wlU5RY/dyjM5B4TjHO7pZjl0y+icRU6vz87mhHSYI30JtNpibWPYxussgV2Nu3aZnXdC5KY0Yx4anIT38JGYH7yniuZHJlFIBxtsE4292kxehG6c6ylkTRlrWjqXkdcUX88Gzb+Bhm5rItgCZUdldIjLFQbkCJhGezrPsv8n0jl2K1X5YWkkUzK1C89iT0RBljnD2mTOdJivUSHxd/EJhpnN0uy/b1Z1kTvObbA5ILjbPGODsJWGOcfTbD+d8LuRAtVD4XnyuGGYW9ZlMha1BlrkUzGq4q5SDG2YHG2Y+hsN4cZK0PBW5H4cZBKLSYSSrE+qFz78vCLkVx0FUoe5EMWkfO+rwSz10OotDXy1Q31VopFgH/AA4o9vWYxtnPo4KZF9B8ryVoHto8NAYA3eTjjLPb+5nBEZEbkC3OWjKlinUFGvx8AsA4OxgJ+KfoB53ntzs1sU+UGmyh9kRizWfCXlp42rdH9rhV90S1xFujCq+l6KlzIXpSzUM1xwa9gnOBcfYov09dW1ZQ6GRP4+zZyE/sj+JyZyN/cTZwVOLtzZFYXy3DuUvFocD6c7XuSBmJxDqm0B19SHEInVPPUaXXy+gdCpf4z6BQIMhfhlisdWlZQWLshfL1JyAB3EgsxvvRj4jKw4aix8wyas9kNMp9u8b9KCcLUWTj8AJfEQ9y5wy6ZhFtic/Po6hD9H6FBt9Gb+yO3ICKhAHLIdbbgR8iP/Uu5OQnR6t3o0D25b7iZgj6YxYyDaSSVLOGtVrciwZB042z07KlS30hz3ndpJ6nE2cVl9KVxXSer7anL1Wse8u6CvgrCvBfQfyIiGhH01V2RLWb/dAdWm8V7hsTtyLB7oPChHdlmSY0Hr0GaZpxdpxx9mXiaUWziGfrtpGdKNQX+f1HEIu1bi1rPvwRpWf7oaC8rdJ5N2UuI55B0UjshuGnxBxLPDi+E9g3se9CFFVYQhzxySRyBaIpRIeh67uW/F/2URDVmoO1AdUA/A7ltSvyYwJdWIWs5ziUaZzsl52DakuvRxbyNDQYvgr9DzFrUHbxYbp3kyaiV9BPQtGeg5GwV1Ohp2a1JwwWXXETKJqVKC0+Eg2GZ6PEzAI0DagdWWGQNU0KrSd//hX0+k/QxM6TUUHN+1RIrLUuvg5Uh8dQtVkDEu2OaJyRORBqp7gYaTQLeQck1ookWMphWfuwcWR/NmaeQlZyBnGh9kNoSkw5eBFpYDPkZvQhu3UtyTiWKtY2ZPoD9U0LmpC5CPg0umYtlC9stwBVg0XveuipziLXS5O7xXR0hAhSIB0EnzWQGoJYA6khiDWQGoJYA6khiDWQGoJYA6khiDWQGoJYA6nh/40QLm5qh3z2AAAAAElFTkSuQmCC" alt="trend" class="sparkline"/>
-            <div style="color:#00c896; font-size:0.78rem; margin-top:2px; font-weight:600;">
+            <div style="color:#00c896;font-size:0.78rem;margin-top:2px;font-weight:600;">
               ▲ 0.75%
             </div>
           </td>
-
-          <!-- Prix -->
           <td class="col-price">
             <span class="price-value">359.70€</span>
             <div class="price-range">
@@ -425,60 +264,44 @@
               <span style="color:#00c896;">↑408.4</span>
             </div>
           </td>
-
-          <!-- Score -->
           <td class="col-score">
-            <span class="score-value" style="color:#f6c90e;">50</span>
+            <span class="score-value" style="color:#f6c90e;">65</span>
             <div class="score-label">/ 100</div>
           </td>
-
-          <!-- Indicateurs RSI / MACD -->
           <td class="col-indicators">
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#a0aec0;">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#a0aec0;">
               RSI 56.4
             </span>
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#00c896;">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#00c896;">
               MACD ▲
             </span>
           </td>
-
-          <!-- Santé fondamentale -->
           <td class="col-sante">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
+            <p class="analysis-text">L'Oréal reste une valeur de qualité avec un PER élevé de 31.4, justifié par sa position dominante dans le secteur des cosmétiques et sa capacité à générer une croissance régulière. La société est peu endettée et offre une forte résilience.</p>
           </td>
-
-          <!-- Tendance chartiste -->
           <td class="col-tendance">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
+            <p class="analysis-text">Le RSI à 56.43 est en zone neutre, indiquant une absence de surachat. Le MACD positif suggère une dynamique haussière, mais le titre reste sous son plus haut annuel à 408.35€.</p>
           </td>
-
-          <!-- Conseil & Prix d'entrée -->
           <td class="col-conseil">
             <div class="conseil-box">
-              <div class="prix-entree">🎯 359.7€</div>
-              <p class="conseil-text">Analyse momentanément indisponible.</p>
+              <div class="prix-entree">🎯 345.00€</div>
+              <p class="conseil-text">Attendre, car le titre est proche de sa valorisation maximale. Une consolidation vers 340€ offrirait une meilleure opportunité d'entrée.</p>
             </div>
           </td>
         </tr>
-        
         <tr>
-          <!-- Colonne Action -->
           <td class="col-action">
             <div class="ticker-symbol">CAP.PA</div>
             <div class="ticker-name">Capgemini SE</div>
             <span class="isin-badge isin-na">ISIN N/D</span>
             <div class="ticker-per">PER 11.6</div>
           </td>
-
-          <!-- Sparkline + variation -->
           <td class="col-spark">
             <img src="data:image/png;base64,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" alt="trend" class="sparkline"/>
-            <div style="color:#ff4d6d; font-size:0.78rem; margin-top:2px; font-weight:600;">
+            <div style="color:#ff4d6d;font-size:0.78rem;margin-top:2px;font-weight:600;">
               ▼ 17.08%
             </div>
           </td>
-
-          <!-- Prix -->
           <td class="col-price">
             <span class="price-value">106.10€</span>
             <div class="price-range">
@@ -487,50 +310,37 @@
               <span style="color:#00c896;">↑156.6</span>
             </div>
           </td>
-
-          <!-- Score -->
           <td class="col-score">
-            <span class="score-value" style="color:#f6c90e;">50</span>
+            <span class="score-value" style="color:#f6c90e;">52</span>
             <div class="score-label">/ 100</div>
           </td>
-
-          <!-- Indicateurs RSI / MACD -->
           <td class="col-indicators">
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#a0aec0;">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#a0aec0;">
               RSI 55.6
             </span>
-            <span class="badge" style="background:rgba(255,255,255,0.06); color:#ff4d6d;">
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:#ff4d6d;">
               MACD ▼
             </span>
           </td>
-
-          <!-- Santé fondamentale -->
           <td class="col-sante">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
+            <p class="analysis-text">Capgemini affiche une rentabilité solide avec des marges opérationnelles en progression. Le PER de 11.6 reste attractif dans le secteur IT européen. La dette est maîtrisée et la génération de cash-flow est régulière.</p>
           </td>
-
-          <!-- Tendance chartiste -->
           <td class="col-tendance">
-            <p class="analysis-text">Données insuffisantes pour l'analyse.</p>
+            <p class="analysis-text">Le RSI à 55.62 indique une zone neutre sans signal extrême. Le MACD négatif suggère une pression vendeuse à court terme. Le titre évolue sous sa moyenne mobile avec un support vers 100€.</p>
           </td>
-
-          <!-- Conseil & Prix d'entrée -->
           <td class="col-conseil">
             <div class="conseil-box">
-              <div class="prix-entree">🎯 106.1€</div>
-              <p class="conseil-text">Analyse momentanément indisponible.</p>
+              <div class="prix-entree">🎯 102.00€</div>
+              <p class="conseil-text">Attendre une stabilisation avant d'entrer en position. Le titre a subi une correction de 17% sur 6 mois, surveiller un rebond confirmé au-dessus de 110€.</p>
             </div>
           </td>
         </tr>
-        
       </tbody>
     </table>
   </div>
-
   <div class="footer">
-    ⚠️ Les analyses sont générées par IA et ne constituent pas un conseil financier. &nbsp;|&nbsp;
-    Screener PEA Pro v2.2
+    ⚠️ Les analyses sont générées par IA et ne constituent pas un conseil financier.
+    &nbsp;|&nbsp; Screener PEA Pro v2.3
   </div>
-
 </body>
 </html>
