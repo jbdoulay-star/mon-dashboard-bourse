@@ -1,8 +1,7 @@
 # ============================================================
-#  Screener PEA Pro — v2.4
-#  - Santé fondamentale enrichie :
-#    + Scénario défavorable (risque principal)
-#    + Scénario favorable (catalyseur principal)
+#  Screener PEA Pro — v2.5
+#  - Colonne renommée : "Conseil · Prix d'entrée & de sortie"
+#  - Prix de sortie conseillé + contexte d'application
 # ============================================================
 
 import os
@@ -278,13 +277,16 @@ def make_sparkline(closes: list, perf: float) -> str:
 # ─────────────────────────────────────────
 def _default_result(d: dict) -> dict:
     return {
-        "sante":       "Analyse momentanément indisponible.",
-        "risque":      "Indisponible.",
-        "catalyseur":  "Indisponible.",
-        "tendance":    "Analyse momentanément indisponible.",
-        "conseil":     "Veuillez réessayer ultérieurement.",
-        "prix_entree": str(d.get("price", "N/A")) + "€",
-        "score":       d.get("pre_score", 50),
+        "sante":            "Analyse momentanément indisponible.",
+        "risque":           "Indisponible.",
+        "catalyseur":       "Indisponible.",
+        "tendance":         "Analyse momentanément indisponible.",
+        "conseil":          "Veuillez réessayer ultérieurement.",
+        "prix_entree":      str(d.get("price", "N/A")) + "€",
+        "contexte_entree":  "N/A",
+        "prix_sortie":      "N/A",
+        "contexte_sortie":  "N/A",
+        "score":            d.get("pre_score", 50),
     }
 
 def _extract_field(text: str, field: str) -> str:
@@ -314,9 +316,12 @@ def build_prompt_batch(batch: list) -> str:
         "SANTE: <1 phrase synthétique sur la santé fondamentale : rentabilité, valorisation, bilan>\n"
         "RISQUE: <1 phrase sur le principal risque ou scénario défavorable>\n"
         "CATALYSEUR: <1 phrase sur le principal catalyseur ou scénario très favorable>\n"
-        "TENDANCE: <1 phrase sur la tendance technique/chartiste : momentum, supports, résistances>\n"
-        "CONSEIL: <1 phrase de conseil opérationnel précis>\n"
+        "TENDANCE: <1 à 2 phrases sur la tendance technique : momentum, supports, résistances>\n"
+        "CONSEIL: <1 phrase de conseil opérationnel précis : Acheter / Renforcer / Attendre / Éviter>\n"
         "PRIX_ENTREE: <prix d'entrée recommandé en euros, ex: 145.50€>\n"
+        "CONTEXTE_ENTREE: <1 phrase : quand et comment entrer, ex: attendre repli sur support, valider cassure de résistance...>\n"
+        "PRIX_SORTIE: <prix de sortie / objectif de cours recommandé en euros, ex: 162.00€>\n"
+        "CONTEXTE_SORTIE: <1 phrase : quand et comment sortir, ex: prendre profits si RSI > 75, sortir si clôture sous support...>\n"
         "SCORE: <score global de 0 à 100>\n\n"
         "Actions à analyser :\n"
         + "\n".join(lines)
@@ -334,13 +339,16 @@ def parse_batch_response(text: str, batch: list) -> dict:
             continue
         symbol = sym_match.group(1).strip().upper()
 
-        sante       = _extract_field(block, "SANTE")
-        risque      = _extract_field(block, "RISQUE")
-        catalyseur  = _extract_field(block, "CATALYSEUR")
-        tendance    = _extract_field(block, "TENDANCE")
-        conseil     = _extract_field(block, "CONSEIL")
-        prix_entree = _extract_field(block, "PRIX_ENTREE")
-        score_str   = _extract_field(block, "SCORE")
+        sante           = _extract_field(block, "SANTE")
+        risque          = _extract_field(block, "RISQUE")
+        catalyseur      = _extract_field(block, "CATALYSEUR")
+        tendance        = _extract_field(block, "TENDANCE")
+        conseil         = _extract_field(block, "CONSEIL")
+        prix_entree     = _extract_field(block, "PRIX_ENTREE")
+        contexte_entree = _extract_field(block, "CONTEXTE_ENTREE")
+        prix_sortie     = _extract_field(block, "PRIX_SORTIE")
+        contexte_sortie = _extract_field(block, "CONTEXTE_SORTIE")
+        score_str       = _extract_field(block, "SCORE")
 
         try:
             score = int(re.search(r"\d+", score_str).group())
@@ -348,13 +356,16 @@ def parse_batch_response(text: str, batch: list) -> dict:
             score = 50
 
         results[symbol] = {
-            "sante":       sante       or "N/A",
-            "risque":      risque      or "N/A",
-            "catalyseur":  catalyseur  or "N/A",
-            "tendance":    tendance    or "N/A",
-            "conseil":     conseil     or "N/A",
-            "prix_entree": prix_entree or "N/A",
-            "score":       score,
+            "sante":            sante           or "N/A",
+            "risque":           risque          or "N/A",
+            "catalyseur":       catalyseur      or "N/A",
+            "tendance":         tendance        or "N/A",
+            "conseil":          conseil         or "N/A",
+            "prix_entree":      prix_entree     or "N/A",
+            "contexte_entree":  contexte_entree or "N/A",
+            "prix_sortie":      prix_sortie     or "N/A",
+            "contexte_sortie":  contexte_sortie or "N/A",
+            "score":            score,
         }
     return results
 
@@ -365,7 +376,7 @@ def call_ai_batch(batch: list) -> list:
             model=MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            max_tokens=4000,
+            max_tokens=5000,
         )
         text    = response.choices[0].message.content
         parsed  = parse_batch_response(text, batch)
@@ -468,8 +479,26 @@ def build_row(d: dict) -> str:
       </td>
       <td>
         <div class="conseil-box">
-          <div class="prix-entree">🎯 Entrée : """ + d.get("prix_entree", "N/A") + """</div>
+
+          <div class="conseil-label">💬 Conseil</div>
           <div class="conseil-text">""" + d.get("conseil", "N/A") + """</div>
+
+          <div class="prix-separator"></div>
+
+          <div class="prix-ligne entree">
+            <div class="prix-titre">🟢 Entrée</div>
+            <div class="prix-valeur">""" + d.get("prix_entree", "N/A") + """</div>
+            <div class="prix-contexte">""" + d.get("contexte_entree", "N/A") + """</div>
+          </div>
+
+          <div class="prix-separator"></div>
+
+          <div class="prix-ligne sortie">
+            <div class="prix-titre">🔴 Sortie / Objectif</div>
+            <div class="prix-valeur sortie-val">""" + d.get("prix_sortie", "N/A") + """</div>
+            <div class="prix-contexte">""" + d.get("contexte_sortie", "N/A") + """</div>
+          </div>
+
         </div>
       </td>
     </tr>"""
@@ -521,7 +550,7 @@ def build_html(data_list: list) -> str:
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1100px;
+      min-width: 1200px;
     }
     thead th {
       background: #1a1d2e;
@@ -586,7 +615,7 @@ def build_html(data_list: list) -> str:
       white-space: nowrap;
     }
 
-    /* ── Santé fondamentale box ── */
+    /* ── Santé fondamentale ── */
     .sante-box {
       display: flex;
       flex-direction: column;
@@ -632,22 +661,62 @@ def build_html(data_list: list) -> str:
 
     /* ── Conseil box ── */
     .conseil-box {
-      background: rgba(99, 179, 237, 0.06);
-      border: 1px solid rgba(99, 179, 237, 0.15);
-      border-radius: 8px;
-      padding: 10px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
-    .prix-entree {
-      font-size: 1.0rem;
+    .conseil-label {
+      font-size: 0.68rem;
       font-weight: 700;
-      color: #00c896;
-      margin-bottom: 6px;
-      letter-spacing: -0.3px;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 4px;
     }
     .conseil-text {
-      font-size: 0.8rem;
-      color: #a0aec0;
+      font-size: 0.82rem;
+      color: #cbd5e0;
       line-height: 1.5;
+    }
+
+    /* ── Séparateur ── */
+    .prix-separator {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 10px 0;
+    }
+
+    /* ── Ligne prix ── */
+    .prix-ligne {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .prix-titre {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: #718096;
+    }
+    .prix-valeur {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #00c896;
+      letter-spacing: -0.3px;
+    }
+    .prix-valeur.sortie-val {
+      color: #f6ad55;
+    }
+    .prix-contexte {
+      font-size: 0.76rem;
+      color: #718096;
+      line-height: 1.45;
+      font-style: italic;
     }
 
     /* ── Footer ── */
@@ -682,7 +751,7 @@ def build_html(data_list: list) -> str:
           <th>Indicateurs</th>
           <th>Santé Fondamentale</th>
           <th>Tendance Chartiste</th>
-          <th>Conseil &amp; Entrée</th>
+          <th>Conseil · Prix d'entrée &amp; de sortie</th>
         </tr>
       </thead>
       <tbody>
@@ -693,7 +762,7 @@ def build_html(data_list: list) -> str:
 
   <div class="footer">
     ⚠️ Les analyses sont générées par IA et ne constituent pas un conseil financier.
-    &nbsp;|&nbsp; Screener PEA Pro v2.4
+    &nbsp;|&nbsp; Screener PEA Pro v2.5
   </div>
 
 </body>
@@ -704,7 +773,7 @@ def build_html(data_list: list) -> str:
 # ─────────────────────────────────────────
 if __name__ == "__main__":
     log.info("═══════════════════════════════════════════")
-    log.info("   Screener PEA Pro v2.4 — Démarrage       ")
+    log.info("   Screener PEA Pro v2.5 — Démarrage       ")
     log.info("═══════════════════════════════════════════")
 
     data_list = load_cache()
