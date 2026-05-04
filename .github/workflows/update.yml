@@ -2,10 +2,10 @@ name: Mise à jour IA - Quotidienne
 
 on:
   schedule:
-    # 21:30 UTC correspond à 23:30 heure de Paris (en été)
-    # S'exécute du lundi au vendredi (1-5)
+    # 21:30 UTC = 23:30 heure de Paris (en été)
+    # S'exécute du lundi au vendredi
     - cron: '30 21 * * 1-5'
-  workflow_dispatch: # Permet de lancer la mise à jour manuellement si besoin
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,13 +15,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Installation de Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
       - name: Installation des dépendances
         run: |
-          pip install yfinance openai matplotlib pytz
+          pip install yfinance openai matplotlib pytz numpy
 
       - name: Exécution de l'analyse IA
         env:
