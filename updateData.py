@@ -1,7 +1,7 @@
 # ============================================================
-#  Screener PEA Pro — v2.7
-#  - Tendance chartiste : + gain potentiel 1 an (%)
-#  - Tendance chartiste : + ratio Gain/Risque (R/R)
+#  Screener PEA Pro — v2.8
+#  - Indicateurs : + Volume relatif + ATR (volatilité)
+#  - Santé fondamentale : + scénario optimiste & pessimiste
 # ============================================================
 
 import os
@@ -57,62 +57,19 @@ BATCH_SIZE         = 10
 # ─────────────────────────────────────────
 BASE_TICKERS = [
     # ── CAC 40 / Grandes caps françaises ──────────────────
-    "AI.PA",      # Air Liquide
-    "AIR.PA",     # Airbus
-    "ALO.PA",     # Alstom
-    "CS.PA",      # AXA
-    "BNP.PA",     # BNP Paribas
-    "EN.PA",      # Bouygues
-    "CA.PA",      # Carrefour
-    "OR.PA",      # L'Oréal
-    "MC.PA",      # LVMH
-    "ML.PA",      # Michelin
-    "RI.PA",      # Pernod Ricard
-    "RNO.PA",     # Renault
-    "SAF.PA",     # Safran
-    "SAN.PA",     # Sanofi
-    "SGO.PA",     # Saint-Gobain
-    "SU.PA",      # Schneider Electric
-    "GLE.PA",     # Société Générale
-    "STM.PA",     # STMicroelectronics
-    "TTE.PA",     # TotalEnergies
-    "DG.PA",      # Vinci
-    "HO.PA",      # Thales
-    "CAP.PA",     # Capgemini
-    "DSY.PA",     # Dassault Systèmes
-    "ERF.PA",     # Eurofins Scientific
-    "ENGI.PA",    # Engie
-    "ELIS.PA",    # Elis
-
+    "AI.PA",   "AIR.PA",  "ALO.PA",  "CS.PA",   "BNP.PA",
+    "EN.PA",   "CA.PA",   "OR.PA",   "MC.PA",   "ML.PA",
+    "RI.PA",   "RNO.PA",  "SAF.PA",  "SAN.PA",  "SGO.PA",
+    "SU.PA",   "GLE.PA",  "STM.PA",  "TTE.PA",  "DG.PA",
+    "HO.PA",   "CAP.PA",  "DSY.PA",  "ERF.PA",  "ENGI.PA",
+    "ELIS.PA",
     # ── Mid-caps françaises ───────────────────────────────
-    "ACA.PA",     # Crédit Agricole
-    "LR.PA",      # Legrand
-    "PUB.PA",     # Publicis
-    "VIE.PA",     # Veolia
-    "ORA.PA",     # Orange
-    "VIV.PA",     # Vivendi
-    "KER.PA",     # Kering
-    "RMS.PA",     # Hermès
-    "EL.PA",      # EssilorLuxottica
-    "TEP.PA",     # Teleperformance
-    "WLN.PA",     # Worldline
-    "FNAC.PA",    # Fnac Darty
-    "AUTRE.PA",   # Trigano
-    "GTT.PA",     # GTT
-    "GENFIT.PA",  # Genfit (biotech)
-    "ABCA.PA",    # ABC Arbitrage
-
+    "ACA.PA",  "LR.PA",   "PUB.PA",  "VIE.PA",  "ORA.PA",
+    "VIV.PA",  "KER.PA",  "RMS.PA",  "EL.PA",   "TEP.PA",
+    "WLN.PA",  "GTT.PA",
     # ── ETFs PEA éligibles ────────────────────────────────
-    "WPEA.PA",    # Amundi MSCI World PEA
-    "EWLD.PA",    # Lyxor MSCI World PEA
-    "PCEU.PA",    # Amundi PEA Europe
-    "C6E.PA",     # Lyxor Euro Stoxx 50
-    "PAEEM.PA",   # Amundi PEA Emerging Markets
-    "PANX.PA",    # Amundi PEA Nasdaq-100
-    "PUST.PA",    # Amundi PEA S&P 500
-    "PBNK.PA",    # Lyxor PEA Banks
-    "BNKE.PA",    # Amundi Euro Banks
-    "MWRD.PA",    # iShares MSCI World PEA
+    "WPEA.PA", "EWLD.PA", "PCEU.PA", "C6E.PA",  "PAEEM.PA",
+    "PANX.PA", "PUST.PA", "BNKE.PA", "MWRD.PA",
 ]
 
 # ─────────────────────────────────────────
@@ -136,7 +93,8 @@ def load_cache() -> Optional[list]:
 
 def save_cache(data: list):
     with open(CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump({"timestamp": datetime.now().isoformat(), "data": data}, f, ensure_ascii=False, indent=2)
+        json.dump({"timestamp": datetime.now().isoformat(), "data": data},
+                  f, ensure_ascii=False, indent=2)
     log.info("💾 Cache sauvegardé.")
 
 # ─────────────────────────────────────────
@@ -153,58 +111,74 @@ def fetch_ticker(symbol: str) -> Optional[dict]:
 
         closes  = hist["Close"].dropna().values
         volumes = hist["Volume"].dropna().values
+        highs   = hist["High"].dropna().values
+        lows    = hist["Low"].dropna().values
         price   = float(closes[-1])
 
-        # ── Indicateurs techniques ──────────────────────
-        # RSI 14
+        # ── RSI 14 ──────────────────────────────────────
         def rsi(src, p=14):
-            d = np.diff(src)
-            g = np.where(d > 0, d, 0.0)
-            l = np.where(d < 0, -d, 0.0)
+            d  = np.diff(src)
+            g  = np.where(d > 0, d, 0.0)
+            l  = np.where(d < 0, -d, 0.0)
             ag = np.convolve(g, np.ones(p)/p, 'valid')
             al = np.convolve(l, np.ones(p)/p, 'valid')
             rs = np.where(al == 0, 100, ag / (al + 1e-10))
             return float(100 - 100 / (1 + rs[-1]))
 
-        # MACD
+        # ── MACD ────────────────────────────────────────
         def ema(src, n):
             k, e = 2/(n+1), src[0]
             for v in src[1:]: e = v*k + e*(1-k)
             return e
 
-        macd_val  = ema(closes, 12) - ema(closes, 26)
-        signal_val= ema(closes[-9:], 9) if len(closes) >= 9 else 0.0
+        macd_val   = ema(closes, 12) - ema(closes, 26)
+        signal_val = ema(closes[-9:], 9) if len(closes) >= 9 else 0.0
 
-        # Moyennes mobiles
-        mm20 = float(np.mean(closes[-20:]))
-        mm50 = float(np.mean(closes[-50:])) if len(closes) >= 50 else mm20
-        mm200= float(np.mean(closes[-200:])) if len(closes) >= 200 else mm50
+        # ── Moyennes mobiles ────────────────────────────
+        mm20  = float(np.mean(closes[-20:]))
+        mm50  = float(np.mean(closes[-50:]))  if len(closes) >= 50  else mm20
+        mm200 = float(np.mean(closes[-200:])) if len(closes) >= 200 else mm50
 
-        # Performance 6 mois
+        # ── Performance 6M ──────────────────────────────
         perf6m = (closes[-1] / closes[0] - 1) * 100
 
-        # Volume moyen
-        vol_moy = float(np.mean(volumes[-20:])) if len(volumes) >= 20 else 0.0
+        # ── Volume relatif (5j vs moyenne 20j) ─────────
+        vol_5j   = float(np.mean(volumes[-5:]))  if len(volumes) >= 5  else 0.0
+        vol_20j  = float(np.mean(volumes[-20:])) if len(volumes) >= 20 else 1.0
+        vol_rel  = vol_5j / vol_20j if vol_20j > 0 else 1.0   # >1 = volumes en hausse
 
-        # ── Miniature graphique (base64) ────────────────
+        # ── ATR 14 (Average True Range) ─────────────────
+        def atr(hi, lo, cl, p=14):
+            tr_list = []
+            for i in range(1, len(cl)):
+                tr_list.append(max(
+                    hi[i] - lo[i],
+                    abs(hi[i] - cl[i-1]),
+                    abs(lo[i] - cl[i-1])
+                ))
+            return float(np.mean(tr_list[-p:])) if len(tr_list) >= p else 0.0
+
+        atr_val     = atr(highs, lows, closes)
+        atr_pct     = (atr_val / price * 100) if price > 0 else 0.0  # ATR en % du prix
+
+        # ── Miniature graphique ─────────────────────────
         fig, ax = plt.subplots(figsize=(3.2, 1.1))
-        color = "#00c896" if closes[-1] >= closes[0] else "#fc5c7d"
+        color   = "#00c896" if closes[-1] >= closes[0] else "#fc5c7d"
         ax.plot(closes, color=color, linewidth=1.4)
-        ax.fill_between(range(len(closes)), closes, closes[0], alpha=0.15, color=color)
+        ax.fill_between(range(len(closes)), closes, closes[0],
+                        alpha=0.15, color=color)
         ax.axis("off")
         fig.patch.set_alpha(0)
         buf = io.BytesIO()
-        plt.savefig(buf, format="png", bbox_inches="tight", transparent=True, dpi=72)
+        plt.savefig(buf, format="png", bbox_inches="tight",
+                    transparent=True, dpi=72)
         plt.close(fig)
         img_b64 = base64.b64encode(buf.getvalue()).decode()
-
-        # ── ISIN ────────────────────────────────────────
-        isin = info.get("isin", "N/A")
 
         return {
             "symbol"   : symbol,
             "name"     : info.get("longName", symbol),
-            "isin"     : isin,
+            "isin"     : info.get("isin", "N/A"),
             "price"    : price,
             "currency" : info.get("currency", "EUR"),
             "per"      : info.get("trailingPE"),
@@ -218,7 +192,8 @@ def fetch_ticker(symbol: str) -> Optional[dict]:
             "mm50"     : mm50,
             "mm200"    : mm200,
             "perf6m"   : float(perf6m),
-            "vol_moy"  : vol_moy,
+            "vol_rel"  : vol_rel,
+            "atr_pct"  : atr_pct,
             "img_b64"  : img_b64,
             "sector"   : info.get("sector", "N/A"),
         }
@@ -234,11 +209,15 @@ def fetch_all_tickers(symbols: list) -> list:
             r = fut.result()
             if r:
                 results.append(r)
-                log.info(f"✔  {r['symbol']:12s} | {r['price']:.2f} {r['currency']} | RSI {r['rsi']:.1f}")
+                log.info(
+                    f"✔  {r['symbol']:12s} | {r['price']:.2f} {r['currency']} "
+                    f"| RSI {r['rsi']:.1f} | VolRel {r['vol_rel']:.2f}x "
+                    f"| ATR {r['atr_pct']:.2f}%"
+                )
     return results
 
 # ─────────────────────────────────────────
-#  6. ANALYSE IA — PROMPT v2.7
+#  6. ANALYSE IA — PROMPT v2.8
 # ─────────────────────────────────────────
 SYSTEM_PROMPT = """Tu es un analyste financier expert en analyse technique et fondamentale.
 Tu analyses des actions éligibles au PEA français.
@@ -253,6 +232,7 @@ def build_user_prompt(batch: list) -> str:
             f"RSI: {d['rsi']:.1f} | MACD: {d['macd']:.3f} | Signal: {d['signal']:.3f}\n"
             f"MM20: {d['mm20']:.2f} | MM50: {d['mm50']:.2f} | MM200: {d['mm200']:.2f}\n"
             f"Perf 6M: {d['perf6m']:.1f}% | PER: {d['per']} | Secteur: {d['sector']}\n"
+            f"Volume relatif 5j/20j: {d['vol_rel']:.2f}x | ATR%: {d['atr_pct']:.2f}%\n"
         )
     prompt = "\n".join(lines)
     prompt += """
@@ -260,13 +240,15 @@ def build_user_prompt(batch: list) -> str:
 Pour CHAQUE action, réponds exactement dans ce format (remplace les crochets) :
 
 ===SYMBOL===
-[SANTE]: 2-3 phrases : rentabilité, PER, forces/faiblesses.
+[SANTE]: 2-3 phrases : rentabilité, PER, forces/faiblesses fondamentales.
+[OPTIMISTE]: 1 phrase : principal catalyseur ou scénario haussier fondamental.
+[PESSIMISTE]: 1 phrase : principal risque ou scénario baissier fondamental.
 [TENDANCE]: 2-3 phrases : RSI, MACD, supports/résistances, momentum.
 [GAIN_1AN]: XX.X (gain potentiel estimé sur 1 an en %, chiffre seul)
-[RATIO_RR]: X.X (ratio Gain/Risque = gain potentiel / risque stop-loss, ex: 2.5)
+[RATIO_RR]: X.X (ratio Gain/Risque, chiffre seul)
 [CONSEIL]: Recommandation claire (Acheter/Renforcer/Attendre/Éviter) + tactique précise.
 [PRIX_ENTREE]: XX.XX (prix d'entrée conseillé, chiffre seul)
-[STOP_LOSS]: XX.XX (prix en dessous duquel le scénario haussier est invalidé, chiffre seul)
+[STOP_LOSS]: XX.XX (niveau d'invalidation haussière, chiffre seul, strictement inférieur au prix d'entrée)
 [CONTEXTE_STOP]: 1-2 phrases : quel niveau technique est cassé et conséquences.
 [SCORE]: 0-100 (entier seul)
 """
@@ -275,6 +257,8 @@ Pour CHAQUE action, réponds exactement dans ce format (remplace les crochets) :
 def _default_result(d: dict) -> dict:
     return {**d,
         "sante"         : "Données insuffisantes.",
+        "optimiste"     : "N/A",
+        "pessimiste"    : "N/A",
         "tendance"      : "Analyse indisponible.",
         "gain_1an"      : "N/A",
         "ratio_rr"      : "N/A",
@@ -286,16 +270,15 @@ def _default_result(d: dict) -> dict:
     }
 
 def parse_ai_response(response_text: str, batch: list) -> list:
-    results = []
+    results    = []
     symbol_map = {d["symbol"]: d for d in batch}
 
     blocks = re.split(r'===([A-Z0-9.\-]+)===', response_text)
     i = 1
     while i < len(blocks) - 1:
-        sym   = blocks[i].strip()
-        body  = blocks[i+1]
-        i    += 2
-
+        sym  = blocks[i].strip()
+        body = blocks[i+1]
+        i   += 2
         if sym not in symbol_map:
             continue
 
@@ -306,6 +289,8 @@ def parse_ai_response(response_text: str, batch: list) -> list:
             return m.group(1).strip() if m else "N/A"
 
         d["sante"]          = extract("SANTE")
+        d["optimiste"]      = extract("OPTIMISTE")
+        d["pessimiste"]     = extract("PESSIMISTE")
         d["tendance"]       = extract("TENDANCE")
         d["gain_1an"]       = extract("GAIN_1AN")
         d["ratio_rr"]       = extract("RATIO_RR")
@@ -322,7 +307,6 @@ def parse_ai_response(response_text: str, batch: list) -> list:
 
         results.append(d)
 
-    # Compléter les manquants
     found = {r["symbol"] for r in results}
     for d in batch:
         if d["symbol"] not in found:
@@ -332,7 +316,8 @@ def parse_ai_response(response_text: str, batch: list) -> list:
 
 def run_ai_analysis(market_data: list) -> list:
     all_results = []
-    batches = [market_data[i:i+BATCH_SIZE] for i in range(0, len(market_data), BATCH_SIZE)]
+    batches = [market_data[i:i+BATCH_SIZE]
+               for i in range(0, len(market_data), BATCH_SIZE)]
     log.info(f"🤖 {len(batches)} batch(es) IA — {len(market_data)} actions")
 
     for idx, batch in enumerate(batches, 1):
@@ -345,9 +330,9 @@ def run_ai_analysis(market_data: list) -> list:
                     {"role": "user",   "content": build_user_prompt(batch)},
                 ],
                 temperature=0.3,
-                max_tokens=5500,
+                max_tokens=6000,
             )
-            text = resp.choices[0].message.content
+            text   = resp.choices[0].message.content
             parsed = parse_ai_response(text, batch)
             all_results.extend(parsed)
             log.info(f"  ✔ Batch {idx} — {len(parsed)} résultats")
@@ -360,7 +345,7 @@ def run_ai_analysis(market_data: list) -> list:
     return all_results
 
 # ─────────────────────────────────────────
-#  7. CONSTRUCTION HTML v2.7
+#  7. CONSTRUCTION HTML v2.8
 # ─────────────────────────────────────────
 def score_color(s: int) -> str:
     if s >= 75: return "#00c896"
@@ -373,7 +358,7 @@ def rsi_color(r: float) -> str:
     return "#a0aec0"
 
 def build_html(data_list: list) -> str:
-    tz = pytz.timezone("Europe/Paris")
+    tz        = pytz.timezone("Europe/Paris")
     update_ts = datetime.now(tz).strftime("%d/%m/%Y à %H:%M")
 
     rows_html = ""
@@ -386,30 +371,41 @@ def build_html(data_list: list) -> str:
         name  = d.get("name", sym)
         isin  = d.get("isin", "N/A")
 
-        perf      = d.get("perf6m", 0)
-        perf_col  = "#00c896" if perf >= 0 else "#fc5c7d"
-        perf_str  = f"+{perf:.1f}%" if perf >= 0 else f"{perf:.1f}%"
+        perf     = d.get("perf6m", 0)
+        perf_col = "#00c896" if perf >= 0 else "#fc5c7d"
+        perf_str = f"+{perf:.1f}%" if perf >= 0 else f"{perf:.1f}%"
 
-        macd_v = d.get("macd", 0)
-        sig_v  = d.get("signal", 0)
-        mm20   = d.get("mm20", 0)
-        mm50   = d.get("mm50", 0)
+        macd_v  = d.get("macd", 0)
+        sig_v   = d.get("signal", 0)
+        mm20    = d.get("mm20", 0)
+        mm50    = d.get("mm50", 0)
 
+        # ── Volume relatif ───────────────────────────────
+        vol_rel     = d.get("vol_rel", 1.0)
+        vol_rel_str = f"{vol_rel:.2f}x"
+        # Vert si volumes en hausse (>1.2), rouge si en baisse (<0.8)
+        vol_color   = "#00c896" if vol_rel >= 1.2 else "#fc5c7d" if vol_rel <= 0.8 else "#a0aec0"
+
+        # ── ATR % ────────────────────────────────────────
+        atr_pct     = d.get("atr_pct", 0.0)
+        atr_str     = f"{atr_pct:.2f}%"
+        # ATR élevé = forte volatilité = orange/ambre (neutre, informatif)
+        atr_color   = "#f6ad55" if atr_pct >= 2.0 else "#a0aec0"
+
+        # ── Gain 1an / Ratio R/R ─────────────────────────
         gain_1an = d.get("gain_1an", "N/A")
         ratio_rr = d.get("ratio_rr", "N/A")
 
-        # Formatage gain_1an
         try:
-            g = float(str(gain_1an).replace("%","").strip())
+            g         = float(str(gain_1an).replace("%", "").strip())
             gain_str  = f"+{g:.1f}%" if g >= 0 else f"{g:.1f}%"
             gain_color= "#00c896" if g >= 0 else "#fc5c7d"
         except:
             gain_str  = str(gain_1an)
             gain_color= "#a0aec0"
 
-        # Formatage ratio R/R
         try:
-            rr = float(str(ratio_rr).replace("x","").strip())
+            rr       = float(str(ratio_rr).replace("x", "").strip())
             rr_str   = f"{rr:.1f}x"
             rr_color = "#00c896" if rr >= 2 else "#f6ad55" if rr >= 1 else "#fc5c7d"
         except:
@@ -418,25 +414,40 @@ def build_html(data_list: list) -> str:
 
         img_tag = ""
         if d.get("img_b64"):
-            img_tag = f'<img src="data:image/png;base64,{d["img_b64"]}" style="width:100%;max-width:220px;display:block;margin:4px 0;">'
+            img_tag = (f'<img src="data:image/png;base64,{d["img_b64"]}" '
+                       f'style="width:100%;max-width:220px;display:block;margin:4px 0;">')
+
+        # ── Scénarios optimiste / pessimiste ─────────────
+        optimiste  = d.get("optimiste",  "N/A")
+        pessimiste = d.get("pessimiste", "N/A")
 
         rows_html += f"""
         <tr>
+          <!-- ACTION -->
           <td>
             <div class="stock-name">{name}</div>
             <div class="stock-isin">ISIN : {isin}</div>
             <div class="stock-sym">{sym}</div>
           </td>
+
+          <!-- TENDANCE 6M -->
           <td>
             {img_tag}
-            <div style="color:{perf_col};font-weight:600;font-size:0.85rem;text-align:center;">{perf_str}</div>
+            <div style="color:{perf_col};font-weight:600;font-size:0.85rem;
+                        text-align:center;">{perf_str}</div>
           </td>
+
+          <!-- PRIX -->
           <td style="text-align:right;">
             <div class="price-val">{price:.2f} {curr}</div>
           </td>
+
+          <!-- SCORE -->
           <td style="text-align:center;">
             <div class="score-badge" style="background:{score_color(sc)};">{sc}</div>
           </td>
+
+          <!-- INDICATEURS -->
           <td>
             <div class="indic-row">
               <span class="indic-label">RSI</span>
@@ -444,26 +455,55 @@ def build_html(data_list: list) -> str:
             </div>
             <div class="indic-row">
               <span class="indic-label">MACD</span>
-              <span class="indic-val" style="color:{'#00c896' if macd_v > sig_v else '#fc5c7d'};">
+              <span class="indic-val"
+                style="color:{'#00c896' if macd_v > sig_v else '#fc5c7d'};">
                 {macd_v:.3f}
               </span>
             </div>
             <div class="indic-row">
               <span class="indic-label">MM20</span>
-              <span class="indic-val" style="color:{'#00c896' if price > mm20 else '#fc5c7d'};">
+              <span class="indic-val"
+                style="color:{'#00c896' if price > mm20 else '#fc5c7d'};">
                 {mm20:.2f}
               </span>
             </div>
             <div class="indic-row">
               <span class="indic-label">MM50</span>
-              <span class="indic-val" style="color:{'#00c896' if price > mm50 else '#fc5c7d'};">
+              <span class="indic-val"
+                style="color:{'#00c896' if price > mm50 else '#fc5c7d'};">
                 {mm50:.2f}
               </span>
             </div>
+            <div class="indic-row">
+              <span class="indic-label">Vol.Rel</span>
+              <span class="indic-val" style="color:{vol_color};"
+                title="Volume moyen 5j vs moyenne 20j — >1 = hausse des volumes">
+                {vol_rel_str}
+              </span>
+            </div>
+            <div class="indic-row">
+              <span class="indic-label">ATR%</span>
+              <span class="indic-val" style="color:{atr_color};"
+                title="Average True Range en % du prix — mesure la volatilité quotidienne">
+                {atr_str}
+              </span>
+            </div>
           </td>
-          <td><div class="text-cell">{d.get('sante','N/A')}</div></td>
+
+          <!-- SANTÉ FONDAMENTALE -->
           <td>
-            <div class="text-cell">{d.get('tendance','N/A')}</div>
+            <div class="text-cell">{d.get('sante', 'N/A')}</div>
+            <div class="scenario-optimiste">
+              🟢 <strong>Optimiste :</strong> {optimiste}
+            </div>
+            <div class="scenario-pessimiste">
+              🔴 <strong>Pessimiste :</strong> {pessimiste}
+            </div>
+          </td>
+
+          <!-- TENDANCE CHARTISTE -->
+          <td>
+            <div class="text-cell">{d.get('tendance', 'N/A')}</div>
             <div class="gain-rr-row">
               <span class="gain-badge" style="color:{gain_color};">
                 📈 Gain 1an : <strong>{gain_str}</strong>
@@ -473,12 +513,18 @@ def build_html(data_list: list) -> str:
               </span>
             </div>
           </td>
+
+          <!-- CONSEIL -->
           <td>
             <div class="conseil-box">
-              <div class="conseil-text">{d.get('conseil','N/A')}</div>
-              <div class="entry-val">🟢 Entrée : <strong>{d.get('prix_entree','N/A')} {curr}</strong></div>
-              <div class="stop-val">🔴 Stop-loss : <strong>{d.get('stop_loss','N/A')} {curr}</strong></div>
-              <div class="stop-ctx">{d.get('contexte_stop','N/A')}</div>
+              <div class="conseil-text">{d.get('conseil', 'N/A')}</div>
+              <div class="entry-val">
+                🟢 Entrée : <strong>{d.get('prix_entree', 'N/A')} {curr}</strong>
+              </div>
+              <div class="stop-val">
+                🔴 Stop-loss : <strong>{d.get('stop_loss', 'N/A')} {curr}</strong>
+              </div>
+              <div class="stop-ctx">{d.get('contexte_stop', 'N/A')}</div>
             </div>
           </td>
         </tr>"""
@@ -488,7 +534,7 @@ def build_html(data_list: list) -> str:
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Screener PEA Pro v2.7</title>
+  <title>Screener PEA Pro v2.8</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -527,10 +573,13 @@ def build_html(data_list: list) -> str:
     }
     th { font-weight: 600; }
     tr:hover { background: #1c2128; }
+
     .stock-name { font-weight: 700; color: #e6edf3; font-size: 0.92rem; }
     .stock-isin { color: #58a6ff; font-size: 0.75rem; margin-top: 2px; font-family: monospace; }
     .stock-sym  { color: #8b949e; font-size: 0.75rem; margin-top: 2px; }
+
     .price-val  { font-weight: 700; font-size: 1.0rem; color: #e6edf3; }
+
     .score-badge {
       display: inline-block;
       padding: 5px 12px;
@@ -541,11 +590,32 @@ def build_html(data_list: list) -> str:
       min-width: 48px;
       text-align: center;
     }
-    .indic-row  { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 3px; }
-    .indic-label{ color: #8b949e; font-size: 0.78rem; }
-    .indic-val  { font-weight: 600; font-size: 0.82rem; }
-    .text-cell  { color: #c9d1d9; font-size: 0.82rem; line-height: 1.5; }
-    .gain-rr-row{
+
+    .indic-row   { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 3px; }
+    .indic-label { color: #8b949e; font-size: 0.78rem; }
+    .indic-val   { font-weight: 600; font-size: 0.82rem; cursor: default; }
+
+    .text-cell { color: #c9d1d9; font-size: 0.82rem; line-height: 1.5; }
+
+    /* Scénarios */
+    .scenario-optimiste {
+      margin-top: 8px;
+      font-size: 0.80rem;
+      color: #00c896;
+      line-height: 1.4;
+      border-left: 2px solid #00c89655;
+      padding-left: 6px;
+    }
+    .scenario-pessimiste {
+      margin-top: 5px;
+      font-size: 0.80rem;
+      color: #fc5c7d;
+      line-height: 1.4;
+      border-left: 2px solid #fc5c7d55;
+      padding-left: 6px;
+    }
+
+    .gain-rr-row {
       display: flex;
       gap: 10px;
       margin-top: 8px;
@@ -557,11 +627,12 @@ def build_html(data_list: list) -> str:
       border-radius: 6px;
       padding: 3px 8px;
     }
-    .conseil-box{ display: flex; flex-direction: column; gap: 6px; }
-    .conseil-text{ color: #c9d1d9; font-size: 0.82rem; line-height: 1.5; }
-    .entry-val  { color: #00c896; font-size: 0.82rem; }
-    .stop-val   { color: #fc5c7d; font-size: 0.82rem; }
-    .stop-ctx   {
+
+    .conseil-box  { display: flex; flex-direction: column; gap: 6px; }
+    .conseil-text { color: #c9d1d9; font-size: 0.82rem; line-height: 1.5; }
+    .entry-val    { color: #00c896; font-size: 0.82rem; }
+    .stop-val     { color: #fc5c7d; font-size: 0.82rem; }
+    .stop-ctx {
       color: #8b949e;
       font-size: 0.78rem;
       font-style: italic;
@@ -570,6 +641,7 @@ def build_html(data_list: list) -> str:
       padding-left: 6px;
       margin-top: 2px;
     }
+
     .footer {
       text-align: center;
       color: #484f58;
@@ -612,18 +684,18 @@ def build_html(data_list: list) -> str:
 
   <div class="footer">
     ⚠️ Les analyses sont générées par IA et ne constituent pas un conseil financier.
-    &nbsp;|&nbsp; Screener PEA Pro v2.7
+    &nbsp;|&nbsp; Screener PEA Pro v2.8
   </div>
 
 </body>
 </html>"""
 
 # ─────────────────────────────────────────
-#  9. POINT D'ENTRÉE
+#  8. POINT D'ENTRÉE
 # ─────────────────────────────────────────
 if __name__ == "__main__":
     log.info("═══════════════════════════════════════════")
-    log.info("   Screener PEA Pro v2.7 — Démarrage       ")
+    log.info("   Screener PEA Pro v2.8 — Démarrage       ")
     log.info("═══════════════════════════════════════════")
 
     data_list = load_cache()
