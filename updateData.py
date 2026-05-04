@@ -57,19 +57,83 @@ BATCH_SIZE         = 10
 # ─────────────────────────────────────────
 BASE_TICKERS = [
     # ── CAC 40 / Grandes caps françaises ──────────────────
-    "AI.PA",   "AIR.PA",  "ALO.PA",  "CS.PA",   "BNP.PA",
-    "EN.PA",   "CA.PA",   "OR.PA",   "MC.PA",   "ML.PA",
-    "RI.PA",   "RNO.PA",  "SAF.PA",  "SAN.PA",  "SGO.PA",
-    "SU.PA",   "GLE.PA",  "STM.PA",  "TTE.PA",  "DG.PA",
-    "HO.PA",   "CAP.PA",  "DSY.PA",  "ERF.PA",  "ENGI.PA",
-    "ELIS.PA",
+    "AI.PA",      # Air Liquide
+    "AIR.PA",     # Airbus
+    "ALO.PA",     # Alstom
+    "CS.PA",      # AXA
+    "BNP.PA",     # BNP Paribas
+    "EN.PA",      # Bouygues
+    "CA.PA",      # Carrefour
+    "OR.PA",      # L'Oréal
+    "MC.PA",      # LVMH
+    "ML.PA",      # Michelin
+    "RI.PA",      # Pernod Ricard
+    "RNO.PA",     # Renault
+    "SAF.PA",     # Safran
+    "SAN.PA",     # Sanofi
+    "SGO.PA",     # Saint-Gobain
+    "SU.PA",      # Schneider Electric
+    "GLE.PA",     # Société Générale
+    "STM.PA",     # STMicroelectronics
+    "TTE.PA",     # TotalEnergies
+    "DG.PA",      # Vinci
+    "HO.PA",      # Thales
+    "CAP.PA",     # Capgemini
+    "DSY.PA",     # Dassault Systèmes
+    "ERF.PA",     # Eurofins Scientific
+    "ENGI.PA",    # Engie
+    "ELIS.PA",    # Elis
+
     # ── Mid-caps françaises ───────────────────────────────
-    "ACA.PA",  "LR.PA",   "PUB.PA",  "VIE.PA",  "ORA.PA",
-    "VIV.PA",  "KER.PA",  "RMS.PA",  "EL.PA",   "TEP.PA",
-    "WLN.PA",  "GTT.PA",
+    "ERA.PA",     # Eramet
+    "EL.PA",      # EssilorLuxottica
+    "ENX.PA",     # Euronext
+    "ETL.PA",     # Eutelsat
+    "NEX.PA",     # Nexans
+    "GTT.PA",     # GTT
+    "RMS.PA",     # Hermès International
+    "IDL.PA",     # ID Logistics
+    "NK.PA",      # Imerys
+    "SOI.PA",     # Soitec
+    "SPIE.PA",    # SPIE
+    "TE.PA",      # Technip Energies
+    "THEP.PA",    # Thermador Groupe
+    "VK.PA",      # Vallourec
+    "VU.PA",      # Vusion Group
+    "VIR.PA",     # Viridien
+    "BLC.PA",     # Bastide Le Confort
+    "BDU.PA",     # Bonduelle
+    "BVI.PA",     # Bureau Veritas
+    "RCF.PA",     # Teleperformance
+    "FDE.PA",     # Française Energie
+    "MEMS.PA",    # Memscap
+    "ALMDG.PA",   # MGI Digital Graphic
+    "ALMDT.PA",   # Median Technologies
+    "EXENS.PA",   # Exosens
+    "EXA.PA",     # Exail Technologies
+    "NOA3.PA",    # Nokia (Paris)
+    "NAE.PA",     # North Atlantic En.
+    "ALAGP.PA",   # Agripower
+    "ALRIB.PA",   # Riber
+
+    # ── Valeurs européennes ───────────────────────────────
+    "ASML.AS",    # ASML
+    "BESI.AS",    # BE Semiconductor
+    "PHI1.AS",    # Koninklijke Philips
+    "SHL.DE",     # Siemens Healthineers
+    "ADS.DE",     # Adidas
+    "BMW.DE",     # BMW
+    "VOS.DE",     # Vossloh
+
     # ── ETFs PEA éligibles ────────────────────────────────
-    "WPEA.PA", "EWLD.PA", "PCEU.PA", "C6E.PA",  "PAEEM.PA",
-    "PANX.PA", "PUST.PA", "BNKE.PA", "MWRD.PA",
+    "EWLD.PA",    # Lyxor MSCI World PEA
+    "RS2K.PA",    # Amundi Russell 2000 PEA
+    "PANX.PA",    # Amundi Nasdaq-100 PEA
+    "PUST.PA",    # Lyxor S&P 500 PEA
+    "PAEEM.PA",   # Amundi MSCI Emerging PEA
+    "PASI.PA",    # Amundi MSCI Asia PEA
+    "PINE.PA",    # Amundi India PEA
+    "EDEF.PA",    # BNP Easy MSCI Def. EU
 ]
 
 # ─────────────────────────────────────────
