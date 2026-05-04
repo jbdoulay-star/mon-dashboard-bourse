@@ -1,7 +1,7 @@
 # ============================================================
-#  Screener PEA Pro — v2.5
-#  - Colonne renommée : "Conseil · Prix d'entrée & de sortie"
-#  - Prix de sortie conseillé + contexte d'application
+#  Screener PEA Pro — v2.6
+#  - Prix de sortie = seuil d'invalidation haussier (stop-loss)
+#  - Contexte : niveau technique qui invalide la hausse
 # ============================================================
 
 import os
@@ -284,8 +284,8 @@ def _default_result(d: dict) -> dict:
         "conseil":          "Veuillez réessayer ultérieurement.",
         "prix_entree":      str(d.get("price", "N/A")) + "€",
         "contexte_entree":  "N/A",
-        "prix_sortie":      "N/A",
-        "contexte_sortie":  "N/A",
+        "stop_loss":        "N/A",
+        "contexte_stop":    "N/A",
         "score":            d.get("pre_score", 50),
     }
 
@@ -301,32 +301,40 @@ def build_prompt_batch(batch: list) -> str:
     for d in batch:
         lines.append(
             "- " + d["symbol"] + " (" + d["name"] + ")"
-            + " | Prix: " + str(d["price"]) + "€"
-            + " | Perf6M: " + str(d["perf_6m"]) + "%"
-            + " | RSI: " + str(d["rsi"])
-            + " | MA20: " + str(d["ma20"])
-            + " | MA50: " + str(d["ma50"])
-            + " | VolRatio: " + str(d["vol_ratio"])
+            + " | Prix actuel: " + str(d["price"]) + "€"
+            + " | Perf6M: "      + str(d["perf_6m"]) + "%"
+            + " | RSI: "         + str(d["rsi"])
+            + " | MA20: "        + str(d["ma20"]) + "€"
+            + " | MA50: "        + str(d["ma50"]) + "€"
+            + " | VolRatio: "    + str(d["vol_ratio"])
         )
 
     prompt = (
         "Tu es un analyste financier expert en bourse européenne et PEA français.\n"
-        "Analyse les actions suivantes et réponds UNIQUEMENT dans ce format exact pour chaque action :\n\n"
+        "Analyse les actions suivantes et réponds UNIQUEMENT dans ce format exact :\n\n"
+
         "SYMBOL: <ticker>\n"
-        "SANTE: <1 phrase synthétique sur la santé fondamentale : rentabilité, valorisation, bilan>\n"
-        "RISQUE: <1 phrase sur le principal risque ou scénario défavorable>\n"
-        "CATALYSEUR: <1 phrase sur le principal catalyseur ou scénario très favorable>\n"
-        "TENDANCE: <1 à 2 phrases sur la tendance technique : momentum, supports, résistances>\n"
-        "CONSEIL: <1 phrase de conseil opérationnel précis : Acheter / Renforcer / Attendre / Éviter>\n"
+        "SANTE: <1 phrase : rentabilité, valorisation, bilan>\n"
+        "RISQUE: <1 phrase : principal risque ou scénario défavorable>\n"
+        "CATALYSEUR: <1 phrase : principal catalyseur ou scénario très favorable>\n"
+        "TENDANCE: <1 à 2 phrases : momentum, supports, résistances clés>\n"
+        "CONSEIL: <1 phrase : Acheter / Renforcer / Attendre / Éviter + tactique précise>\n"
         "PRIX_ENTREE: <prix d'entrée recommandé en euros, ex: 145.50€>\n"
-        "CONTEXTE_ENTREE: <1 phrase : quand et comment entrer, ex: attendre repli sur support, valider cassure de résistance...>\n"
-        "PRIX_SORTIE: <prix de sortie / objectif de cours recommandé en euros, ex: 162.00€>\n"
-        "CONTEXTE_SORTIE: <1 phrase : quand et comment sortir, ex: prendre profits si RSI > 75, sortir si clôture sous support...>\n"
+        "CONTEXTE_ENTREE: <1 phrase : condition pour entrer, ex: attendre repli sur MA50, valider cassure de résistance>\n"
+        "STOP_LOSS: <prix en euros EN DESSOUS duquel le scénario haussier est INVALIDÉ "
+        "— correspond à un support technique majeur ou un plancher récent. "
+        "Ce prix servira de limite basse de vente automatique. ex: 138.00€>\n"
+        "CONTEXTE_STOP: <1 phrase : quel niveau technique est cassé et pourquoi cela invalide la hausse, "
+        "ex: clôture sous le support des 138€ invalide le rebond et ouvre vers 125€>\n"
         "SCORE: <score global de 0 à 100>\n\n"
+
         "Actions à analyser :\n"
         + "\n".join(lines)
-        + "\n\nRéponds en français. Sois précis et concis. "
-        + "Respecte scrupuleusement le format ci-dessus pour chaque action."
+        + "\n\nRègles importantes :\n"
+        + "- Le STOP_LOSS doit être INFÉRIEUR au prix d'entrée (jamais au-dessus).\n"
+        + "- Le STOP_LOSS doit correspondre à un niveau chartiste réel (support, MM, creux récent).\n"
+        + "- Réponds en français. Sois précis et concis.\n"
+        + "- Respecte scrupuleusement le format ci-dessus pour chaque action."
     )
     return prompt
 
@@ -346,8 +354,8 @@ def parse_batch_response(text: str, batch: list) -> dict:
         conseil         = _extract_field(block, "CONSEIL")
         prix_entree     = _extract_field(block, "PRIX_ENTREE")
         contexte_entree = _extract_field(block, "CONTEXTE_ENTREE")
-        prix_sortie     = _extract_field(block, "PRIX_SORTIE")
-        contexte_sortie = _extract_field(block, "CONTEXTE_SORTIE")
+        stop_loss       = _extract_field(block, "STOP_LOSS")
+        contexte_stop   = _extract_field(block, "CONTEXTE_STOP")
         score_str       = _extract_field(block, "SCORE")
 
         try:
@@ -363,8 +371,8 @@ def parse_batch_response(text: str, batch: list) -> dict:
             "conseil":          conseil         or "N/A",
             "prix_entree":      prix_entree     or "N/A",
             "contexte_entree":  contexte_entree or "N/A",
-            "prix_sortie":      prix_sortie     or "N/A",
-            "contexte_sortie":  contexte_sortie or "N/A",
+            "stop_loss":        stop_loss       or "N/A",
+            "contexte_stop":    contexte_stop   or "N/A",
             "score":            score,
         }
     return results
@@ -485,18 +493,18 @@ def build_row(d: dict) -> str:
 
           <div class="prix-separator"></div>
 
-          <div class="prix-ligne entree">
-            <div class="prix-titre">🟢 Entrée</div>
-            <div class="prix-valeur">""" + d.get("prix_entree", "N/A") + """</div>
+          <div class="prix-ligne">
+            <div class="prix-titre">🟢 Prix d'entrée</div>
+            <div class="prix-valeur entree-val">""" + d.get("prix_entree", "N/A") + """</div>
             <div class="prix-contexte">""" + d.get("contexte_entree", "N/A") + """</div>
           </div>
 
           <div class="prix-separator"></div>
 
-          <div class="prix-ligne sortie">
-            <div class="prix-titre">🔴 Sortie / Objectif</div>
-            <div class="prix-valeur sortie-val">""" + d.get("prix_sortie", "N/A") + """</div>
-            <div class="prix-contexte">""" + d.get("contexte_sortie", "N/A") + """</div>
+          <div class="prix-ligne">
+            <div class="prix-titre">🔴 Stop-loss · Invalidation haussière</div>
+            <div class="prix-valeur stop-val">""" + d.get("stop_loss", "N/A") + """</div>
+            <div class="prix-contexte stop-contexte">""" + d.get("contexte_stop", "N/A") + """</div>
           </div>
 
         </div>
@@ -602,7 +610,7 @@ def build_html(data_list: list) -> str:
       font-weight: 800;
     }
 
-    /* ── Pills indicateurs ── */
+    /* ── Pills ── */
     .pill {
       display: inline-block;
       background: rgba(255,255,255,0.04);
@@ -634,8 +642,8 @@ def build_html(data_list: list) -> str:
     .scenario-bad {
       font-size: 0.76rem;
       color: #fc5c7d;
-      background: rgba(252, 92, 125, 0.08);
-      border: 1px solid rgba(252, 92, 125, 0.2);
+      background: rgba(252,92,125,0.08);
+      border: 1px solid rgba(252,92,125,0.2);
       border-radius: 6px;
       padding: 4px 8px;
       line-height: 1.45;
@@ -644,8 +652,8 @@ def build_html(data_list: list) -> str:
     .scenario-good {
       font-size: 0.76rem;
       color: #00c896;
-      background: rgba(0, 200, 150, 0.08);
-      border: 1px solid rgba(0, 200, 150, 0.2);
+      background: rgba(0,200,150,0.08);
+      border: 1px solid rgba(0,200,150,0.2);
       border-radius: 6px;
       padding: 4px 8px;
       line-height: 1.45;
@@ -668,6 +676,7 @@ def build_html(data_list: list) -> str:
       display: flex;
       flex-direction: column;
       gap: 0;
+      min-width: 220px;
     }
     .conseil-label {
       font-size: 0.68rem;
@@ -704,19 +713,21 @@ def build_html(data_list: list) -> str:
       color: #718096;
     }
     .prix-valeur {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      color: #00c896;
       letter-spacing: -0.3px;
     }
-    .prix-valeur.sortie-val {
-      color: #f6ad55;
-    }
+    .entree-val { color: #00c896; }
+    .stop-val   { color: #fc5c7d; }
+
     .prix-contexte {
       font-size: 0.76rem;
       color: #718096;
       line-height: 1.45;
       font-style: italic;
+    }
+    .stop-contexte {
+      color: #fc5c7d99;
     }
 
     /* ── Footer ── */
@@ -751,7 +762,7 @@ def build_html(data_list: list) -> str:
           <th>Indicateurs</th>
           <th>Santé Fondamentale</th>
           <th>Tendance Chartiste</th>
-          <th>Conseil · Prix d'entrée &amp; de sortie</th>
+          <th>Conseil · Prix d'entrée &amp; Stop-loss</th>
         </tr>
       </thead>
       <tbody>
@@ -762,7 +773,7 @@ def build_html(data_list: list) -> str:
 
   <div class="footer">
     ⚠️ Les analyses sont générées par IA et ne constituent pas un conseil financier.
-    &nbsp;|&nbsp; Screener PEA Pro v2.5
+    &nbsp;|&nbsp; Screener PEA Pro v2.6
   </div>
 
 </body>
@@ -773,7 +784,7 @@ def build_html(data_list: list) -> str:
 # ─────────────────────────────────────────
 if __name__ == "__main__":
     log.info("═══════════════════════════════════════════")
-    log.info("   Screener PEA Pro v2.5 — Démarrage       ")
+    log.info("   Screener PEA Pro v2.6 — Démarrage       ")
     log.info("═══════════════════════════════════════════")
 
     data_list = load_cache()
