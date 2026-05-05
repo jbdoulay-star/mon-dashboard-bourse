@@ -1,7 +1,7 @@
 # ============================================================
-#  Screener PEA Pro — v2.8
-#  - Indicateurs : + Volume relatif + ATR (volatilité)
-#  - Santé fondamentale : + scénario optimiste & pessimiste
+#  Screener PEA Pro — v2.9
+#  - ISIN : yfinance → OpenFIGI fallback
+#  - Devise : conversion automatique en EUR
 # ============================================================
 
 import os
@@ -10,6 +10,7 @@ import logging
 import re
 import io
 import base64
+import requests
 from datetime import datetime, timedelta
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -114,15 +115,15 @@ BASE_TICKERS = [
     "AM.PA",    # Deezer/Aston Martin ?
     "BLC.PA",   # Believe
     "FDE.PA",   # Figeac Aero
-    "TF1.PA",   # TF1 ✅ corrigé
+    "TF1.PA",   # TF1
     "MMT.PA",   # M6 / RTL Group
 
     # 🇩🇪 Allemagne
     "SAP.DE",   # SAP
     "SIE.DE",   # Siemens
     "ADS.DE",   # Adidas
-    "ALV.DE",   # Allianz ✅ corrigé
-    "MUV2.DE",  # Munich Re ✅ corrigé
+    "ALV.DE",   # Allianz
+    "MUV2.DE",  # Munich Re
     "BMW.DE",   # BMW
     "BAS.DE",   # BASF
     "BIO.DE",   # Biontech
@@ -148,7 +149,7 @@ BASE_TICKERS = [
     "ADYEN.AS", # Adyen
     "BESI.AS",  # BE Semiconductor
     "AD.AS",    # Ahold Delhaize
-    "HEIN.AS",  # Heineken ✅ corrigé
+    "HEIN.AS",  # Heineken
 
     # 🇧🇪 Belgique
     "UMI.BR",   # Umicore
@@ -160,12 +161,12 @@ BASE_TICKERS = [
 
     # 🇪🇸 Espagne
     "IBE.MC",   # Iberdrola
-    "TEF.MC",   # Telefónica ✅ corrigé
+    "TEF.MC",   # Telefónica
 
     # 🇵🇹 Portugal
     "GALP.LS",  # Galp
     "EDPR.LS",  # EDP Renovaveis
-    "EDP.LS",   # EDP ✅ corrigé (.LS au lieu de .F)
+    "EDP.LS",   # EDP
 
     # 🇸🇪 Suède / 🇳🇴 Norvège
     "EQNR.ST",  # Equinor
@@ -192,7 +193,152 @@ BASE_TICKERS = [
 ]
 
 # ─────────────────────────────────────────
-#  4. CACHE
+#  4. ISIN — OpenFIGI FALLBACK
+# ─────────────────────────────────────────
+
+# Mapping suffixe ticker → exchCode OpenFIGI
+SUFFIX_TO_EXCHANGE = {
+    "PA" : "EPA",
+    "DE" : "EXX",
+    "F"  : "EXX",
+    "AS" : "AEX",
+    "BR" : "EBR",
+    "MC" : "BME",
+    "LS" : "ELI",
+    "ST" : "SSE",
+    "OL" : "OSL",
+}
+
+def _openfigi_post(payload: list) -> Optional[list]:
+    """Appel générique à l'API OpenFIGI v3."""
+    try:
+        resp = requests.post(
+            "https://api.openfigi.com/v3/mapping",
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=10,
+        )
+        if resp.status_code == 200:
+            return resp.json()
+    except Exception as e:
+        log.warning(f"OpenFIGI request error : {e}")
+    return None
+
+def get_isin_via_openfigi(symbol: str) -> str:
+    """
+    Cherche l'ISIN via OpenFIGI en deux étapes :
+      1. Ticker + exchCode  → FIGI
+      2. FIGI               → ISIN
+    Retourne "N/A" si introuvable.
+    """
+    parts    = symbol.split(".")
+    base     = parts[0]
+    suffix   = parts[1] if len(parts) > 1 else ""
+    exch     = SUFFIX_TO_EXCHANGE.get(suffix, "")
+
+    # ── Étape 1 : Ticker → FIGI ─────────────────────
+    payload1 = [{"idType": "TICKER", "idValue": base, "exchCode": exch}]
+    data1    = _openfigi_post(payload1)
+    if not data1:
+        return "N/A"
+
+    figi = ""
+    block = data1[0]
+    if "data" in block:
+        for item in block["data"]:
+            if item.get("securityType") == "Common Stock":
+                figi = item.get("figi", "")
+                break
+        if not figi:
+            # Prendre le premier FIGI disponible si pas de Common Stock
+            figi = block["data"][0].get("figi", "")
+
+    if not figi:
+        return "N/A"
+
+    # ── Étape 2 : FIGI → ISIN ───────────────────────
+    payload2 = [{"idType": "ID_BB_GLOBAL", "idValue": figi}]
+    data2    = _openfigi_post(payload2)
+    if not data2:
+        return "N/A"
+
+    block2 = data2[0]
+    if "data" in block2:
+        for item in block2["data"]:
+            isin = item.get("isin", "")
+            if isin:
+                return isin
+
+    return "N/A"
+
+def resolve_isin(symbol: str, info: dict) -> str:
+    """Retourne l'ISIN : yfinance en priorité, OpenFIGI en fallback."""
+    isin = info.get("isin", "") or ""
+    if isin and isin != "N/A":
+        return isin
+    log.info(f"  🔍 ISIN manquant pour {symbol} — tentative OpenFIGI...")
+    isin = get_isin_via_openfigi(symbol)
+    if isin != "N/A":
+        log.info(f"  ✅ ISIN trouvé via OpenFIGI : {symbol} → {isin}")
+    else:
+        log.warning(f"  ⚠️  ISIN introuvable pour {symbol}")
+    return isin
+
+# ─────────────────────────────────────────
+#  5. CONVERSION DEVISE → EUR
+# ─────────────────────────────────────────
+
+# Taux de repli (mis à jour manuellement si besoin)
+FALLBACK_RATES_TO_EUR = {
+    "NOK": 0.087,
+    "SEK": 0.088,
+    "GBP": 1.17,
+    "USD": 0.92,
+    "CHF": 1.04,
+    "DKK": 0.134,
+    "PLN": 0.233,
+    "CZK": 0.040,
+    "HUF": 0.0026,
+}
+
+_fx_cache: dict = {}  # Cache des taux pour éviter les appels répétés
+
+def get_rate_to_eur(currency: str) -> float:
+    """
+    Retourne le taux de conversion currency → EUR.
+    Priorité : cache → yfinance → taux fixe de repli.
+    """
+    if currency == "EUR":
+        return 1.0
+    if currency in _fx_cache:
+        return _fx_cache[currency]
+
+    # Tentative via yfinance
+    try:
+        pair   = f"{currency}EUR=X"
+        tk     = yf.Ticker(pair)
+        rate   = tk.fast_info.get("lastPrice", None)
+        if rate and float(rate) > 0:
+            _fx_cache[currency] = float(rate)
+            log.info(f"  💱 {currency}→EUR : {rate:.6f} (yfinance)")
+            return float(rate)
+    except Exception:
+        pass
+
+    # Repli sur taux fixe
+    rate = FALLBACK_RATES_TO_EUR.get(currency, 1.0)
+    _fx_cache[currency] = rate
+    log.warning(f"  💱 {currency}→EUR : {rate:.6f} (taux fixe de repli)")
+    return rate
+
+def convert_to_eur(value: float, currency: str) -> float:
+    """Convertit une valeur dans currency vers EUR."""
+    if currency == "EUR":
+        return value
+    return round(value * get_rate_to_eur(currency), 4)
+
+# ─────────────────────────────────────────
+#  6. CACHE
 # ─────────────────────────────────────────
 def load_cache() -> Optional[list]:
     p = Path(CACHE_FILE)
@@ -217,7 +363,7 @@ def save_cache(data: list):
     log.info("💾 Cache sauvegardé.")
 
 # ─────────────────────────────────────────
-#  5. DONNÉES MARCHÉ
+#  7. DONNÉES MARCHÉ
 # ─────────────────────────────────────────
 def fetch_ticker(symbol: str) -> Optional[dict]:
     try:
@@ -232,7 +378,17 @@ def fetch_ticker(symbol: str) -> Optional[dict]:
         volumes = hist["Volume"].dropna().values
         highs   = hist["High"].dropna().values
         lows    = hist["Low"].dropna().values
-        price   = float(closes[-1])
+
+        # ── Devise & conversion EUR ──────────────────────
+        currency_orig = info.get("currency", "EUR")
+        price_orig    = float(closes[-1])
+        rate          = get_rate_to_eur(currency_orig)
+
+        # Conversion de toutes les séries de prix
+        closes_eur  = closes  * rate
+        highs_eur   = highs   * rate
+        lows_eur    = lows    * rate
+        price       = round(price_orig * rate, 3)
 
         # ── RSI 14 ──────────────────────────────────────
         def rsi(src, p=14):
@@ -250,23 +406,23 @@ def fetch_ticker(symbol: str) -> Optional[dict]:
             for v in src[1:]: e = v*k + e*(1-k)
             return e
 
-        macd_val   = ema(closes, 12) - ema(closes, 26)
-        signal_val = ema(closes[-9:], 9) if len(closes) >= 9 else 0.0
+        macd_val   = ema(closes_eur, 12) - ema(closes_eur, 26)
+        signal_val = ema(closes_eur[-9:], 9) if len(closes_eur) >= 9 else 0.0
 
         # ── Moyennes mobiles ────────────────────────────
-        mm20  = float(np.mean(closes[-20:]))
-        mm50  = float(np.mean(closes[-50:]))  if len(closes) >= 50  else mm20
-        mm200 = float(np.mean(closes[-200:])) if len(closes) >= 200 else mm50
+        mm20  = float(np.mean(closes_eur[-20:]))
+        mm50  = float(np.mean(closes_eur[-50:]))  if len(closes_eur) >= 50  else mm20
+        mm200 = float(np.mean(closes_eur[-200:])) if len(closes_eur) >= 200 else mm50
 
-        # ── Performance 6M ──────────────────────────────
+        # ── Performance 6M (ratio, pas affecté par la devise)
         perf6m = (closes[-1] / closes[0] - 1) * 100
 
         # ── Volume relatif (5j vs moyenne 20j) ─────────
-        vol_5j   = float(np.mean(volumes[-5:]))  if len(volumes) >= 5  else 0.0
-        vol_20j  = float(np.mean(volumes[-20:])) if len(volumes) >= 20 else 1.0
-        vol_rel  = vol_5j / vol_20j if vol_20j > 0 else 1.0   # >1 = volumes en hausse
+        vol_5j  = float(np.mean(volumes[-5:]))  if len(volumes) >= 5  else 0.0
+        vol_20j = float(np.mean(volumes[-20:])) if len(volumes) >= 20 else 1.0
+        vol_rel = vol_5j / vol_20j if vol_20j > 0 else 1.0
 
-        # ── ATR 14 (Average True Range) ─────────────────
+        # ── ATR 14 ──────────────────────────────────────
         def atr(hi, lo, cl, p=14):
             tr_list = []
             for i in range(1, len(cl)):
@@ -277,14 +433,17 @@ def fetch_ticker(symbol: str) -> Optional[dict]:
                 ))
             return float(np.mean(tr_list[-p:])) if len(tr_list) >= p else 0.0
 
-        atr_val     = atr(highs, lows, closes)
-        atr_pct     = (atr_val / price * 100) if price > 0 else 0.0  # ATR en % du prix
+        atr_val = atr(highs_eur, lows_eur, closes_eur)
+        atr_pct = (atr_val / price * 100) if price > 0 else 0.0
 
-        # ── Miniature graphique ─────────────────────────
+        # ── ISIN ────────────────────────────────────────
+        isin = resolve_isin(symbol, info)
+
+        # ── Miniature graphique (en EUR) ─────────────────
         fig, ax = plt.subplots(figsize=(3.2, 1.1))
-        color   = "#00c896" if closes[-1] >= closes[0] else "#fc5c7d"
-        ax.plot(closes, color=color, linewidth=1.4)
-        ax.fill_between(range(len(closes)), closes, closes[0],
+        color   = "#00c896" if closes_eur[-1] >= closes_eur[0] else "#fc5c7d"
+        ax.plot(closes_eur, color=color, linewidth=1.4)
+        ax.fill_between(range(len(closes_eur)), closes_eur, closes_eur[0],
                         alpha=0.15, color=color)
         ax.axis("off")
         fig.patch.set_alpha(0)
@@ -295,26 +454,29 @@ def fetch_ticker(symbol: str) -> Optional[dict]:
         img_b64 = base64.b64encode(buf.getvalue()).decode()
 
         return {
-            "symbol"   : symbol,
-            "name"     : info.get("longName", symbol),
-            "isin"     : info.get("isin", "N/A"),
-            "price"    : price,
-            "currency" : info.get("currency", "EUR"),
-            "per"      : info.get("trailingPE"),
-            "eps"      : info.get("trailingEps"),
-            "revenue"  : info.get("totalRevenue"),
-            "mktcap"   : info.get("marketCap"),
-            "rsi"      : rsi(closes),
-            "macd"     : float(macd_val),
-            "signal"   : float(signal_val),
-            "mm20"     : mm20,
-            "mm50"     : mm50,
-            "mm200"    : mm200,
-            "perf6m"   : float(perf6m),
-            "vol_rel"  : vol_rel,
-            "atr_pct"  : atr_pct,
-            "img_b64"  : img_b64,
-            "sector"   : info.get("sector", "N/A"),
+            "symbol"          : symbol,
+            "name"            : info.get("longName", symbol),
+            "isin"            : isin,
+            "price"           : price,           # ← toujours en EUR
+            "price_orig"      : round(price_orig, 3),
+            "currency_orig"   : currency_orig,   # devise native
+            "currency"        : "EUR",            # toujours EUR en sortie
+            "fx_rate"         : rate,
+            "per"             : info.get("trailingPE"),
+            "eps"             : info.get("trailingEps"),
+            "revenue"         : info.get("totalRevenue"),
+            "mktcap"          : info.get("marketCap"),
+            "rsi"             : rsi(closes_eur),
+            "macd"            : float(macd_val),
+            "signal"          : float(signal_val),
+            "mm20"            : mm20,
+            "mm50"            : mm50,
+            "mm200"           : mm200,
+            "perf6m"          : float(perf6m),
+            "vol_rel"         : vol_rel,
+            "atr_pct"         : atr_pct,
+            "img_b64"         : img_b64,
+            "sector"          : info.get("sector", "N/A"),
         }
     except Exception as e:
         log.error(f"❌ {symbol} — {e}")
@@ -328,18 +490,22 @@ def fetch_all_tickers(symbols: list) -> list:
             r = fut.result()
             if r:
                 results.append(r)
+                # Affiche devise originale si différente de EUR
+                fx_info = (f" [{r['currency_orig']} × {r['fx_rate']:.4f}]"
+                           if r['currency_orig'] != "EUR" else "")
                 log.info(
-                    f"✔  {r['symbol']:12s} | {r['price']:.2f} {r['currency']} "
-                    f"| RSI {r['rsi']:.1f} | VolRel {r['vol_rel']:.2f}x "
-                    f"| ATR {r['atr_pct']:.2f}%"
+                    f"✔  {r['symbol']:12s} | {r['price']:.2f} EUR{fx_info}"
+                    f" | RSI {r['rsi']:.1f} | VolRel {r['vol_rel']:.2f}x"
+                    f" | ATR {r['atr_pct']:.2f}%"
                 )
     return results
 
 # ─────────────────────────────────────────
-#  6. ANALYSE IA — PROMPT v2.8
+#  8. ANALYSE IA — PROMPT v2.9
 # ─────────────────────────────────────────
 SYSTEM_PROMPT = """Tu es un analyste financier expert en analyse technique et fondamentale.
 Tu analyses des actions éligibles au PEA français.
+Tous les prix sont exprimés en EUR.
 Réponds UNIQUEMENT avec le format demandé, sans texte autour."""
 
 def build_user_prompt(batch: list) -> str:
@@ -347,7 +513,7 @@ def build_user_prompt(batch: list) -> str:
     for d in batch:
         lines.append(
             f"===SYMBOL={d['symbol']}===\n"
-            f"Nom: {d['name']} | Prix: {d['price']:.2f} {d['currency']}\n"
+            f"Nom: {d['name']} | Prix: {d['price']:.2f} EUR\n"
             f"RSI: {d['rsi']:.1f} | MACD: {d['macd']:.3f} | Signal: {d['signal']:.3f}\n"
             f"MM20: {d['mm20']:.2f} | MM50: {d['mm50']:.2f} | MM200: {d['mm200']:.2f}\n"
             f"Perf 6M: {d['perf6m']:.1f}% | PER: {d['per']} | Secteur: {d['sector']}\n"
@@ -366,8 +532,8 @@ Pour CHAQUE action, réponds exactement dans ce format (remplace les crochets) :
 [GAIN_1AN]: XX.X (gain potentiel estimé sur 1 an en %, chiffre seul)
 [RATIO_RR]: X.X (ratio Gain/Risque, chiffre seul)
 [CONSEIL]: Recommandation claire (Acheter/Renforcer/Attendre/Éviter) + tactique précise.
-[PRIX_ENTREE]: XX.XX (prix d'entrée conseillé, chiffre seul)
-[STOP_LOSS]: XX.XX (niveau d'invalidation haussière, chiffre seul, strictement inférieur au prix d'entrée)
+[PRIX_ENTREE]: XX.XX (prix d'entrée conseillé en EUR, chiffre seul)
+[STOP_LOSS]: XX.XX (niveau d'invalidation haussière en EUR, chiffre seul, strictement inférieur au prix d'entrée)
 [CONTEXTE_STOP]: 1-2 phrases : quel niveau technique est cassé et conséquences.
 [SCORE]: 0-100 (entier seul)
 """
@@ -464,7 +630,7 @@ def run_ai_analysis(market_data: list) -> list:
     return all_results
 
 # ─────────────────────────────────────────
-#  7. CONSTRUCTION HTML v2.8
+#  9. CONSTRUCTION HTML v2.9
 # ─────────────────────────────────────────
 def score_color(s: int) -> str:
     if s >= 75: return "#00c896"
@@ -484,34 +650,43 @@ def build_html(data_list: list) -> str:
     for d in data_list:
         sc    = d.get("score", 0)
         rsi_v = d.get("rsi", 50)
-        price = d.get("price", 0)
-        curr  = d.get("currency", "EUR")
+        price = d.get("price", 0)          # toujours EUR
         sym   = d.get("symbol", "")
         name  = d.get("name", sym)
         isin  = d.get("isin", "N/A")
+
+        # Devise originale pour info contextuelle
+        currency_orig = d.get("currency_orig", "EUR")
+        price_orig    = d.get("price_orig", price)
+        fx_rate       = d.get("fx_rate", 1.0)
+
+        # Affichage devise originale si non-EUR
+        if currency_orig != "EUR":
+            price_display = (
+                f"{price:.2f} EUR "
+                f'<span style="color:#8b949e;font-size:0.75rem;">'
+                f"({price_orig:.2f} {currency_orig})</span>"
+            )
+        else:
+            price_display = f"{price:.2f} EUR"
 
         perf     = d.get("perf6m", 0)
         perf_col = "#00c896" if perf >= 0 else "#fc5c7d"
         perf_str = f"+{perf:.1f}%" if perf >= 0 else f"{perf:.1f}%"
 
-        macd_v  = d.get("macd", 0)
-        sig_v   = d.get("signal", 0)
-        mm20    = d.get("mm20", 0)
-        mm50    = d.get("mm50", 0)
+        macd_v = d.get("macd", 0)
+        sig_v  = d.get("signal", 0)
+        mm20   = d.get("mm20", 0)
+        mm50   = d.get("mm50", 0)
 
-        # ── Volume relatif ───────────────────────────────
         vol_rel     = d.get("vol_rel", 1.0)
         vol_rel_str = f"{vol_rel:.2f}x"
-        # Vert si volumes en hausse (>1.2), rouge si en baisse (<0.8)
         vol_color   = "#00c896" if vol_rel >= 1.2 else "#fc5c7d" if vol_rel <= 0.8 else "#a0aec0"
 
-        # ── ATR % ────────────────────────────────────────
-        atr_pct     = d.get("atr_pct", 0.0)
-        atr_str     = f"{atr_pct:.2f}%"
-        # ATR élevé = forte volatilité = orange/ambre (neutre, informatif)
-        atr_color   = "#f6ad55" if atr_pct >= 2.0 else "#a0aec0"
+        atr_pct   = d.get("atr_pct", 0.0)
+        atr_str   = f"{atr_pct:.2f}%"
+        atr_color = "#f6ad55" if atr_pct >= 2.0 else "#a0aec0"
 
-        # ── Gain 1an / Ratio R/R ─────────────────────────
         gain_1an = d.get("gain_1an", "N/A")
         ratio_rr = d.get("ratio_rr", "N/A")
 
@@ -536,7 +711,6 @@ def build_html(data_list: list) -> str:
             img_tag = (f'<img src="data:image/png;base64,{d["img_b64"]}" '
                        f'style="width:100%;max-width:220px;display:block;margin:4px 0;">')
 
-        # ── Scénarios optimiste / pessimiste ─────────────
         optimiste  = d.get("optimiste",  "N/A")
         pessimiste = d.get("pessimiste", "N/A")
 
@@ -558,7 +732,7 @@ def build_html(data_list: list) -> str:
 
           <!-- PRIX -->
           <td style="text-align:right;">
-            <div class="price-val">{price:.2f} {curr}</div>
+            <div class="price-val">{price_display}</div>
           </td>
 
           <!-- SCORE -->
@@ -566,7 +740,7 @@ def build_html(data_list: list) -> str:
             <div class="score-badge" style="background:{score_color(sc)};">{sc}</div>
           </td>
 
-          <!-- INDICATEURS -->
+          <!-- INDICATEURS (tous en EUR) -->
           <td>
             <div class="indic-row">
               <span class="indic-label">RSI</span>
@@ -596,14 +770,14 @@ def build_html(data_list: list) -> str:
             <div class="indic-row">
               <span class="indic-label">Vol.Rel</span>
               <span class="indic-val" style="color:{vol_color};"
-                title="Volume moyen 5j vs moyenne 20j — >1 = hausse des volumes">
+                title="Volume moyen 5j vs moyenne 20j">
                 {vol_rel_str}
               </span>
             </div>
             <div class="indic-row">
               <span class="indic-label">ATR%</span>
               <span class="indic-val" style="color:{atr_color};"
-                title="Average True Range en % du prix — mesure la volatilité quotidienne">
+                title="Average True Range en % du prix">
                 {atr_str}
               </span>
             </div>
@@ -638,10 +812,10 @@ def build_html(data_list: list) -> str:
             <div class="conseil-box">
               <div class="conseil-text">{d.get('conseil', 'N/A')}</div>
               <div class="entry-val">
-                🟢 Entrée : <strong>{d.get('prix_entree', 'N/A')} {curr}</strong>
+                🟢 Entrée : <strong>{d.get('prix_entree', 'N/A')} EUR</strong>
               </div>
               <div class="stop-val">
-                🔴 Stop-loss : <strong>{d.get('stop_loss', 'N/A')} {curr}</strong>
+                🔴 Stop-loss : <strong>{d.get('stop_loss', 'N/A')} EUR</strong>
               </div>
               <div class="stop-ctx">{d.get('contexte_stop', 'N/A')}</div>
             </div>
@@ -653,7 +827,7 @@ def build_html(data_list: list) -> str:
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Screener PEA Pro v2.8</title>
+  <title>Screener PEA Pro v2.9</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -716,7 +890,6 @@ def build_html(data_list: list) -> str:
 
     .text-cell { color: #c9d1d9; font-size: 0.82rem; line-height: 1.5; }
 
-    /* Scénarios */
     .scenario-optimiste {
       margin-top: 8px;
       font-size: 0.80rem;
@@ -777,7 +950,8 @@ def build_html(data_list: list) -> str:
     <div class="header-meta">
       Dernière mise à jour : """ + update_ts + """ &nbsp;·&nbsp;
       """ + str(len(data_list)) + """ valeurs analysées &nbsp;·&nbsp;
-      Trié par score IA décroissant
+      Trié par score IA décroissant &nbsp;·&nbsp;
+      Tous les prix convertis en EUR
     </div>
   </div>
 
@@ -787,7 +961,7 @@ def build_html(data_list: list) -> str:
         <tr>
           <th>Action</th>
           <th>Tendance 6M</th>
-          <th style="text-align:right;">Prix</th>
+          <th style="text-align:right;">Prix (EUR)</th>
           <th style="text-align:center;">Score</th>
           <th>Indicateurs</th>
           <th>Santé Fondamentale</th>
@@ -803,18 +977,19 @@ def build_html(data_list: list) -> str:
 
   <div class="footer">
     ⚠️ Les analyses sont générées par IA et ne constituent pas un conseil financier.
-    &nbsp;|&nbsp; Screener PEA Pro v2.8
+    &nbsp;|&nbsp; Screener PEA Pro v2.9 &nbsp;|&nbsp;
+    Prix NOK/SEK/GBP/USD convertis en EUR au taux du jour
   </div>
 
 </body>
 </html>"""
 
 # ─────────────────────────────────────────
-#  8. POINT D'ENTRÉE
+#  10. POINT D'ENTRÉE
 # ─────────────────────────────────────────
 if __name__ == "__main__":
     log.info("═══════════════════════════════════════════")
-    log.info("   Screener PEA Pro v2.8 — Démarrage       ")
+    log.info("   Screener PEA Pro v2.9 — Démarrage       ")
     log.info("═══════════════════════════════════════════")
 
     data_list = load_cache()
