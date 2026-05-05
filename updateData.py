@@ -55,85 +55,140 @@ BATCH_SIZE         = 10
 # ─────────────────────────────────────────
 #  3. TICKERS
 # ─────────────────────────────────────────
-BASE_TICKERS = [
-    # ── CAC 40 / Grandes caps françaises ──────────────────
-    "AI.PA",      # Air Liquide
-    "AIR.PA",     # Airbus
-    "ALO.PA",     # Alstom
-    "CS.PA",      # AXA
-    "BNP.PA",     # BNP Paribas
-    "EN.PA",      # Bouygues
-    "CA.PA",      # Carrefour
-    "OR.PA",      # L'Oréal
-    "MC.PA",      # LVMH
-    "ML.PA",      # Michelin
-    "RI.PA",      # Pernod Ricard
-    "RNO.PA",     # Renault
-    "SAF.PA",     # Safran
-    "SAN.PA",     # Sanofi
-    "SGO.PA",     # Saint-Gobain
-    "SU.PA",      # Schneider Electric
-    "GLE.PA",     # Société Générale
-    "STM.PA",     # STMicroelectronics
-    "TTE.PA",     # TotalEnergies
-    "DG.PA",      # Vinci
-    "HO.PA",      # Thales
-    "CAP.PA",     # Capgemini
-    "DSY.PA",     # Dassault Systèmes
-    "ERF.PA",     # Eurofins Scientific
-    "ENGI.PA",    # Engie
-    "ELIS.PA",    # Elis
+TICKERS = [
+    # 🇫🇷 CAC 40 / Large caps françaises
+    "AI.PA",    # Air Liquide
+    "AIR.PA",   # Airbus
+    "ALO.PA",   # Alstom
+    "ACA.PA",   # Crédit Agricole
+    "BNP.PA",   # BNP Paribas
+    "GLE.PA",   # Société Générale
+    "CS.PA",    # AXA
+    "CA.PA",    # Carrefour
+    "CAP.PA",   # Capgemini
+    "CDI.PA",   # Christian Dior
+    "DG.PA",    # Vinci
+    "DSY.PA",   # Dassault Systèmes
+    "EL.PA",    # EssilorLuxottica
+    "EN.PA",    # Bouygues
+    "ENGI.PA",  # Engie
+    "ENX.PA",   # Euronext
+    "ERF.PA",   # Eurofins
+    "ELIS.PA",  # Elis
+    "ERA.PA",   # Eramet
+    "ETL.PA",   # Eutelsat
+    "FGR.PA",   # Fleury Michon
+    "GTT.PA",   # GTT
+    "HO.PA",    # Thales
+    "IDL.PA",   # Imerys
+    "IPN.PA",   # Ipsen
+    "IPS.PA",   # Ipsos
+    "KER.PA",   # Kering
+    "LR.PA",    # Legrand
+    "MC.PA",    # LVMH
+    "ML.PA",    # Michelin
+    "OR.PA",    # L'Oréal
+    "NAE.PA",   # Nexans
+    "NEX.PA",   # Nexity
+    "NK.PA",    # Imerys (NK)
+    "RCO.PA",   # Remy Cointreau
+    "RI.PA",    # Pernod Ricard
+    "RMS.PA",   # Hermès
+    "RNO.PA",   # Renault
+    "RXL.PA",   # Rexel
+    "SAF.PA",   # Safran
+    "SAN.PA",   # Sanofi
+    "SGO.PA",   # Saint-Gobain
+    "SOI.PA",   # Soitec
+    "SPIE.PA",  # SPIE
+    "SU.PA",    # Schneider Electric
+    "TE.PA",    # Technip Energies
+    "TTE.PA",   # TotalEnergies
+    "VK.PA",    # Vallourec
+    "VU.PA",    # Veolia
+    "BVI.PA",   # Bureau Veritas
+    "VCT.PA",   # Vicat
+    "AKE.PA",   # Arkema
+    "MAU.PA",   # Moncler (coté PA)
+    "AUB.PA",   # Aubay
+    "AM.PA",    # Deezer/Aston Martin ?
+    "BLC.PA",   # Believe
+    "FDE.PA",   # Figeac Aero
+    "TF1.PA",   # TF1 ✅ corrigé
+    "MMT.PA",   # M6 / RTL Group
 
-    # ── Mid-caps françaises ───────────────────────────────
-    "ERA.PA",     # Eramet
-    "EL.PA",      # EssilorLuxottica
-    "ENX.PA",     # Euronext
-    "ETL.PA",     # Eutelsat
-    "NEX.PA",     # Nexans
-    "GTT.PA",     # GTT
-    "RMS.PA",     # Hermès International
-    "IDL.PA",     # ID Logistics
-    "NK.PA",      # Imerys
-    "SOI.PA",     # Soitec
-    "SPIE.PA",    # SPIE
-    "TE.PA",      # Technip Energies
-    "THEP.PA",    # Thermador Groupe
-    "VK.PA",      # Vallourec
-    "VU.PA",      # Vusion Group
-    "VIR.PA",     # Viridien
-    "BLC.PA",     # Bastide Le Confort
-    "BDU.PA",     # Bonduelle
-    "BVI.PA",     # Bureau Veritas
-    "RCF.PA",     # Teleperformance
-    "FDE.PA",     # Française Energie
-    "MEMS.PA",    # Memscap
-    "ALMDG.PA",   # MGI Digital Graphic
-    "ALMDT.PA",   # Median Technologies
-    "EXENS.PA",   # Exosens
-    "EXA.PA",     # Exail Technologies
-    "NOA3.PA",    # Nokia (Paris)
-    "NAE.PA",     # North Atlantic En.
-    "ALAGP.PA",   # Agripower
-    "ALRIB.PA",   # Riber
+    # 🇩🇪 Allemagne
+    "SAP.DE",   # SAP
+    "SIE.DE",   # Siemens
+    "ADS.DE",   # Adidas
+    "ALV.DE",   # Allianz ✅ corrigé
+    "MUV2.DE",  # Munich Re ✅ corrigé
+    "BMW.DE",   # BMW
+    "BAS.DE",   # BASF
+    "BIO.DE",   # Biontech
+    "GRF.DE",   # Grifols
+    "IFX.DE",   # Infineon
+    "RHM.DE",   # Rheinmetall
+    "HAG.DE",   # Henkel
+    "RWE.DE",   # RWE
+    "ZAL.DE",   # Zalando
+    "VOS.DE",   # Voestalpine
+    "RCF.DE",   # Rational
+    "STM.DE",   # STMicroelectronics
+    "ENI.DE",   # ENI
+    "REP.DE",   # Repsol
+    "OMV.DE",   # OMV
+    "NOA3.DE",  # Noah Holdings
+    "SHL.DE",   # Siemens Healthineers
+    "PHI1.DE",  # Philips
+    "EDEF.DE",  # ETF Défense Europe
 
-    # ── Valeurs européennes ───────────────────────────────
-    "ASML.AS",    # ASML
-    "BESI.AS",    # BE Semiconductor
-    "PHI1.AS",    # Koninklijke Philips
-    "SHL.DE",     # Siemens Healthineers
-    "ADS.DE",     # Adidas
-    "BMW.DE",     # BMW
-    "VOS.DE",     # Vossloh
+    # 🇳🇱 Pays-Bas
+    "ASML.AS",  # ASML
+    "ADYEN.AS", # Adyen
+    "BESI.AS",  # BE Semiconductor
+    "AD.AS",    # Ahold Delhaize
+    "HEIN.AS",  # Heineken ✅ corrigé
 
-    # ── ETFs PEA éligibles ────────────────────────────────
-    "EWLD.PA",    # Lyxor MSCI World PEA
-    "RS2K.PA",    # Amundi Russell 2000 PEA
-    "PANX.PA",    # Amundi Nasdaq-100 PEA
-    "PUST.PA",    # Lyxor S&P 500 PEA
-    "PAEEM.PA",   # Amundi MSCI Emerging PEA
-    "PASI.PA",    # Amundi MSCI Asia PEA
-    "PINE.PA",    # Amundi India PEA
-    "EDEF.PA",    # BNP Easy MSCI Def. EU
+    # 🇧🇪 Belgique
+    "UMI.BR",   # Umicore
+    "UCB.BR",   # UCB
+    "EVS.BR",   # EVS Broadcast
+    "SOLB.BR",  # Solvay
+    "ABI.BR",   # AB InBev
+    "COLR.BR",  # Colruyt
+
+    # 🇪🇸 Espagne
+    "IBE.MC",   # Iberdrola
+    "TEF.MC",   # Telefónica ✅ corrigé
+
+    # 🇵🇹 Portugal
+    "GALP.LS",  # Galp
+    "EDPR.LS",  # EDP Renovaveis
+    "EDP.LS",   # EDP ✅ corrigé (.LS au lieu de .F)
+
+    # 🇸🇪 Suède / 🇳🇴 Norvège
+    "EQNR.ST",  # Equinor
+    "VER.ST",   # Vestas (coté Stockholm)
+    "AKRBP.OL", # Aker BP
+
+    # 🇩🇪 Frankfurt divers
+    "VIR.F",    # Virbac
+    "BDU.F",    # Bundu Gold
+    "4BV.F",    # Nabriva
+    "BZZ.F",    # Buzzi Unicem
+    "FUR.F",    # Furetank
+    "3WG.F",    # 3W Power
+
+    # 📦 ETFs éligibles PEA
+    "EWLD.PA",  # Lyxor MSCI World
+    "RS2K.PA",  # Amundi Russell 2000
+    "PANX.PA",  # Amundi NASDAQ
+    "PUST.PA",  # Amundi S&P 500
+    "PCEU.PA",  # Amundi Europe
+    "PAEEM.PA", # Amundi Emerging Markets
+    "PASI.PA",  # Amundi Asia
+    "PTPXE.PA", # Amundi PEA
 ]
 
 # ─────────────────────────────────────────
