@@ -55,7 +55,7 @@ BATCH_SIZE         = 10
 # ─────────────────────────────────────────
 #  3. TICKERS
 # ─────────────────────────────────────────
-TICKERS = [
+BASE_TICKERS = [
     # 🇫🇷 CAC 40 / Large caps françaises
     "AI.PA",    # Air Liquide
     "AIR.PA",   # Airbus
