@@ -57,7 +57,18 @@ BATCH_SIZE         = 10
 #  3. TICKERS
 # ─────────────────────────────────────────
 BASE_TICKERS = [
-    # 🇫🇷 CAC 40 / Large caps françaises
+    # 🇺🇸 "Magnificent Seven" & Tech US (Cotées à Francfort, éligibles PEA via courtier type Bourse Direct/Fortuneo selon conditions)
+    "APC.DE",   # Apple
+    "MSF.DE",   # Microsoft
+    "ABE.F",    # Alphabet (Google)
+    "AMZ.DE",   # Amazon
+    "NVD.DE",   # NVIDIA
+    "FB2A.DE",  # Meta (Facebook)
+    "TL0.DE",   # Tesla
+    "ADB.DE",   # Adobe
+    "CAT1.DE",  # Caterpillar
+
+    # 🇫🇷 CAC 40 / Large & Mid caps françaises
     "AI.PA",    # Air Liquide
     "AIR.PA",   # Airbus
     "ALO.PA",   # Alstom
@@ -112,13 +123,23 @@ BASE_TICKERS = [
     "AKE.PA",   # Arkema
     "MAU.PA",   # Moncler (coté PA)
     "AUB.PA",   # Aubay
-    "AM.PA",    # Deezer/Aston Martin ?
+    "AM.PA",    # Dassault Aviation
     "BLC.PA",   # Believe
-    "FDE.PA",   # Figeac Aero
+    "FDE.PA",   # Française de l'Énergie
     "TF1.PA",   # TF1
-    "MMT.PA",   # M6 / RTL Group
+    "MMT.PA",   # M6 / Métropole TV
+    "DBG.PA",   # Derichebourg
+    "VAC.PA",   # Vetoquinol
+    "THEP.PA",  # Thermador Groupe
+    "RUI.PA",   # Rubis
+    "ORA.PA",   # Orange
+    "ALMDG.PA", # Digital Value (Madvertise)
+    "MEMS.PA",  # McPhy Energy
+    "ALMDT.PA", # Median Technologies
+    "EXA.PA",   # Exel Industries
+    "EQS.PA",   # Equasens
 
-    # 🇩🇪 Allemagne
+    # 🇩🇪 Allemagne (DAX & Mid-caps)
     "SAP.DE",   # SAP
     "SIE.DE",   # Siemens
     "ADS.DE",   # Adidas
@@ -136,13 +157,18 @@ BASE_TICKERS = [
     "VOS.DE",   # Voestalpine
     "RCF.DE",   # Rational
     "STM.DE",   # STMicroelectronics
-    "ENI.DE",   # ENI
-    "REP.DE",   # Repsol
+    "ENI.DE",   # ENI (DE)
+    "REP.DE",   # Repsol (DE)
     "OMV.DE",   # OMV
     "NOA3.DE",  # Noah Holdings
     "SHL.DE",   # Siemens Healthineers
     "PHI1.DE",  # Philips
     "EDEF.DE",  # ETF Défense Europe
+    "SOT.DE",   # Sartorius AG
+    "ENR.DE",   # Siemens Energy
+    "SND.DE",   # S&T / Kontron
+    "AIL.DE",   # Air Liquide (Francfort)
+    "AXA.DE",   # AXA (Francfort)
 
     # 🇳🇱 Pays-Bas
     "ASML.AS",  # ASML
@@ -159,27 +185,32 @@ BASE_TICKERS = [
     "ABI.BR",   # AB InBev
     "COLR.BR",  # Colruyt
 
-    # 🇪🇸 Espagne
+    # 🇪🇸 Espagne / 🇵🇹 Portugal
     "IBE.MC",   # Iberdrola
     "TEF.MC",   # Telefónica
-
-    # 🇵🇹 Portugal
     "GALP.LS",  # Galp
     "EDPR.LS",  # EDP Renovaveis
     "EDP.LS",   # EDP
 
     # 🇸🇪 Suède / 🇳🇴 Norvège
     "EQNR.ST",  # Equinor
-    "VER.ST",   # Vestas (coté Stockholm)
+    "VER.ST",   # Vestas
     "AKRBP.OL", # Aker BP
+    "NEL.OL",   # Nel ASA
 
-    # 🇩🇪 Frankfurt divers
-    "VIR.F",    # Virbac
+    # 🇩🇪 Frankfurt Divers / Secondaires
+    "VIR.F",    # Virbac (DE)
     "BDU.F",    # Bundu Gold
     "4BV.F",    # Nabriva
     "BZZ.F",    # Buzzi Unicem
     "FUR.F",    # Furetank
     "3WG.F",    # 3W Power
+    "THL.F",    # Thales (DE)
+    "PHIA.F",   # Philips (DE)
+    "ER7.DE",   # Eurofins (DE)
+    "E7L.F",    # Edenred (DE)
+    "7LB.F",    # Bilfinger (DE)
+    "9SP.F",    # 9Spokes
 
     # 📦 ETFs éligibles PEA
     "EWLD.PA",  # Lyxor MSCI World
@@ -190,6 +221,7 @@ BASE_TICKERS = [
     "PAEEM.PA", # Amundi Emerging Markets
     "PASI.PA",  # Amundi Asia
     "PTPXE.PA", # Amundi PEA
+    "NDX1.DE",  # iShares Nasdaq 100 (DE)
 ]
 
 # ─────────────────────────────────────────
