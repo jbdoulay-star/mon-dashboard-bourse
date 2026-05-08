@@ -61,6 +61,7 @@ BASE_TICKERS = [
     # 🇫🇷 CAC 40 / Large & Mid caps françaises
     "AI.PA",    # Air Liquide
     "AIR.PA",   # Airbus
+    "AF.PA",    # Air France-KLM
     "ALO.PA",   # Alstom
     "ACA.PA",   # Crédit Agricole
     "BNP.PA",   # BNP Paribas
@@ -104,6 +105,7 @@ BASE_TICKERS = [
     "SOI.PA",   # Soitec
     "SPIE.PA",  # SPIE
     "SU.PA",    # Schneider Electric
+    "STM.PA",   # STMicroelectronics
     "TE.PA",    # Technip Energies
     "TTE.PA",   # TotalEnergies
     "VK.PA",    # Vallourec
@@ -111,23 +113,26 @@ BASE_TICKERS = [
     "BVI.PA",   # Bureau Veritas
     "VCT.PA",   # Vicat
     "AKE.PA",   # Arkema
-    "MAU.PA",   # Moncler (coté PA)
+    "MAU.PA",   # Moncler
     "AUB.PA",   # Aubay
     "AM.PA",    # Dassault Aviation
     "BLC.PA",   # Believe
     "FDE.PA",   # Française de l'Énergie
     "TF1.PA",   # TF1
-    "MMT.PA",   # M6 / Métropole TV
+    "MMT.PA",   # Métropole TV / M6
     "DBG.PA",   # Derichebourg
     "VAC.PA",   # Vetoquinol
     "THEP.PA",  # Thermador Groupe
     "RUI.PA",   # Rubis
     "ORA.PA",   # Orange
-    "ALMDG.PA", # Digital Value (Madvertise)
+    "TEP.PA",   # Teract
+    "ALMDG.PA", # Madvertise
     "MEMS.PA",  # McPhy Energy
     "ALMDT.PA", # Median Technologies
     "EXA.PA",   # Exel Industries
     "EQS.PA",   # Equasens
+    "PARRO.PA", # Parrot
+    "ALEXA.PA", # Alexa (Groupe Alexandre)
 
     # 🇩🇪 Allemagne (DAX & Mid-caps)
     "SAP.DE",   # SAP
@@ -146,19 +151,33 @@ BASE_TICKERS = [
     "ZAL.DE",   # Zalando
     "VOS.DE",   # Voestalpine
     "RCF.DE",   # Rational
-    "STM.DE",   # STMicroelectronics
-    "ENI.DE",   # ENI (DE)
-    "REP.DE",   # Repsol (DE)
+    "ENI.DE",   # ENI
+    "REP.DE",   # Repsol
     "OMV.DE",   # OMV
     "NOA3.DE",  # Noah Holdings
     "SHL.DE",   # Siemens Healthineers
     "PHI1.DE",  # Philips
     "EDEF.DE",  # ETF Défense Europe
-    "SOT.DE",   # Sartorius AG
+    "SOT.DE",   # Sartorius
     "ENR.DE",   # Siemens Energy
-    "SND.DE",   # S&T / Kontron
+    "SND.DE",   # Kontron
     "AIL.DE",   # Air Liquide (Francfort)
     "AXA.DE",   # AXA (Francfort)
+    "NDX1.DE",  # iShares Nasdaq 100
+    "ER7.DE",   # Eurofins (DE)
+
+    # 🇩🇪 Frankfurt Divers
+    "VIR.F",    # Virbac
+    "BDU.F",    # Bundu Gold
+    "4BV.F",    # Nabriva
+    "BZZ.F",    # Buzzi Unicem
+    "FUR.F",    # Furetank
+    "3WG.F",    # 3W Power
+    "THL.F",    # Thales (DE)
+    "PHIA.F",   # Philips (DE)
+    "E7L.F",    # Edenred (DE)
+    "7LB.F",    # Bilfinger
+    "9SP.F",    # 9Spokes
 
     # 🇳🇱 Pays-Bas
     "ASML.AS",  # ASML
@@ -166,6 +185,8 @@ BASE_TICKERS = [
     "BESI.AS",  # BE Semiconductor
     "AD.AS",    # Ahold Delhaize
     "HEIN.AS",  # Heineken
+    "PHIA.AS",  # Philips
+    "FLOW.AS",  # Flow Traders
 
     # 🇧🇪 Belgique
     "UMI.BR",   # Umicore
@@ -185,22 +206,25 @@ BASE_TICKERS = [
     # 🇸🇪 Suède / 🇳🇴 Norvège
     "EQNR.ST",  # Equinor
     "VER.ST",   # Vestas
+    "VOLV-B.ST",# Volvo B
     "AKRBP.OL", # Aker BP
     "NEL.OL",   # Nel ASA
 
-    # 🇩🇪 Frankfurt Divers / Secondaires
-    "VIR.F",    # Virbac (DE)
-    "BDU.F",    # Bundu Gold
-    "4BV.F",    # Nabriva
-    "BZZ.F",    # Buzzi Unicem
-    "FUR.F",    # Furetank
-    "3WG.F",    # 3W Power
-    "THL.F",    # Thales (DE)
-    "PHIA.F",   # Philips (DE)
-    "ER7.DE",   # Eurofins (DE)
-    "E7L.F",    # Edenred (DE)
-    "7LB.F",    # Bilfinger (DE)
-    "9SP.F",    # 9Spokes
+    # 🇮🇹 Italie
+    "STLAM.MI", # Stellantis
+    "RACE.MI",  # Ferrari
+
+    # 🇨🇦 Canada
+    "PXT.TO",   # Parex Resources
+
+    # 🇺🇸 US (hors PEA)
+    "ADBE",     # Adobe
+    "AVGO",     # Broadcom
+    "CAT",      # Caterpillar
+    "CMG",      # Chipotle
+    "DELL",     # Dell
+    "QURE",     # uniQure
+    "QUBT",     # Quantum Computing
 
     # 📦 ETFs éligibles PEA
     "EWLD.PA",  # Lyxor MSCI World
@@ -211,24 +235,6 @@ BASE_TICKERS = [
     "PAEEM.PA", # Amundi Emerging Markets
     "PASI.PA",  # Amundi Asia
     "PTPXE.PA", # Amundi PEA
-    "NDX1.DE",  # iShares Nasdaq 100 (DE)
-   
-    # Europe & autres
-    "DG.PA", "VU.PA", "VOLV-B.ST", "QURE",
-    "TTE.PA", "THEP.PA", "HO.PA", "TEP.PA", "TE.PA",
-    "STM.PA",
-    "STLAM.MI", "SOLB.BR", "SOI.PA", "GLE.PA",
-    "SIE.DE", "ENR.DE", "SU.PA", "SAN.PA", "RNO.PA",
-    "QUBT", "PHIA.AS", "RI.PA",
-    "PARRO.PA", "PXT.TO", "ORA.PA", "NDX1.DE", "NEL.OL",
-    "MEMS.PA", "ALMDT.PA", "IDL.PA", "FLOW.AS",
-    "RACE.MI", "ALEXA.PA", "ETL.PA", "EL.PA",
-    "ERA.PA", "ENGI.PA", "ELIS.PA", "DRO.AX",
-    "DELL", "DSY.PA", "ACA.PA", "SGO.PA",
-    "CMG", "CAT", "CAP.PA", "BVI.PA", "AVGO",
-    "EN.PA", "BNP.PA", "BESI.AS", "CS.PA", "ASML.AS",
-    "ALO.PA", "AIR.PA", "AI.PA", "AF.PA",
-    "ADBE", "ADS.DE"
 ]
 
 # ─────────────────────────────────────────
