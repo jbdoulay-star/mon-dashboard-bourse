@@ -57,16 +57,6 @@ BATCH_SIZE         = 10
 #  3. TICKERS
 # ─────────────────────────────────────────
 BASE_TICKERS = [
-    # 🇺🇸 "Magnificent Seven" & Tech US (Cotées à Francfort, éligibles PEA via courtier type Bourse Direct/Fortuneo selon conditions)
-    "APC.DE",   # Apple
-    "MSF.DE",   # Microsoft
-    "ABE.F",    # Alphabet (Google)
-    "AMZ.DE",   # Amazon
-    "NVD.DE",   # NVIDIA
-    "FB2A.DE",  # Meta (Facebook)
-    "TL0.DE",   # Tesla
-    "ADB.DE",   # Adobe
-    "CAT1.DE",  # Caterpillar
 
     # 🇫🇷 CAC 40 / Large & Mid caps françaises
     "AI.PA",    # Air Liquide
@@ -222,12 +212,11 @@ BASE_TICKERS = [
     "PASI.PA",  # Amundi Asia
     "PTPXE.PA", # Amundi PEA
     "NDX1.DE",  # iShares Nasdaq 100 (DE)
-    # Magnificent 7
-    "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA",
+   
     # Europe & autres
     "DG.PA", "VU.PA", "VOLV-B.ST", "QURE",
     "TTE.PA", "THEP.PA", "HO.PA", "TEP.PA", "TE.PA",
-    "STM.PA",       # corrigé depuis STM.DE
+    "STM.PA",
     "STLAM.MI", "SOLB.BR", "SOI.PA", "GLE.PA",
     "SIE.DE", "ENR.DE", "SU.PA", "SAN.PA", "RNO.PA",
     "QUBT", "PHIA.AS", "RI.PA",
