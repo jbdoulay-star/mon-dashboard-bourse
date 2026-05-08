@@ -222,6 +222,24 @@ BASE_TICKERS = [
     "PASI.PA",  # Amundi Asia
     "PTPXE.PA", # Amundi PEA
     "NDX1.DE",  # iShares Nasdaq 100 (DE)
+    # Magnificent 7
+    "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA",
+    # Europe & autres
+    "DG.PA", "VU.PA", "VOLV-B.ST", "QURE",
+    "TTE.PA", "THEP.PA", "HO.PA", "TEP.PA", "TE.PA",
+    "STM.PA",       # corrigé depuis STM.DE
+    "STLAM.MI", "SOLB.BR", "SOI.PA", "GLE.PA",
+    "SIE.DE", "ENR.DE", "SU.PA", "SAN.PA", "RNO.PA",
+    "QUBT", "PHIA.AS", "RI.PA",
+    "PARRO.PA", "PXT.TO", "ORA.PA", "NDX1.DE", "NEL.OL",
+    "MEMS.PA", "ALMDT.PA", "IDL.PA", "FLOW.AS",
+    "RACE.MI", "ALEXA.PA", "ETL.PA", "EL.PA",
+    "ERA.PA", "ENGI.PA", "ELIS.PA", "DRO.AX",
+    "DELL", "DSY.PA", "ACA.PA", "SGO.PA",
+    "CMG", "CAT", "CAP.PA", "BVI.PA", "AVGO",
+    "EN.PA", "BNP.PA", "BESI.AS", "CS.PA", "ASML.AS",
+    "ALO.PA", "AIR.PA", "AI.PA", "AF.PA",
+    "ADBE", "ADS.DE"
 ]
 
 # ─────────────────────────────────────────
