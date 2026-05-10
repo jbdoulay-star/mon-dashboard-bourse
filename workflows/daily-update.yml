@@ -1,0 +1,91 @@
+name: Daily PEA Stock Update
+
+on:
+  schedule:
+    # 20h00 CET hiver (UTC+1) = 19h00 UTC
+    - cron: '0 19 * * 1-5'
+    # 20h00 CEST été (UTC+2) = 18h00 UTC
+    # GitHub Actions ne gère pas les timezones, on double la règle
+    # et on filtre côté script Python si besoin
+    # Alternative : une seule règle à 18h30 UTC = toujours entre 19h30 et 20h30
+    # → solution la plus simple :
+
+  # ✅ UNE SEULE RÈGLE : 18h30 UTC = entre 19h30 (été) et 20h30 (hiver)
+  # On retire les deux règles ci-dessus et on utilise celle-ci :
+  workflow_dispatch:  # déclenchement manuel toujours disponible
+
+jobs:
+  update-stocks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas numpy requests openai
+
+      - name: Run analysis
+        env:
+          MAMMOUTH_API_KEY: ${{ secrets.MAMMOUTH_API_KEY }}
+        run: python scripts/analyze_stocks.py
+
+      - name: Commit and push results
+        run: |
+          git config user.email "bot@peatracker.local"
+          git config user.name "PEA Bot"
+          git add data/selections.json
+          git diff --staged --quiet || \
+            git commit -m "📈 Sélection du $(date +'%d/%m/%Y %H:%M') UTC" && git push
+
+
+⚠️ Problème : le bloc on.schedule ci-dessus contient des commentaires qui cassent le YAML. Voici la version propre et finale à copier-coller directement :
+
+
+✅ Version propre à utiliser
+name: Daily PEA Stock Update
+
+on:
+  schedule:
+    - cron: '30 18 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  update-stocks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas numpy requests openai
+
+      - name: Run analysis
+        env:
+          MAMMOUTH_API_KEY: ${{ secrets.MAMMOUTH_API_KEY }}
+        run: python scripts/analyze_stocks.py
+
+      - name: Commit and push results
+        run: |
+          git config user.email "bot@peatracker.local"
+          git config user.name "PEA Bot"
+          git add data/selections.json
+          git diff --staged --quiet || \
+            git commit -m "📈 Sélection du $(date +'%d/%m/%Y %H:%M') UTC" && git push
