@@ -1,328 +1,218 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
+from datetime import datetime
 import json
-from datetime import datetime, timedelta
-import requests  # Pour l'appel API (si vous utilisez une IA externe)
+import os
 
 # =============================================
 # CONFIGURATION
 # =============================================
-PEA_ELIGIBLE_FILE = "pe_eligible_tickers.txt"  # Liste des tickers éligibles au PEA
-OUTPUT_FILE = "selected_stocks.json"          # Fichier de sortie
-LOG_FILE = "screener_log.txt"                 # Log des exécutions
-MAX_ACTIONS = 20                              # Nombre d'actions à sélectionner
-MIN_CAP = 1_000_000_000                       # Capitalisation minimale (1Md€)
-MOMENTUM_MIN = 0.05                           # Momentum 6M minimum (+5%)
-RSI_MIN, RSI_MAX = 40, 70                     # Plage RSI acceptable
-VOLUME_RELATIVE_MIN = 1.1                     # Volume > 1.1x moyenne 20j
-PER_MAX = 30                                  # Exclure les PER > 30 (sauf exceptions)
-DEBT_TO_EBITDA_MAX = 3                        # Dette nette < 3x EBITDA
+PEA_ELIGIBLE_FILE = "pe_eligible_tickers.txt"
+OUTPUT_FILE = "selected_stocks.json"
+LOG_FILE = "screener_log.txt"
+MAX_ACTIONS = 20
+MIN_CAP = 1_000_000_000  # 1 milliard d'euros
+MOMENTUM_MIN = 0.05  # 5% de momentum sur 6 mois
+RSI_MIN, RSI_MAX = 40, 70
+VOLUME_RELATIVE_MIN = 1.1  # Volume 10% supérieur à la moyenne
+PER_MAX = 30
+DEBT_TO_EBITDA_MAX = 3
 
 # =============================================
-# 1. FILTRAGE INITIAL (GRATUIT - yfinance)
+# FONCTIONS DE FILTRAGE
 # =============================================
 def load_pe_eligible_tickers():
-    """Charge la liste des tickers éligibles au PEA (Trade Republic = Europe)"""
-    with open(PEA_ELIGIBLE_FILE, "r") as f:
-        tickers = [line.strip() for line in f if line.strip()]
-    return tickers
+    """Charge la liste des tickers éligibles au PEA."""
+    try:
+        with open(PEA_ELIGIBLE_FILE, "r") as f:
+            return [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        print("❌ Fichier pe_eligible_tickers.txt introuvable!")
+        return []
 
-def get_sector(ticker):
-    """Récupère le secteur d'une action via yfinance"""
+def get_financial_data(ticker):
+    """Récupère les données financières pour un ticker."""
     try:
         stock = yf.Ticker(ticker)
-        return stock.info.get('sector', 'Unknown')
-    except:
-        return 'Unknown'
+        info = stock.info
 
-def get_country(ticker):
-    """Récupère le pays d'une action via yfinance"""
-    try:
-        stock = yf.Ticker(ticker)
-        country = stock.info.get('country', 'Unknown')
-        # Normaliser les pays (ex: "France" -> "FR")
-        country_map = {
-            "France": "FR", "Germany": "DE", "Netherlands": "NL",
-            "Italy": "IT", "Belgium": "BE", "Spain": "ES",
-            "Sweden": "SE", "Norway": "NO", "Austria": "AT",
-            "Switzerland": "CH", "United Kingdom": "UK"
-        }
-        return country_map.get(country, country[:2])
-    except:
-        return 'XX'
-
-def calculate_rsi(series, window=14):
-    """Calcule le RSI 14j"""
-    delta = series.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
-    rs = gain / loss
-    return 100 - (100 / (1 + rs))
-
-def calculate_momentum(data, period="6mo"):
-    """Calcule le momentum (perf sur 6M)"""
-    if len(data) < 30:
-        return 0
-    start_price = data['Close'].iloc[0]
-    end_price = data['Close'].iloc[-1]
-    return (end_price - start_price) / start_price
-
-def filter_initial_tickers(tickers):
-    """Filtre les tickers selon vos critères initiaux"""
-    filtered = []
-    for ticker in tickers:
-        try:
-            stock = yf.Ticker(ticker)
-            info = stock.info
-
-            # Vérifier capitalisation
-            if info.get('marketCap', 0) < MIN_CAP:
-                continue
-
-            # Récupérer 6M de données
-            data = yf.download(ticker, period="6mo", interval="1d")
-            if len(data) < 30:
-                continue
-
-            # Calculer métriques
-            momentum = calculate_momentum(data)
-            if momentum < MOMENTUM_MIN:
-                continue
-
-            rsi = calculate_rsi(data['Close'])
-            if rsi.iloc[-1] < RSI_MIN or rsi.iloc[-1] > RSI_MAX:
-                continue
-
-            volume_rel = data['Volume'].iloc[-1] / data['Volume'].rolling(20).mean().iloc[-1]
-            if volume_rel < VOLUME_RELATIVE_MIN:
-                continue
-
-            # Exclure les ETFs
-            if info.get('quoteType') == 'ETF':
-                continue
-
-            # Stocker les données
-            filtered.append({
-                "ticker": ticker,
-                "name": info.get('shortName', 'Unknown'),
-                "sector": get_sector(ticker),
-                "country": get_country(ticker),
-                "marketCap": info.get('marketCap', 0),
-                "momentum_6m": round(momentum * 100, 2),
-                "rsi_14j": round(rsi.iloc[-1], 2),
-                "volume_relative": round(volume_rel, 2),
-                "close": round(data['Close'].iloc[-1], 2),
-                "pe_ratio": info.get('trailingPE', np.nan),
-                "debt_to_ebitda": info.get('debtToEbitda', np.nan)
-            })
-        except Exception as e:
-            print(f"⚠️ Erreur pour {ticker}: {str(e)}")
-            continue
-
-    # Convertir en DataFrame
-    df = pd.DataFrame(filtered)
-
-    # Exclure les actions avec PER > 30 ou dette > 3x EBITDA
-    df = df[
-        (df['pe_ratio'].isna()) | (df['pe_ratio'] <= PER_MAX) |
-        (df['debt_to_ebitda'].isna()) | (df['debt_to_ebitda'] <= DEBT_TO_EBITDA_MAX)
-    ]
-
-    # Diversification sectorielle : garder 1 action par secteur
-    df['sector_rank'] = df.groupby('sector')['momentum_6m'].rank(ascending=False)
-    df = df[df['sector_rank'] <= 1].sort_values('momentum_6m', ascending=False)
-
-    # Diversification géographique : limiter à 2 actions par pays
-    df['country_rank'] = df.groupby('country')['momentum_6m'].rank(ascending=False)
-    df = df[df['country_rank'] <= 2].sort_values('momentum_6m', ascending=False)
-
-    return df.head(60)  # On garde ~60 actions pour la sélection IA
-
-# =============================================
-# 2. SÉLECTION IA (1 PROMPT - 60 → 20 actions)
-# =============================================
-def generate_ai_prompt(df):
-    """Génère le prompt pour l'IA (à envoyer via API ou copier-coller)"""
-    prompt = f"""
-Voici 60 actions européennes éligibles au PEA, filtrées par capitalisation, momentum et volume.
-Pour CHAQUE action, analyse :
-1. **Actualité récente** (sentiment positif/négatif/neutre) via Yahoo Finance/Investing.com
-2. **Catalyseurs à venir** (résultats trimestriels, annonces stratégiques, réglementations)
-3. **Ratio risque/rendement estimé** (basé sur volatilité et potentiel à 6-12 mois)
-4. **Diversification sectorielle et géographique** (éviter les doublons de secteur/pays)
-
-Sélectionne les 20 actions les plus pertinentes pour un horizon 6-12 mois, en respectant :
-- **Diversification maximale** : 1 action par secteur, géographie variée (France, Allemagne, Italie, etc.)
-- **Exclure les actions avec PER > 30** (sauf exceptions justifiées)
-- **Exclure les actions avec dette nette > 3x EBITDA**
-- **Priorité aux actions avec un bon momentum récent** (RSI 14j > 50, perf 1M > +3%)
-
-Données disponibles :
-{df[['ticker', 'name', 'sector', 'country', 'momentum_6m', 'rsi_14j', 'close']].to_string(index=False)}
-
-Format de réponse attendu :
-TICKERS: [TICKER1, TICKER2, ..., TICKER20]
-RAISONS: [2-3 phrases par action expliquant les critères dominants]
-SCORE_RAISONNÉ: [Note de 0 à 100 pour chaque action, basée sur momentum + actualité + diversification]
-"""
-    return prompt
-
-def parse_ai_response(response, df):
-    """Parse la réponse de l'IA et retourne les 20 tickers sélectionnés"""
-    try:
-        # Exemple de réponse attendue (à adapter selon votre IA)
-        tickers_selected = response.split("TICKERS:")[1].split("\n")[0].strip().strip("[]").replace(" ", "").split(",")
-        return [ticker.strip() for ticker in tickers_selected if ticker.strip() in df['ticker'].values]
-    except:
-        print("⚠️ Erreur de parsing de la réponse IA. Utilisation des 20 meilleures actions par momentum.")
-        return df.sort_values('momentum_6m', ascending=False)['ticker'].head(20).tolist()
-
-# =============================================
-# 3. CALCUL DU STOP-LOSS DYNAMIQUE (6 MOIS)
-# =============================================
-def calculate_dynamic_stop_loss(ticker):
-    """Calcule le stop-loss dynamique basé sur l'amplitude et les supports"""
-    try:
-        data = yf.download(ticker, period="6mo", interval="1d")
-        if len(data) < 30:
-            return None
-
-        # Calculer les moyennes
-        high_mean = data['High'].mean()
-        low_mean = data['Low'].mean()
-        close_mean = data['Close'].mean()
-        close_current = data['Close'].iloc[-1]
-        ma20 = data['Close'].rolling(20).mean().iloc[-1]
-
-        # Amplitude moyenne
-        amplitude = (high_mean - low_mean) / close_mean
-
-        # Supports
-        support_bas = low_mean - (0.5 * amplitude * close_current)
-        support_mm20 = ma20 - (0.3 * amplitude * close_current)
-        support_pullback = data['Low'].iloc[-20:].min() - (0.2 * amplitude * close_current)
-
-        # Stop-loss final avec marge de sécurité
-        stop_loss = min(support_bas, support_mm20, support_pullback) - (0.1 * amplitude * close_current)
+        # Valeurs par défaut si les données sont manquantes
+        pe_ratio = info.get('trailingPE', None)
+        debt_to_ebitda = info.get('debtToEbitda', None)
+        market_cap = info.get('marketCap', 0)
+        sector = info.get('sector', 'Unknown')
+        country = info.get('country', 'Unknown')
+        name = info.get('longName', ticker)
 
         return {
-            "ticker": ticker,
-            "stop_loss": round(stop_loss, 2),
-            "amplitude": round(amplitude * 100, 2),
-            "supports": {
-                "bas": round(support_bas, 2),
-                "mm20": round(support_mm20, 2),
-                "pullback": round(support_pullback, 2)
-            },
-            "close_current": round(close_current, 2),
-            "ma20": round(ma20, 2)
+            'ticker': ticker,
+            'name': name,
+            'sector': sector,
+            'country': country,
+            'market_cap': market_cap,
+            'pe_ratio': pe_ratio,
+            'debt_to_ebitda': debt_to_ebitda
         }
     except Exception as e:
-        print(f"⚠️ Erreur pour {ticker} (stop-loss): {str(e)}")
+        print(f"⚠️ Impossible de récupérer les données pour {ticker} : {e}")
         return None
 
-# =============================================
-# 4. GÉNÉRATION DU TABLEAU FINAL
-# =============================================
-def generate_final_table(selected_tickers, df_initial):
-    """Génère le tableau final avec toutes les métriques"""
-    final_data = []
+def filter_initial_tickers(tickers):
+    """Filtre les tickers selon les critères initiaux."""
+    financial_data = []
+    for ticker in tickers:
+        data = get_financial_data(ticker)
+        if data:
+            financial_data.append(data)
 
-    for ticker in selected_tickers:
-        # Récupérer les données initiales
-        stock_data = df_initial[df_initial['ticker'] == ticker].iloc[0]
+    if not financial_data:
+        raise ValueError("Aucune donnée financière disponible!")
 
-        # Calculer le stop-loss
-        stop_data = calculate_dynamic_stop_loss(ticker)
-        if not stop_data:
+    df = pd.DataFrame(financial_data)
+
+    # Filtrer les tickers avec market_cap > MIN_CAP
+    df = df[df['market_cap'] >= MIN_CAP]
+
+    # Filtrer les tickers avec pe_ratio <= PER_MAX OU pe_ratio manquant
+    pe_mask = df['pe_ratio'].isna() | (df['pe_ratio'] <= PER_MAX)
+    df = df[pe_mask]
+
+    # Filtrer les tickers avec debt_to_ebitda <= DEBT_TO_EBITDA_MAX OU manquant
+    debt_mask = df['debt_to_ebitda'].isna() | (df['debt_to_ebitda'] <= DEBT_TO_EBITDA_MAX)
+    df = df[debt_mask]
+
+    return df
+
+def calculate_momentum(ticker):
+    """Calcule le momentum sur 6 mois."""
+    try:
+        data = yf.download(ticker, period="6mo", interval="1d")
+        if len(data) < 30 or 'Close' not in data.columns:
+            return None
+
+        initial_price = data['Close'].iloc[0]
+        final_price = data['Close'].iloc[-1]
+        momentum = (final_price - initial_price) / initial_price
+        return momentum
+    except Exception as e:
+        print(f"⚠️ Erreur pour {ticker} dans calculate_momentum : {e}")
+        return None
+
+def calculate_rsi(ticker, window=14):
+    """Calcule le RSI sur 14 jours."""
+    try:
+        data = yf.download(ticker, period="3mo", interval="1d")
+        if len(data) < window or 'Close' not in data.columns:
+            return None
+
+        delta = data['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+        rs = gain / loss
+        rsi = 100 - (100 / (1 + rs))
+        return rsi.iloc[-1]
+    except Exception as e:
+        print(f"⚠️ Erreur pour {ticker} dans calculate_rsi : {e}")
+        return None
+
+def calculate_volume_relative(ticker):
+    """Calcule le volume relatif (volume actuel / moyenne sur 30 jours)."""
+    try:
+        data = yf.download(ticker, period="1mo", interval="1d")
+        if len(data) < 30 or 'Volume' not in data.columns:
+            return None
+
+        avg_volume = data['Volume'].mean()
+        last_volume = data['Volume'].iloc[-1]
+        return last_volume / avg_volume
+    except Exception as e:
+        print(f"⚠️ Erreur pour {ticker} dans calculate_volume_relative : {e}")
+        return None
+
+def calculate_dynamic_stop_loss(ticker):
+    """Calcule un stop-loss dynamique basé sur l'amplitude des 6 derniers mois."""
+    try:
+        data = yf.download(ticker, period="6mo", interval="1d")
+        if len(data) < 30 or 'Close' not in data.columns:
+            return None
+
+        high = data['High'].max()
+        low = data['Low'].min()
+        amplitude = (high - low) / low
+        return amplitude * 0.5  # Stop à 50% de l'amplitude
+    except Exception as e:
+        print(f"⚠️ Erreur pour {ticker} dans calculate_dynamic_stop_loss : {e}")
+        return None
+
+def select_top_stocks(df, tickers):
+    """Sélectionne les top 20 actions selon les critères."""
+    results = []
+
+    for ticker in tickers:
+        momentum = calculate_momentum(ticker)
+        rsi = calculate_rsi(ticker)
+        volume_rel = calculate_volume_relative(ticker)
+        stop_loss = calculate_dynamic_stop_loss(ticker)
+
+        if (momentum is None or rsi is None or volume_rel is None or stop_loss is None):
             continue
 
-        # Calculer le prix d'entrée (moyenne des 5 derniers jours)
-        data = yf.download(ticker, period="1mo", interval="1d")
-        entry_price = round(data['Close'].iloc[-5:].mean(), 2)
+        if (momentum >= MOMENTUM_MIN and
+            RSI_MIN <= rsi <= RSI_MAX and
+            volume_rel >= VOLUME_RELATIVE_MIN):
 
-        final_data.append({
-            "ticker": ticker,
-            "name": stock_data['name'],
-            "sector": stock_data['sector'],
-            "country": stock_data['country'],
-            "momentum_6m": stock_data['momentum_6m'],
-            "rsi_14j": stock_data['rsi_14j'],
-            "close_current": stop_data['close_current'],
-            "entry_price": entry_price,
-            "stop_loss": stop_data['stop_loss'],
-            "amplitude_6m": stop_data['amplitude'],
-            "support_bas": stop_data['supports']['bas'],
-            "support_mm20": stop_data['supports']['mm20'],
-            "support_pullback": stop_data['supports']['pullback'],
-            "ma20": stop_data['ma20'],
-            "volume_relative": stock_data['volume_relative'],
-            "pe_ratio": stock_data['pe_ratio'],
-            "debt_to_ebitda": stock_data['debt_to_ebitda'],
-            "selection_date": datetime.now().strftime("%Y-%m-%d %H:%M")
-        })
+            stock_info = yf.Ticker(ticker).info
+            current_price = stock_info.get('currentPrice', None)
 
-    return pd.DataFrame(final_data)
+            results.append({
+                'ticker': ticker,
+                'name': stock_info.get('longName', ticker),
+                'sector': stock_info.get('sector', 'Unknown'),
+                'country': stock_info.get('country', 'Unknown'),
+                'price': current_price,
+                'momentum_6m': round(momentum, 4),
+                'rsi_14j': round(rsi, 2),
+                'stop_loss': round(current_price * (1 - stop_loss), 2),
+                'amplitude_6m': round(stop_loss * 2, 4),
+                'selection_date': datetime.now().strftime("%Y-%m-%d %H:%M")
+            })
+
+    # Trier par momentum décroissant et prendre les top 20
+    results.sort(key=lambda x: x['momentum_6m'], reverse=True)
+    return results[:MAX_ACTIONS]
 
 # =============================================
-# 5. FONCTION PRINCIPALE
+# FONCTION PRINCIPALE
 # =============================================
 def main():
     print("🚀 Démarrage du screener PEA...")
-    start_time = datetime.now()
 
     # 1. Charger les tickers éligibles
-    print("📂 Chargement des tickers éligibles au PEA...")
     tickers = load_pe_eligible_tickers()
+    if not tickers:
+        print("❌ Aucun ticker éligible trouvé!")
+        return
+
     print(f"✅ {len(tickers)} tickers chargés.")
 
-    # 2. Filtrer les tickers initiaux (60 actions)
-    print("🔍 Filtrage initial des actions...")
-    df_initial = filter_initial_tickers(tickers)
-    print(f"✅ {len(df_initial)} actions filtrées (1 champion par secteur + diversification géographique).")
+    # 2. Filtrer les tickers initiaux
+    try:
+        df_initial = filter_initial_tickers(tickers)
+        print(f"✅ {len(df_initial)} tickers après filtre initial.")
+    except Exception as e:
+        print(f"❌ Erreur lors du filtrage initial : {e}")
+        return
 
-    # 3. Générer le prompt pour l'IA
-    print("🤖 Génération du prompt pour l'IA...")
-    ai_prompt = generate_ai_prompt(df_initial)
-    print("✅ Prompt généré. Copiez-le dans votre outil IA préféré (ex: ChatGPT, Mistral, etc.).")
+    # 3. Sélectionner les top 20 actions
+    selected_stocks = select_top_stocks(df_initial, tickers)
+    print(f"✅ {len(selected_stocks)} actions sélectionnées.")
 
-    # 4. Récupérer la réponse de l'IA (simulation)
-    print("\n📌 **COPIEZ-COLLEZ CE PROMPT DANS VOTRE IA** :")
-    print("=" * 80)
-    print(ai_prompt)
-    print("=" * 80)
-    print("\n🔹 Après avoir reçu la réponse de l'IA, collez-la ici (ou modifiez le code pour une API automatique) :")
+    # 4. Sauvegarder les résultats
+    with open(OUTPUT_FILE, 'w') as f:
+        json.dump(selected_stocks, f, indent=2, ensure_ascii=False)
 
-    # Simulation : on utilise les 20 meilleures par momentum si pas de réponse IA
-    ai_response = input("Entrez la réponse de l'IA (ou appuyez sur Entrée pour utiliser les 20 meilleures par momentum) : ").strip()
-    selected_tickers = parse_ai_response(ai_response, df_initial) if ai_response else df_initial.sort_values('momentum_6m', ascending=False)['ticker'].head(20).tolist()
+    print(f"✅ Résultats sauvegardés dans {OUTPUT_FILE}")
 
-    print(f"\n✅ {len(selected_tickers)} actions sélectionnées par l'IA.")
-
-    # 5. Générer le tableau final
-    print("📊 Génération du tableau final...")
-    final_df = generate_final_table(selected_tickers, df_initial)
-
-    # 6. Sauvegarder les résultats
-    final_df.to_json(OUTPUT_FILE, orient="records", indent=2)
-    print(f"\n💾 Résultats sauvegardés dans {OUTPUT_FILE}")
-
-    # 7. Afficher le tableau final
-    print("\n📋 **TABLEAU FINAL DES 20 ACTIONS SÉLECTIONNÉES**")
-    print("=" * 120)
-    print(final_df[['ticker', 'name', 'sector', 'country', 'momentum_6m', 'rsi_14j', 'entry_price', 'stop_loss', 'amplitude_6m']].to_string(index=False))
-    print("=" * 120)
-
-    # 8. Log l'exécution
-    with open(LOG_FILE, "a") as f:
-        f.write(f"\n{datetime.now()}: {len(selected_tickers)} actions sélectionnées. Fichier: {OUTPUT_FILE}\n")
-
-    print(f"\n⏱️ Exécution terminée en {(datetime.now() - start_time).total_seconds():.2f} secondes.")
-    print("🔹 Prochaine étape : Programmez les achats/ventes dans Trade Republic avec les seuils indiqués.")
-
-# =============================================
-# EXÉCUTION
-# =============================================
 if __name__ == "__main__":
     main()
