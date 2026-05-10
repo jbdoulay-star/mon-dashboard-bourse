@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📈 PEA Tracker — Top 20 du jour</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>📈 PEA Tracker</h1>
+    <p id="update-date">Chargement...</p>
+  </header>
+
+  <main>
+    <div id="loading" class="loading">
+      ⏳ Chargement des données...
+    </div>
+    <div id="stats-bar" class="stats-bar hidden"></div>
+    <div id="stocks-grid" class="stocks-grid"></div>
+  </main>
+
+  <footer>
+    <p>Données mises à jour chaque soir à 20h · Mis à jour via GitHub Actions</p>
+    <p>⚠️ Ces informations ne constituent pas un conseil en investissement.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
