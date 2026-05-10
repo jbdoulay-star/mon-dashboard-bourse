@@ -1,0 +1,190 @@
+:root {
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --border: #2a2d3a;
+  --green: #00c896;
+  --red: #ff4d6d;
+  --orange: #ffaa00;
+  --blue: #4da6ff;
+  --text: #e0e0e0;
+  --muted: #888;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+header {
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 { font-size: 2rem; color: var(--green); }
+header p  { color: var(--muted); margin-top: .5rem; }
+
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem 2rem;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.stat-item { text-align: center; }
+.stat-item .val { font-size: 1.4rem; font-weight: bold; color: var(--blue); }
+.stat-item .lbl { font-size: .75rem; color: var(--muted); }
+
+.stocks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.2rem;
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.card-title h3 { font-size: 1rem; color: var(--text); }
+.card-title .ticker { font-size: .8rem; color: var(--muted); }
+.card-title .sector {
+  font-size: .7rem;
+  background: #2a2d3a;
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: var(--blue);
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.price-block { text-align: right; }
+.price-block .price { font-size: 1.3rem; font-weight: bold; }
+.price-block .chg { font-size: .85rem; }
+
+.positive { color: var(--green); }
+.negative { color: var(--red); }
+.neutral  { color: var(--orange); }
+
+.indicators {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .5rem;
+  margin: .8rem 0;
+}
+
+.ind {
+  background: #12141e;
+  border-radius: 8px;
+  padding: .4rem .6rem;
+  text-align: center;
+}
+
+.ind .ind-val { font-size: .9rem; font-weight: bold; }
+.ind .ind-lbl { font-size: .65rem; color: var(--muted); }
+
+.section-title {
+  font-size: .7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: .8rem 0 .3rem;
+}
+
+.analysis-block {
+  font-size: .8rem;
+  line-height: 1.5;
+  color: #bbb;
+  background: #12141e;
+  border-radius: 8px;
+  padding: .6rem .8rem;
+  margin-bottom: .5rem;
+}
+
+.trade-block {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .4rem;
+  margin-top: .8rem;
+}
+
+.trade-item {
+  background: #12141e;
+  border-radius: 8px;
+  padding: .5rem;
+  text-align: center;
+}
+
+.trade-item .t-val { font-size: .95rem; font-weight: bold; }
+.trade-item .t-lbl { font-size: .65rem; color: var(--muted); }
+
+.confidence-bar {
+  margin-top: .8rem;
+  background: #12141e;
+  border-radius: 20px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--red), var(--orange), var(--green));
+  transition: width .6s ease;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: bold;
+  margin-top: .5rem;
+}
+
+.badge-buy    { background: rgba(0,200,150,.15); color: var(--green); border: 1px solid var(--green); }
+.badge-wait   { background: rgba(255,170,0,.15);  color: var(--orange); border: 1px solid var(--orange); }
+.badge-avoid  { background: rgba(255,77,109,.15); color: var(--red);    border: 1px solid var(--red); }
+
+.hidden { display: none; }
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+  font-size: .75rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
