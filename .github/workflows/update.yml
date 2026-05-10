@@ -1,37 +1,45 @@
-name: Mise à jour IA - Quotidienne
+name: Mise à jour Automatique - PEA Screener
 
 on:
   schedule:
-    # 21:30 UTC = 23:30 heure de Paris (en été)
-    # S'exécute du lundi au vendredi
-    - cron: '30 21 * * 1-5'
+    # Dimanche à 16h Paris (14h UTC)
+    - cron: '0 14 * * 0'
   workflow_dispatch:
 
 jobs:
-  build:
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Récupération du code
-        uses: actions/checkout@v2
+      - name: Checkout du code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Nécessaire pour git diff
 
-      - name: Installation de Python
-        uses: actions/setup-python@v4
+      - name: Configuration de Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Installation des dépendances
         run: |
-          pip install yfinance openai matplotlib pytz numpy
+          python -m pip install --upgrade pip
+          pip install yfinance numpy pandas
 
-      - name: Exécution de l'analyse IA
+      - name: Exécution de l'analyse
         env:
           MAMMOUTH_API_KEY: ${{ secrets.MAMMOUTH_API_KEY }}
         run: python updateData.py
 
-      - name: Sauvegarde des changements
+      - name: Vérification des changements
+        id: verify_diff
         run: |
-          git config --global user.name 'ScreenerBot'
-          git config --global user.email 'bot@screener.com'
-          git add index.html
-          git commit -m "Mise à jour analyse quotidienne 23:30" || exit 0
+          git diff --quiet selected_stocks.json || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit des modifications
+        if: steps.verify_diff.outputs.changes == 'true'
+        run: |
+          git config --global user.name "ScreenerBot"
+          git config --global user.email "bot@screener@example.com"
+          git add selected_stocks.json
+          git commit -m "Mise à jour automatique $(date +'%Y-%m-%d %H:%M')"
           git push
