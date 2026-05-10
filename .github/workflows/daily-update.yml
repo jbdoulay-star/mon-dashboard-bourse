@@ -1,0 +1,38 @@
+name: Daily PEA Stock Update
+
+on:
+  schedule:
+    - cron: '30 18 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  update-stocks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas numpy requests openai
+
+      - name: Run analysis
+        env:
+          MAMMOUTH_API_KEY: ${{ secrets.MAMMOUTH_API_KEY }}
+        run: python scripts/analyze_stocks.py
+
+      - name: Commit and push results
+        run: |
+          git config user.email "bot@peatracker.local"
+          git config user.name "PEA Bot"
+          git add data/selections.json
+          git diff --staged --quiet || \
+            git commit -m "📈 Sélection du $(date +'%d/%m/%Y %H:%M') UTC" && git push
