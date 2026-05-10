@@ -1,0 +1,10 @@
+{
+  "date": "2025-01-01",
+  "generated_at": "En attente de la première analyse...",
+  "stocks": [],
+  "meta": {
+    "total_analyzed": 0,
+    "universe_size": 0,
+    "api_calls": 0
+  }
+}
