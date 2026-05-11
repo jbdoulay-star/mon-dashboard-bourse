@@ -1,14 +1,7 @@
-Voici le script complet corrigé. Les changements clés :
-
-MIN_GAIN_PCT abaissé à 1.0% (était 2.5%)
-rr >= 1.5 abaissé à rr >= 1.0
-Suppression du return None si not pertinent — toutes les actions passent, le score est juste pénalisé
-TOP_PER_SECTOR augmenté à 3 pour avoir plus de candidats finaux
-
 #!/usr/bin/env python3
 """
 PEA Tracker - Analyse quotidienne optimisee
-- Presélection 100% quantitative (yfinance, aucun cout)
+- Preselection 100% quantitative (yfinance, aucun cout)
 - 1 seul appel MammouthIA pour les 20 finalistes
 """
 
