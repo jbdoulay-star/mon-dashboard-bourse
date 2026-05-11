@@ -27,6 +27,7 @@ AI_MODEL = "gpt-4o"
 TR_FEE = 1.0
 TR_FEE_TOTAL = 2.0
 MIN_GAIN_PCT = 2.5
+MAX_PRICE = 250.0
 
 PEA_UNIVERSE = {
     "Technologie": [
@@ -207,6 +208,11 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     close = hist["Close"]
     price = float(close.iloc[-1])
 
+    # ✅ FILTRE PRIX - correctement indenté dans la fonction
+    if price > MAX_PRICE:
+        print(f"    Elimine (prix {price:.2f}EUR > {MAX_PRICE}EUR) : {ticker}")
+        return None
+
     ma20  = float(close.rolling(20).mean().iloc[-1])
     ma50  = float(close.rolling(50).mean().iloc[-1]) if len(close) >= 50 else None
     ma200 = float(close.rolling(200).mean().iloc[-1]) if len(close) >= 200 else None
@@ -318,8 +324,9 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     net_gain  = round((reward / entry * 100) - fees_pct, 2)
     pertinent = net_gain >= MIN_GAIN_PCT and rr >= 1.5
 
+    # ✅ CORRECTION : on ne pénalise plus le score, on retourne None si pas pertinent
     if not pertinent:
-        total = int(total * 0.75)
+        return None
 
     return {
         "ticker":     ticker,
@@ -369,8 +376,6 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 # ETAPE 3 : SELECTION PAR SECTEUR
 # ============================================================
 
-MAX_PRICE = 250.0  # Filtre prix max Trade Republic
-
 def select_candidates() -> list[dict]:
     all_results = []
     for sector, stocks in PEA_UNIVERSE.items():
@@ -380,10 +385,6 @@ def select_candidates() -> list[dict]:
             print(f"    Analyse {ticker}...")
             result = score_stock(ticker, name, sector)
             if result:
-                # FILTRE : on ecarte les actions > 250€
-                if result["price"] > MAX_PRICE:
-                    print(f"    {ticker} ecarte : prix {result['price']}€ > {MAX_PRICE}€")
-                    continue
                 sector_results.append(result)
             time.sleep(0.3)
 
@@ -451,7 +452,6 @@ def get_ai_analysis(stocks: list[dict]) -> dict:
         )
         raw = resp.choices[0].message.content.strip()
 
-        # Nettoyage si markdown
         if raw.startswith("```"):
             raw = raw.split("```")[1]
             if raw.startswith("json"):
@@ -474,9 +474,13 @@ def save_results(stocks: list[dict], ai_map: dict):
     output = []
     for s in stocks:
         ai = ai_map.get(s["ticker"], {})
+        # ✅ CORRECTION : on n'inclut que ACHETER et SURVEILLER
+        signal = ai.get("signal", "SURVEILLER")
+        if signal == "EVITER":
+            continue
         output.append({
             **s,
-            "signal":     ai.get("signal", "SURVEILLER"),
+            "signal":     signal,
             "conviction": ai.get("conviction", 3),
             "resume":     ai.get("resume", "Donnees fondamentales en cours de chargement."),
             "bull_case":  ai.get("bull_case", ""),
