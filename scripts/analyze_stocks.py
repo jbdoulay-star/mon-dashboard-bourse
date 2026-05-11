@@ -26,7 +26,7 @@ AI_MODEL = "gpt-4o"
 
 TR_FEE = 1.0
 TR_FEE_TOTAL = 2.0
-MIN_GAIN_PCT = 1.0   # ✅ CORRIGE : était 2.5, trop restrictif
+MIN_GAIN_PCT = 1.0
 MAX_PRICE = 250.0
 
 PEA_UNIVERSE = {
@@ -48,16 +48,13 @@ PEA_UNIVERSE = {
         ("MGI.PA",      "MGI Digital"),
         ("TIT.MI",      "Telecom Italia"),
         ("TEP.PA",      "Teleperformance"),
-        ("ITRK.PA",     "Intertek"),
         ("OVH.PA",      "OVHcloud"),
         ("BIGBEN.PA",   "BigBen Interactive"),
         ("AUBAY.PA",    "Aubay"),
         ("TXCOM.PA",    "Txcom"),
-        ("GENY.PA",     "Genoway"),
         ("INFE.PA",     "Infotel"),
-        ("ALTAV.PA",    "Altamir"),
         ("WGRD.PA",     "Wavestone"),
-        ("DASSYS.PA",   "Dassault Systemes"),
+        ("DSY.PA",      "Dassault Systemes"),
         ("HEX1V.HE",    "Hexagon"),
         ("TEMN.SW",     "Temenos"),
         ("ALSO.SW",     "Also Holding"),
@@ -83,15 +80,10 @@ PEA_UNIVERSE = {
         ("INGA.AS",     "ING Groep"),
         ("EXO.MI",      "Exor"),
         ("SCOR.PA",     "SCOR"),
-        ("LFC.PA",      "La Francaise des Jeux"),
         ("FDJ.PA",      "Francaise des Jeux"),
         ("CRBP2.PA",    "Credit Agricole Brie Picardie"),
         ("MRM.PA",      "MRM"),
         ("TIKR.PA",     "Tikehau Capital"),
-        ("SFCA.PA",     "Societe Fonciere Lyonnaise"),
-        ("GENX.PA",     "Generali"),
-        ("BNPP.PA",     "BNP Paribas"),
-        ("BPCE.PA",     "BPCE"),
         ("CIC.PA",      "CIC"),
     ],
     "Sante": [
@@ -104,21 +96,16 @@ PEA_UNIVERSE = {
         ("LNA.PA",      "LNA Sante"),
         ("DBV.PA",      "DBV Technologies"),
         ("NOVN.SW",     "Novartis"),
-        ("ALCRB.PA",    "Carbios"),
         ("ELIS.PA",     "Elis"),
         ("ORPEA.PA",    "Orpea"),
-        ("HLAG.PA",     "Hapag Lloyd"),
-        ("MEDCL.PA",    "Mediclever"),
         ("VALNEVA.PA",  "Valneva"),
         ("GMED.PA",     "Guerbet"),
         ("IPHA.PA",     "Innate Pharma"),
         ("GENFIT.PA",   "Genfit"),
-        ("HYBRIGENICS.PA", "Hybrigenics"),
         ("NANOB.PA",    "Nanobiotix"),
         ("ABIVAX.PA",   "Abivax"),
         ("ONXEO.PA",    "Onxeo"),
         ("TXPA.PA",     "Transgene"),
-        ("SHAM.PA",     "Sham"),
         ("BALN.SW",     "Baloise"),
     ],
     "Energie": [
@@ -137,13 +124,9 @@ PEA_UNIVERSE = {
         ("VLTSA.PA",    "Voltalia"),
         ("NEOEN.PA",    "Neoen"),
         ("MCPHY.PA",    "McPhy Energy"),
-        ("ALTUV.PA",    "Altur Investissement"),
         ("OMV.VI",      "OMV"),
         ("ALD.PA",      "ALD Automotive"),
-        ("SMIA.PA",     "SM Industries"),
         ("ALBIOMA.PA",  "Albioma"),
-        ("VALMY.PA",    "Valmy"),
-        ("GFCM.PA",     "Gecina"),
     ],
     "Industrie": [
         ("AI.PA",       "Air Liquide"),
@@ -159,8 +142,6 @@ PEA_UNIVERSE = {
         ("AF.PA",       "Air France-KLM"),
         ("ABB.ST",      "ABB"),
         ("LHN.SW",      "Holcim"),
-        ("HEIO.AS",     "Heineken"),
-        ("SHL.DE",      "Siemens Healthineers"),
         ("MBG.DE",      "Mercedes-Benz"),
         ("BMW.DE",      "BMW"),
         ("VOW3.DE",     "Volkswagen"),
@@ -168,22 +149,15 @@ PEA_UNIVERSE = {
         ("KNEBV.HE",    "Kone"),
         ("WRT1V.HE",    "Wartsila"),
         ("STERV.HE",    "Stora Enso"),
-        ("TKTT.PA",     "Tikehau Capital"),
         ("FGR.PA",      "Figeac Aero"),
         ("HAULOTTE.PA", "Haulotte"),
-        ("SK.PA",       "Sogefi"),
-        ("BOI.PA",      "Bois Sauvage"),
         ("DEME.BR",     "DEME Group"),
-        ("FAGR.PA",     "Fagron"),
         ("EIFF.PA",     "Eiffage"),
-        ("BVIC.PA",     "Bureau Veritas"),
+        ("BVI.PA",      "Bureau Veritas"),
         ("GET.PA",      "Getlink"),
         ("MANU.PA",     "Manitou"),
         ("LISI.PA",     "Lisi"),
-        ("LACR.PA",     "Lacroix"),
         ("GL.PA",       "GL Events"),
-        ("ATE.PA",      "Ateme"),
-        ("PARRO.PA",    "Parrot"),
         ("FLEURY.PA",   "Fleury Michon"),
     ],
     "Luxe & Conso": [
@@ -197,22 +171,12 @@ PEA_UNIVERSE = {
         ("NESN.SW",     "Nestle"),
         ("CARLB.CO",    "Carlsberg"),
         ("SMCP.PA",     "SMCP"),
-        ("ALCLA.PA",    "Clasquin"),
         ("FNAC.PA",     "Fnac Darty"),
         ("CA.PA",       "Carrefour"),
         ("RCO.PA",      "Remy Cointreau"),
-        ("VIV.PA",      "Vivendi"),
-        ("TFI.PA",      "TF1"),
-        ("NRJ.PA",      "NRJ Group"),
-        ("MMB.PA",      "Lagardere"),
-        ("BELO.PA",     "Belo"),
-        ("AURES.PA",    "Aures Technologies"),
         ("BEN.PA",      "Beneteau"),
         ("CDA.PA",      "Compagnie des Alpes"),
-        ("AMBU.CO",     "Ambu"),
-        ("DSV.CO",      "DSV"),
-        ("GMAB.CO",     "Genmab"),
-        ("ORSTED.CO",   "Orsted"),
+        ("AURES.PA",    "Aures Technologies"),
     ],
     "Automobile": [
         ("STLA.MI",     "Stellantis"),
@@ -220,13 +184,10 @@ PEA_UNIVERSE = {
         ("LI.PA",       "Plastic Omnium"),
         ("VLEO.PA",     "Valeo"),
         ("GTX.PA",      "Garrett Motion"),
-        ("FCHA.PA",     "FCH Groupe"),
         ("MBG.DE",      "Mercedes-Benz"),
         ("BMW.DE",      "BMW"),
         ("VOW3.DE",     "Volkswagen"),
-        ("PUM.DE",      "Puma"),
         ("ELCO.PA",     "Electra"),
-        ("MLBIO.PA",    "Bilendi"),
     ],
     "Immobilier": [
         ("URW.AS",      "Unibail-Rodamco"),
@@ -236,35 +197,26 @@ PEA_UNIVERSE = {
         ("MRM.PA",      "MRM"),
         ("ALTAG.PA",    "Altarea"),
         ("NSE.PA",      "Nexity"),
-        ("ICAD.PA",     "iCAD"),
-        ("IDL.PA",      "ID Logistics"),
-        ("SFCA.PA",     "Societe Fonciere Lyonnaise"),
         ("MONTEA.BR",   "Montea"),
         ("COFB.BR",     "Cofinimmo"),
         ("WDP.BR",      "Warehouses De Pauw"),
         ("GFCM.PA",     "Gecina"),
-        ("EURO.PA",     "Eurocommercial"),
         ("MERY.PA",     "Mercialys"),
     ],
     "Telecom & Media": [
         ("ORA.PA",      "Orange"),
         ("TEF.MC",      "Telefonica"),
         ("DTE.DE",      "Deutsche Telekom"),
-        ("TLIT.MI",     "Telecom Italia"),
         ("PRX.AS",      "Prosus"),
         ("PUBP.PA",     "Publicis"),
         ("MMB.PA",      "Lagardere"),
         ("TEP.PA",      "Teleperformance"),
-        ("ALTEV.PA",    "Alten"),
         ("PROX.BR",     "Proximus"),
-        ("TCFG.PA",     "Technicolor"),
         ("ILD.PA",      "Iliad"),
-        ("SESG.PA",     "SES"),
         ("NRJ.PA",      "NRJ Group"),
         ("TFI.PA",      "TF1"),
         ("M6.PA",       "M6 Metropole Television"),
         ("VIV.PA",      "Vivendi"),
-        ("CANAL.PA",    "Canal Plus"),
     ],
     "Materiaux & Chimie": [
         ("AIR.PA",      "Airbus"),
@@ -278,18 +230,28 @@ PEA_UNIVERSE = {
         ("WACKER.DE",   "Wacker Chemie"),
         ("BASF.DE",     "BASF"),
         ("LANXE.DE",    "Lanxess"),
-        ("COIM.MI",     "Coima"),
-        ("PEC.PA",      "Paref"),
         ("DEINF.PA",    "Derichebourg"),
-        ("MLCFD.PA",    "Clasquin"),
-        ("SEFER.PA",    "Séché Environnement"),
         ("LIN.DE",      "Linde"),
     ],
 }
 
 SECTORS = list(PEA_UNIVERSE.keys())
-TOP_PER_SECTOR = 3   # ✅ CORRIGE : était 2, augmenté pour avoir plus de candidats
+TOP_PER_SECTOR = 3
 FINAL_COUNT = 20
+
+
+# ============================================================
+# FONCTION UTILITAIRE - CORRECTION PRINCIPALE
+# ============================================================
+
+def to_float(val):
+    """Convertit une valeur en float de manière sécurisée."""
+    try:
+        if val is None:
+            return None
+        return float(val)
+    except (ValueError, TypeError):
+        return None
 
 
 def get_stock_data(ticker: str) -> dict | None:
@@ -410,32 +372,32 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 
     ts = min(45, ts)
 
-    # Score fondamental (0-40)
-    pe     = info.get("trailingPE") or info.get("forwardPE")
-    roe    = info.get("returnOnEquity")
-    rev_g  = info.get("revenueGrowth")
-    earn_g = info.get("earningsGrowth")
-    de     = info.get("debtToEquity")
-    div    = info.get("dividendYield")
-    beta   = info.get("beta")
-    target = info.get("targetMeanPrice")
+    # Score fondamental (0-40) - CORRECTION : to_float() sur toutes les métriques
+    pe     = to_float(info.get("trailingPE") or info.get("forwardPE"))
+    roe    = to_float(info.get("returnOnEquity"))
+    rev_g  = to_float(info.get("revenueGrowth"))
+    earn_g = to_float(info.get("earningsGrowth"))
+    de     = to_float(info.get("debtToEquity"))
+    div    = to_float(info.get("dividendYield"))
+    beta   = to_float(info.get("beta"))
+    target = to_float(info.get("targetMeanPrice"))
     mktcap = info.get("marketCap")
 
     upside = ((target / price) - 1) * 100 if target and price > 0 else None
 
     fs = 20
-    if pe:
+    if pe is not None:
         if   10 <= pe <= 18: fs += 10
         elif 18 < pe <= 28:  fs += 5
         elif pe > 28:        fs -= 5
         elif 0 < pe < 10:    fs += 7
 
-    if roe   and roe > 0.15:     fs += 6
-    if rev_g and rev_g > 0.05:   fs += 6
-    if earn_g and earn_g > 0.05: fs += 5
-    if de    and de < 80:        fs += 3
-    if upside and upside > 15:   fs += 5
-    elif upside and upside > 8:  fs += 3
+    if roe   is not None and roe > 0.15:     fs += 6
+    if rev_g is not None and rev_g > 0.05:   fs += 6
+    if earn_g is not None and earn_g > 0.05: fs += 5
+    if de    is not None and de < 80:        fs += 3
+    if upside is not None and upside > 15:   fs += 5
+    elif upside is not None and upside > 8:  fs += 3
 
     fs = min(40, max(0, fs))
 
@@ -476,11 +438,9 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     fees_pct = TR_FEE_TOTAL / entry * 100
     net_gain = round((reward / entry * 100) - fees_pct, 2)
 
-    # ✅ CORRIGE : seuils assouplis, et on ne retourne plus None si pas pertinent
-    # On pénalise juste le score pour que les meilleures actions remontent naturellement
     pertinent = net_gain >= MIN_GAIN_PCT and rr >= 1.0
     if not pertinent:
-        total = max(0, total - 15)  # pénalité au lieu de None
+        total = max(0, total - 15)
 
     return {
         "ticker":     ticker,
@@ -506,11 +466,11 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         "support":    round(support, 2),
         "resist":     round(resist, 2),
         "vol_rel":    round(vol_rel, 2),
-        "pe":         round(pe, 1) if pe else None,
-        "roe":        round(roe * 100, 1) if roe else None,
-        "upside":     round(upside, 1) if upside else None,
-        "div":        round(div * 100, 2) if div else None,
-        "beta":       round(beta, 2) if beta else None,
+        "pe":         round(pe, 1) if pe is not None else None,
+        "roe":        round(roe * 100, 1) if roe is not None else None,
+        "upside":     round(upside, 1) if upside is not None else None,
+        "div":        round(div * 100, 2) if div is not None else None,
+        "beta":       round(beta, 2) if beta is not None else None,
         "mktcap":     mktcap,
         "entry":      entry,
         "entry_tip":  entry_tip,
@@ -629,7 +589,6 @@ def save_results(stocks: list[dict], ai_map: dict):
     for s in stocks:
         ai = ai_map.get(s["ticker"], {})
         signal = ai.get("signal", "SURVEILLER")
-        # ✅ On garde toutes les actions, le front-end fait le tri si besoin
         output.append({
             **s,
             "signal":     signal,
