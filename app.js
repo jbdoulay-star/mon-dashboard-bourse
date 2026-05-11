@@ -12,11 +12,9 @@ async function loadData() {
 function render(data) {
   document.getElementById('loading').classList.add('hidden');
 
-  // Date
   document.getElementById('update-date').textContent =
     `Mise à jour : ${data.generated_at || data.date}`;
 
-  // Stats bar
   const statsBar = document.getElementById('stats-bar');
   if (data.meta) {
     statsBar.innerHTML = `
@@ -36,7 +34,6 @@ function render(data) {
     statsBar.classList.remove('hidden');
   }
 
-  // Cards
   const grid = document.getElementById('stocks-grid');
   grid.innerHTML = data.stocks.map((s, i) => buildCard(s, i)).join('');
 }
@@ -44,14 +41,58 @@ function render(data) {
 function buildCard(s, rank) {
   const chgClass = s.chg1d > 0 ? 'positive' : s.chg1d < 0 ? 'negative' : 'neutral';
   const rsiClass = s.rsi > 70 ? 'negative' : s.rsi < 30 ? 'positive' : 'neutral';
-  const conf     = Math.round((s.score_total || 50));
-  
-  const badgeClass = s.signal === 'ACHAT'   ? 'badge-buy'
-                   : s.signal === 'ATTENTE' ? 'badge-wait'
-                   : 'badge-avoid';
+  const conf     = Math.round(s.score || s.score_total || 50);
 
-  const macdIcon = s.macd_hist > 0 ? '▲' : '▼';
+  const badgeClass = s.signal === 'ACHETER' ? 'badge-buy'
+                   : s.signal === 'SURVEILLER' ? 'badge-wait'
+                   : s.signal === 'EVITER' ? 'badge-avoid'
+                   : 'badge-wait';
+
+  const macdIcon  = s.macd_hist > 0 ? '▲' : '▼';
   const macdClass = s.macd_hist > 0 ? 'positive' : 'negative';
+
+  // Gain net : priorité au champ Python, fallback calcul JS
+  const netGain = (s.net_gain !== undefined && s.net_gain !== null)
+    ? s.net_gain
+    : (s.net_gain_pct !== undefined && s.net_gain_pct !== null)
+      ? s.net_gain_pct
+      : (s.target_1m && s.entry)
+        ? parseFloat((((s.target_1m - s.entry) / s.entry * 100) - 2).toFixed(2))
+        : null;
+
+  const netGainHTML = netGain !== null
+    ? `<span class="${netGain > 0 ? 'positive' : 'negative'}">
+         ${netGain > 0 ? '+' : ''}${netGain.toFixed(2)}%
+       </span>`
+    : `<span style="color:#888">N/A</span>`;
+
+  // Fondamentaux : champs Python nouveaux + fallback ancien champ
+  const resumeLine = s.resume && s.resume !== 'Donnees fondamentales en cours de chargement.'
+    ? `<p style="margin:0 0 6px 0;color:#cbd5e1;font-size:0.82rem;line-height:1.5;">${s.resume}</p>`
+    : s.ai_fundamentals
+      ? `<p style="margin:0 0 6px 0;color:#cbd5e1;font-size:0.82rem;line-height:1.5;">${s.ai_fundamentals}</p>`
+      : `<p style="margin:0 0 6px 0;color:#888;font-size:0.82rem;">Analyse en cours...</p>`;
+
+  const bullLine = s.bull_case
+    ? `<p style="margin:0 0 4px 0;font-size:0.80rem;">
+         <span style="color:#4ade80;">▲ Optimiste :</span>
+         <span style="color:#94a3b8;"> ${s.bull_case}</span>
+       </p>`
+    : '';
+
+  const bearLine = s.bear_case
+    ? `<p style="margin:0;font-size:0.80rem;">
+         <span style="color:#f87171;">▼ Pessimiste :</span>
+         <span style="color:#94a3b8;"> ${s.bear_case}</span>
+       </p>`
+    : '';
+
+  // Analyse chartiste : champ Python nouveau + fallback ancien champ
+  const chartisteLine = s.chartiste && s.chartiste !== ''
+    ? s.chartiste
+    : s.ai_chartist && s.ai_chartist !== '—'
+      ? s.ai_chartist
+      : s.entry_tip || 'Analyse chartiste en cours...';
 
   return `
     <div class="card">
@@ -101,10 +142,18 @@ function buildCard(s, rank) {
       </div>
 
       <div class="section-title">📊 Fondamentaux</div>
-      <div class="analysis-block">${s.ai_fundamentals || '—'}</div>
+      <div class="analysis-block">
+        ${resumeLine}
+        ${bullLine}
+        ${bearLine}
+      </div>
 
       <div class="section-title">📉 Analyse chartiste</div>
-      <div class="analysis-block">${s.ai_chartist || '—'}</div>
+      <div class="analysis-block">
+        <p style="margin:0;color:#cbd5e1;font-size:0.82rem;line-height:1.6;">
+          ${chartisteLine}
+        </p>
+      </div>
 
       <div class="section-title">🎯 Points d'entrée / sortie</div>
       <div class="trade-block">
@@ -125,10 +174,7 @@ function buildCard(s, rank) {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.8rem">
         <span class="badge ${badgeClass}">${s.signal || '—'}</span>
         <span style="font-size:.75rem;color:#888">
-          Gain net estimé : 
-          <span class="${s.net_gain_pct > 0 ? 'positive' : 'negative'}">
-            ${s.net_gain_pct > 0 ? '+' : ''}${s.net_gain_pct?.toFixed(2)}%
-          </span>
+          Gain net estimé : ${netGainHTML}
         </span>
       </div>
 
