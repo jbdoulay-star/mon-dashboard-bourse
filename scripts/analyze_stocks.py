@@ -369,6 +369,8 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 # ETAPE 3 : SELECTION PAR SECTEUR
 # ============================================================
 
+MAX_PRICE = 250.0  # Filtre prix max Trade Republic
+
 def select_candidates() -> list[dict]:
     all_results = []
     for sector, stocks in PEA_UNIVERSE.items():
@@ -378,6 +380,10 @@ def select_candidates() -> list[dict]:
             print(f"    Analyse {ticker}...")
             result = score_stock(ticker, name, sector)
             if result:
+                # FILTRE : on ecarte les actions > 250€
+                if result["price"] > MAX_PRICE:
+                    print(f"    {ticker} ecarte : prix {result['price']}€ > {MAX_PRICE}€")
+                    continue
                 sector_results.append(result)
             time.sleep(0.3)
 
@@ -399,9 +405,13 @@ def build_prompt(stocks: list[dict]) -> str:
     for i, s in enumerate(stocks, 1):
         lines.append(
             f"{i}. {s['name']} ({s['ticker']}) | Score={s['score']}/100 | "
-            f"Prix={s['price']} | RSI={s['rsi']} | Tendance={s['trend']:+.1f}% | "
+            f"Prix={s['price']}EUR | RSI={s['rsi']} | Tendance={s['trend']:+.1f}% | "
             f"R/R={s['rr']} | Gain net={s['net_gain']}% | "
-            f"Entree={s['entry']} | Stop={s['stop_loss']} | Obj={s['target_1m']}"
+            f"Entree={s['entry']} | Stop={s['stop_loss']} | Obj={s['target_1m']} | "
+            f"PE={s.get('pe','N/A')} | ROE={s.get('roe','N/A')}% | "
+            f"Upside analyst={s.get('upside','N/A')}% | Div={s.get('div','N/A')}% | "
+            f"MA50={'AU-DESSUS' if s.get('ma50') and s['price'] > s['ma50'] else 'EN-DESSOUS'} | "
+            f"BB_pos={s.get('bb_pos','N/A')} | ATR%={s.get('atr_pct','N/A')}"
         )
     stocks_text = "\n".join(lines)
 
@@ -415,8 +425,11 @@ Pour chacune, fournis en JSON un tableau "analyses" avec ces champs :
 - ticker (string)
 - signal (string): "ACHETER", "SURVEILLER" ou "EVITER"
 - conviction (int): 1 a 5
-- resume (string): 2-3 phrases max sur le contexte, catalyseurs et risques
-- conseil (string): conseil operationnel precis (timing entree, gestion position)
+- resume (string): 1-2 phrases resumant les fondamentaux cles (valorisation, croissance, sante financiere)
+- bull_case (string): 1 phrase - raison principale scenario optimiste
+- bear_case (string): 1 phrase - raison principale scenario pessimiste
+- chartiste (string): 3-4 phrases max : tendance actuelle, conseil precis sur timing entree (attendre rebond / franchissement seuil / stabilisation), zone surveillance, vigilance stop-loss
+- conseil (string): conseil operationnel court (1 phrase)
 
 Reponds UNIQUEMENT avec le JSON valide, sans markdown, sans explication."""
 
@@ -465,7 +478,10 @@ def save_results(stocks: list[dict], ai_map: dict):
             **s,
             "signal":     ai.get("signal", "SURVEILLER"),
             "conviction": ai.get("conviction", 3),
-            "resume":     ai.get("resume", "Analyse IA non disponible."),
+            "resume":     ai.get("resume", "Donnees fondamentales en cours de chargement."),
+            "bull_case":  ai.get("bull_case", ""),
+            "bear_case":  ai.get("bear_case", ""),
+            "chartiste":  ai.get("chartiste", ""),
             "conseil":    ai.get("conseil", s["entry_tip"]),
         })
 
