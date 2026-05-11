@@ -199,7 +199,7 @@ def select_candidates() -> list[dict]:
     all_stocks = []
     for sector, tickers in PEA_UNIVERSE.items():
         for ticker, name in tickers:
-            print(f"  Scoring {ticker}...", end="
+            print(f"  Scoring {ticker}...", end="", flush=True)
 ")
             result = score_stock(ticker, name, sector)
             if result:
