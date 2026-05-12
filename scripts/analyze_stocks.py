@@ -554,7 +554,29 @@ def get_ai_analysis(stocks: list[dict]) -> dict:
         print("  Pas de cle API - analyse IA ignoree")
         return {}
 
-    prompt = build_prompt(stocks)
+    # Prompt raccourci pour eviter la troncature
+    prompt = f"""Analyse ces {len(stocks)} actions boursières. Réponds UNIQUEMENT en JSON valide.
+
+Actions:
+{chr(10).join([f"- {s['ticker']} ({s['name']}): PE={s.get('pe','N/A')}, ROE={s.get('roe','N/A')}%, upside={s.get('upside','N/A')}%, trend={s.get('trend','N/A')}%, RSI={s.get('rsi','N/A')}, entry={s.get('entry','N/A')}, stop={s.get('stop_loss','N/A')}, target={s.get('target_1m','N/A')}" for s in stocks])}
+
+Format JSON STRICT :
+{{
+  "analyses": [
+    {{
+      "ticker": "XXX.XX",
+      "signal": "ACHETER|SURVEILLER|EVITER",
+      "conviction": 1-5,
+      "resume": "Max 15 mots sur valorisation et fondamentaux.",
+      "bull_case": "Max 10 mots.",
+      "bear_case": "Max 10 mots.",
+      "chartiste": "Max 20 mots avec entry, stop et target."
+    }}
+  ]
+}}
+
+Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte avant ou après."""
+
     print(f"  Appel MammouthIA ({AI_MODEL})...")
 
     try:
@@ -562,7 +584,7 @@ def get_ai_analysis(stocks: list[dict]) -> dict:
             model=AI_MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            max_tokens=6000,
+            max_tokens=4000,
         )
         raw = resp.choices[0].message.content.strip()
         finish_reason = resp.choices[0].finish_reason
@@ -601,7 +623,6 @@ def get_ai_analysis(stocks: list[dict]) -> dict:
     except Exception as e:
         print(f"  Erreur IA : {e}")
         return {}
-
 
 # ============================================================
 # SAUVEGARDE JSON
