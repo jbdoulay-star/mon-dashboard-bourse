@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T17:36:13Z",
+  "updated_at": "2026-05-12T17:55:13Z",
   "date": "2026-05-12",
   "count": 20,
   "stocks": [
@@ -46,11 +46,11 @@
       "score_mom": 7,
       "signal": "ACHETER",
       "conviction": 4,
-      "resume": "Adidas affiche une valorisation raisonnable avec un PE de 18.4 et un ROE solide de 22.9%. La croissance est soutenue par un upside analyste de 38.5%.",
-      "bull_case": "La marque bénéficie d'une forte demande et d'une amélioration des marges.",
-      "bear_case": "Une baisse de la consommation pourrait impacter les ventes.",
-      "chartiste": "La tendance est haussière (+10.0%) avec un RSI équilibré à 49.6. Entrée recommandée à 142.0 EUR, stop-loss à 129.84 EUR. Surveiller la zone autour de 155.82 EUR pour des prises de profit.",
-      "conseil": "Achetez maintenant avec un stop serré pour limiter les risques."
+      "resume": "Bonne valorisation et croissance solide.",
+      "bull_case": "Upside attractif.",
+      "bear_case": "RSI neutre.",
+      "chartiste": "Entrée 142.0, stop 129.84, cible 155.82.",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "DSY.PA",
@@ -94,12 +94,12 @@
       "score_fond": 38,
       "score_mom": 5,
       "signal": "ACHETER",
-      "conviction": 5,
-      "resume": "Dassault Systèmes présente un PE attractif de 20.9 et un ROE de 13.4%, avec une tendance haussière solide (+16.3%).",
-      "bull_case": "La demande pour ses solutions logicielles reste robuste dans un marché en expansion.",
-      "bear_case": "Une concurrence accrue pourrait limiter la croissance future.",
-      "chartiste": "La tendance est clairement haussière avec un RSI à 53.9. Entrée idéale à 19.26 EUR, stop-loss à 17.76 EUR. Objectif à 22.08 EUR à surveiller.",
-      "conseil": "Achetez sur faiblesse et surveillez la résistance à 22.08 EUR."
+      "conviction": 3,
+      "resume": "Valorisation correcte, ROE modéré.",
+      "bull_case": "Upside intéressant.",
+      "bear_case": "PE élevé.",
+      "chartiste": "Entrée 19.26, stop 17.76, cible 22.08.",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "AIR.PA",
@@ -142,13 +142,13 @@
       "score_tech": 38,
       "score_fond": 39,
       "score_mom": 5,
-      "signal": "ACHETER",
-      "conviction": 4,
-      "resume": "Airbus bénéficie d'un PE de 27.3 et d'un ROE de 19.7%, avec un upside analyste de 21.3%.",
-      "bull_case": "La reprise du secteur aéronautique soutient les commandes et les revenus.",
-      "bear_case": "Les tensions géopolitiques ou économiques pourraient freiner les livraisons.",
-      "chartiste": "La tendance est haussière (+11.6%) avec un RSI à 52.1. Entrée recommandée à 172.52 EUR, stop-loss à 157.13 EUR. Zone cible à 191.62 EUR.",
-      "conseil": "Achetez maintenant pour profiter de la reprise du secteur aérien."
+      "signal": "SURVEILLER",
+      "conviction": 3,
+      "resume": "PE élevé, croissance correcte.",
+      "bull_case": "Upside raisonnable.",
+      "bear_case": "RSI neutre.",
+      "chartiste": "Entrée 172.52, stop 157.13, cible 191.62.",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "KBC.BR",
@@ -191,13 +191,13 @@
       "score_tech": 30,
       "score_fond": 39,
       "score_mom": 5,
-      "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "KBC Groupe affiche un PE attractif de 12.8 et un ROE de 13.6%, mais la tendance reste modérée (+5.9%).",
-      "bull_case": "La banque bénéficie d'une bonne rentabilité et d'un dividende élevé.",
-      "bear_case": "Une hausse des taux pourrait peser sur ses marges.",
-      "chartiste": "La tendance est haussière mais lente, avec un RSI à 35.1. Entrée possible à 111.7 EUR, stop-loss à 105.45 EUR. Surveiller la zone de 119.57 EUR.",
-      "conseil": "Surveillez une accélération avant de prendre position."
+      "signal": "EVITER",
+      "conviction": 2,
+      "resume": "Upside limité, RSI faible.",
+      "bull_case": "PE attractif.",
+      "bear_case": "Croissance faible.",
+      "chartiste": "Entrée 111.7, stop 105.45, cible 119.57.",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "INGA.AS",
@@ -240,13 +240,13 @@
       "score_tech": 40,
       "score_fond": 40,
       "score_mom": 7,
-      "signal": "EVITER",
-      "conviction": 2,
-      "resume": "ING affiche un PE bas de 11.5 et un ROE solide de 16.6%, mais le gain net est négatif (-7.87%).",
-      "bull_case": "La banque est bien positionnée pour profiter de la hausse des taux.",
-      "bear_case": "La volatilité des marchés pourrait peser sur ses résultats.",
-      "chartiste": "La tendance est haussière (+14.3%) avec un RSI à 56.2. Cependant, le ratio risque/rendement est défavorable. Stop recommandé à 23.66 EUR.",
-      "conseil": "Évitez pour l'instant en raison du risque élevé."
+      "signal": "SURVEILLER",
+      "conviction": 3,
+      "resume": "ROE solide, valorisation correcte.",
+      "bull_case": "Trend positif.",
+      "bear_case": "Upside limité.",
+      "chartiste": "Entrée 25.16, stop 23.66, cible 25.18.",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "SOP.PA",
@@ -291,11 +291,11 @@
       "score_mom": 5,
       "signal": "ACHETER",
       "conviction": 5,
-      "resume": "Sopra Steria affiche un PE très attractif de 8.8 et un upside analyste élevé de 46.2%.",
-      "bull_case": "La société est bien positionnée pour profiter de la digitalisation croissante.",
-      "bear_case": "Une pression sur les marges pourrait limiter la croissance.",
-      "chartiste": "La tendance est haussière (+14.6%) avec un RSI à 52.8. Entrée idéale à 134.0 EUR, stop-loss à 118.57 EUR. Objectif à 140.84 EUR.",
-      "conseil": "Achetez maintenant pour profiter d'une valorisation attractive."
+      "resume": "PE bas, upside élevé.",
+      "bull_case": "Upside très attractif.",
+      "bear_case": "RSI neutre.",
+      "chartiste": "Entrée 134.0, stop 118.57, cible 140.84.",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "UMI.BR",
@@ -340,11 +340,11 @@
       "score_mom": 15,
       "signal": "EVITER",
       "conviction": 1,
-      "resume": "Umicore affiche un PE de 14.1 et un ROE de 18.6%, mais l'upside analyste est négatif (-5.9%).",
-      "bull_case": "La demande pour les matériaux avancés pourrait soutenir la croissance.",
-      "bear_case": "La volatilité des matières premières pourrait peser sur les marges.",
-      "chartiste": "La tendance est haussière (+24.6%) mais le RSI est suracheté à 90.0. Stop recommandé à 20.3 EUR.",
-      "conseil": "Évitez en raison du risque de correction imminent."
+      "resume": "Upside négatif, RSI élevé.",
+      "bull_case": "Trend fort.",
+      "bear_case": "Surachat évident.",
+      "chartiste": "Entrée 22.01, stop 20.3, cible 21.79.",
+      "conseil": "Attendre pull-back ~2% (RSI eleve)"
     },
     {
       "ticker": "DEME.BR",
@@ -389,11 +389,11 @@
       "score_mom": 10,
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "DEME affiche un PE de 16.0 et un ROE de 15.3%, avec une tendance modérée (+6.2%).",
-      "bull_case": "La société bénéficie de la croissance des projets d'infrastructure.",
-      "bear_case": "Une baisse des investissements publics pourrait limiter la demande.",
-      "chartiste": "La tendance est haussière avec un RSI à 64.1. Entrée possible à 193.8 EUR, stop-loss à 183.15 EUR. Objectif à 200.06 EUR à surveiller.",
-      "conseil": "Surveillez une confirmation de la tendance avant d'acheter."
+      "resume": "Upside modéré, valorisation correcte.",
+      "bull_case": "ROE solide.",
+      "bear_case": "RSI élevé.",
+      "chartiste": "Entrée 193.8, stop 183.15, cible 200.06.",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "TEMN.SW",
@@ -436,13 +436,13 @@
       "score_tech": 20,
       "score_fond": 40,
       "score_mom": 7,
-      "signal": "ACHETER",
-      "conviction": 4,
-      "resume": "Temenos affiche un ROE exceptionnel de 53.0% et un upside analyste de 14.7%.",
-      "bull_case": "La demande pour ses solutions bancaires numériques reste forte.",
-      "bear_case": "La concurrence pourrait peser sur ses marges.",
-      "chartiste": "La tendance est haussière (+8.4%) avec un RSI à 35.9. Entrée idéale à 72.1 EUR, stop-loss à 65.54 EUR. Objectif à 79.34 EUR.",
-      "conseil": "Achetez sur faiblesse pour maximiser le potentiel de hausse."
+      "signal": "SURVEILLER",
+      "conviction": 3,
+      "resume": "ROE exceptionnel, PE élevé.",
+      "bull_case": "ROE très attractif.",
+      "bear_case": "RSI faible.",
+      "chartiste": "Entrée 72.1, stop 65.54, cible 79.34.",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "BNP.PA",
@@ -485,12 +485,12 @@
       "score_tech": 38,
       "score_fond": 40,
       "score_mom": 4,
-      "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "signal": "ACHETER",
+      "conviction": 4,
+      "resume": "PE bas, upside attractif.",
+      "bull_case": "Upside intéressant.",
+      "bear_case": "ROE faible.",
+      "chartiste": "Entrée 90.41, stop 84.06, cible 94.43.",
       "conseil": "Zone d'entree actuelle correcte"
     },
     {
@@ -536,10 +536,10 @@
       "score_mom": 12,
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "resume": "Upside limité, valorisation correcte.",
+      "bull_case": "Trend positif.",
+      "bear_case": "Upside faible.",
+      "chartiste": "Entrée 24.0, stop 22.03, cible 25.11.",
       "conseil": "Zone d'entree actuelle correcte"
     },
     {
@@ -584,11 +584,11 @@
       "score_fond": 36,
       "score_mom": 10,
       "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "conviction": 2,
+      "resume": "Upside limité, ROE inconnu.",
+      "bull_case": "Trend positif.",
+      "bear_case": "Upside faible.",
+      "chartiste": "Entrée 29.8, stop 28.8, cible 29.68.",
       "conseil": "Zone d'entree actuelle correcte"
     },
     {
@@ -634,10 +634,10 @@
       "score_mom": 7,
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "resume": "ROE élevé, upside limité.",
+      "bull_case": "ROE exceptionnel.",
+      "bear_case": "Upside faible.",
+      "chartiste": "Entrée 204.0, stop 191.86, cible 208.55.",
       "conseil": "Zone d'entree actuelle correcte"
     },
     {
@@ -681,12 +681,12 @@
       "score_tech": 30,
       "score_fond": 37,
       "score_mom": 12,
-      "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "signal": "ACHETER",
+      "conviction": 5,
+      "resume": "PE bas, trend fort.",
+      "bull_case": "Trend très positif.",
+      "bear_case": "RSI élevé.",
+      "chartiste": "Entrée 65.95, stop 60.25, cible 67.1.",
       "conseil": "Attendre pull-back ~2% (RSI eleve)"
     },
     {
@@ -732,10 +732,10 @@
       "score_mom": 7,
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "resume": "Upside limité, valorisation correcte.",
+      "bull_case": "Trend positif.",
+      "bear_case": "Upside faible.",
+      "chartiste": "Entrée 27.3, stop 26.02, cible 27.22.",
       "conseil": "Zone d'entree actuelle correcte"
     },
     {
@@ -781,10 +781,10 @@
       "score_mom": 2,
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "resume": "Upside modéré, ROE faible.",
+      "bull_case": "Trend positif.",
+      "bear_case": "ROE faible.",
+      "chartiste": "Entrée 39.82, stop 36.77, cible 44.75.",
       "conseil": "Zone d'entree actuelle correcte"
     },
     {
@@ -828,12 +828,12 @@
       "score_tech": 37,
       "score_fond": 38,
       "score_mom": 2,
-      "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "signal": "EVITER",
+      "conviction": 2,
+      "resume": "ROE négatif, upside limité.",
+      "bull_case": "PE attractif.",
+      "bear_case": "ROE faible.",
+      "chartiste": "Entrée 7.12, stop 6.66, cible 7.4.",
       "conseil": "Zone d'entree actuelle correcte"
     },
     {
@@ -879,10 +879,10 @@
       "score_mom": 2,
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "resume": "PE bas, ROE élevé.",
+      "bull_case": "ROE exceptionnel.",
+      "bear_case": "Upside limité.",
+      "chartiste": "Entrée 10.15, stop 9.14, cible 11.1.",
       "conseil": "Zone d'entree actuelle correcte"
     },
     {
@@ -926,12 +926,12 @@
       "score_tech": 20,
       "score_fond": 35,
       "score_mom": 2,
-      "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "signal": "ACHETER",
+      "conviction": 4,
+      "resume": "PE bas, upside attractif.",
+      "bull_case": "Upside intéressant.",
+      "bear_case": "RSI faible.",
+      "chartiste": "Entrée 55.02, stop 51.87, cible 58.28.",
       "conseil": "RSI en survente : entree par tranche possible"
     },
     {
@@ -975,12 +975,12 @@
       "score_tech": 38,
       "score_fond": 26,
       "score_mom": 7,
-      "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Donnees fondamentales en cours de chargement.",
-      "bull_case": "",
-      "bear_case": "",
-      "chartiste": "",
+      "signal": "ACHETER",
+      "conviction": 4,
+      "resume": "Upside élevé, valorisation chère.",
+      "bull_case": "Upside attractif.",
+      "bear_case": "PE élevé.",
+      "chartiste": "Entrée 6.99, stop 6.46, cible 7.18.",
       "conseil": "Zone d'entree actuelle correcte"
     }
   ]
