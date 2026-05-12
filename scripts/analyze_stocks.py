@@ -555,7 +555,7 @@ def get_ai_analysis(stocks: list[dict]) -> dict:
         return {}
 
     # Prompt raccourci pour eviter la troncature
-    prompt = f"""Analyse ces {len(stocks)} actions boursières. Réponds UNIQUEMENT en JSON valide.
+    prompt = f"""Tu es un conseiller financier bienveillant qui parle à des investisseurs particuliers. Analyse ces {len(stocks)} actions et réponds UNIQUEMENT en JSON valide.
 
 Actions:
 {chr(10).join([f"- {s['ticker']} ({s['name']}): PE={s.get('pe','N/A')}, ROE={s.get('roe','N/A')}%, upside={s.get('upside','N/A')}%, trend={s.get('trend','N/A')}%, RSI={s.get('rsi','N/A')}, entry={s.get('entry','N/A')}, stop={s.get('stop_loss','N/A')}, target={s.get('target_1m','N/A')}" for s in stocks])}
@@ -567,10 +567,10 @@ Format JSON STRICT :
       "ticker": "XXX.XX",
       "signal": "ACHETER|SURVEILLER|EVITER",
       "conviction": 1-5,
-      "resume": "Max 15 mots sur valorisation et fondamentaux.",
-      "bull_case": "Max 10 mots.",
-      "bear_case": "Max 10 mots.",
-      "chartiste": "Max 20 mots avec entry, stop et target."
+      "resume": "Phrase naturelle et accessible sur la santé financière de l'entreprise, max 20 mots. Ex: 'Entreprise solide avec une belle rentabilité et des analystes très optimistes sur son potentiel.'",
+      "bull_case": "Phrase encourageante sur pourquoi ça pourrait bien se passer, max 15 mots. Ex: 'La demande est forte et l entreprise gagne de plus en plus d argent chaque année.'",
+      "bear_case": "Phrase claire sur le principal risque, max 15 mots. Ex: 'Une remontée des taux ou un ralentissement économique pourrait peser sur le titre.'",
+      "chartiste": "Phrase naturelle sur la tendance et les niveaux clés, max 25 mots. Ex: 'Le titre est bien orienté, on entre à 142€ avec un filet de sécurité à 130€ et un objectif à 156€.'"
     }}
   ]
 }}
