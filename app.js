@@ -1,3 +1,79 @@
+function indicatorColor(indicator, value) {
+  const v = parseFloat(value);
+  if (isNaN(v)) return '#888888';
+  switch(indicator) {
+    case 'rsi':
+      if (v >= 70) return '#ff1744';
+      if (v >= 60) return '#ff6d00';
+      if (v >= 45) return '#ffd600';
+      if (v >= 30) return '#76ff03';
+      return '#00c853';
+    case 'macd':
+      if (v > 0.5)  return '#00c853';
+      if (v > 0)    return '#76ff03';
+      if (v > -0.5) return '#ffd600';
+      if (v > -1)   return '#ff6d00';
+      return '#ff1744';
+    case 'atr':
+      if (v <= 1.5) return '#00c853';
+      if (v <= 2.5) return '#76ff03';
+      if (v <= 3.5) return '#ffd600';
+      if (v <= 5)   return '#ff6d00';
+      return '#ff1744';
+    case 'bb':
+      if (v <= 20)  return '#00c853';
+      if (v <= 40)  return '#76ff03';
+      if (v <= 60)  return '#ffd600';
+      if (v <= 80)  return '#ff6d00';
+      return '#ff1744';
+    case 'rr':
+      if (v >= 2.5) return '#00c853';
+      if (v >= 2.0) return '#76ff03';
+      if (v >= 1.5) return '#ffd600';
+      if (v >= 1.0) return '#ff6d00';
+      return '#ff1744';
+    case 'score':
+      if (v >= 80) return '#00c853';
+      if (v >= 65) return '#76ff03';
+      if (v >= 50) return '#ffd600';
+      if (v >= 35) return '#ff6d00';
+      return '#ff1744';
+  }
+  return '#888888';
+}
+
+function buildSparkline(prices) {
+  if (!prices || prices.length < 2) return '';
+  const w = 400, h = 55;
+  const mn = Math.min(...prices);
+  const mx = Math.max(...prices);
+  const rng = mx - mn || 1;
+  const pts = prices.map((p, i) => {
+    const x = (i / (prices.length - 1)) * w;
+    const y = h - ((p - mn) / rng * (h - 10)) - 5;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  const isUp = prices[prices.length - 1] >= prices[0];
+  const color = isUp ? '#00c853' : '#ff1744';
+  const uid = Math.random().toString(36).slice(2, 7);
+  const fillPts = `0,${h} ${pts} ${w},${h}`;
+  return `
+    <div style="margin:8px 0 4px 0;">
+      <svg width="100%" viewBox="0 0 ${w} ${h}"
+           preserveAspectRatio="none" style="display:block;height:55px;">
+        <defs>
+          <linearGradient id="sg${uid}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="${color}" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="${color}" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <polygon points="${fillPts}" fill="url(#sg${uid})"/>
+        <polyline points="${pts}" fill="none"
+                  stroke="${color}" stroke-width="2"
+                  stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+    </div>`;
+}
 async function loadData() {
   try {
     const res = await fetch(`data/selections.json?t=${Date.now()}`);
@@ -114,32 +190,34 @@ function buildCard(s, rank) {
         </div>
       </div>
 
-      <div class="indicators">
+ <div class="indicators">
         <div class="ind">
-          <div class="ind-val ${rsiClass}">${s.rsi?.toFixed(0)}</div>
+          <div class="ind-val" style="color:${indicatorColor('rsi', s.rsi)}">${s.rsi?.toFixed(0)}</div>
           <div class="ind-lbl">RSI 14</div>
         </div>
         <div class="ind">
-          <div class="ind-val ${macdClass}">${macdIcon} MACD</div>
+          <div class="ind-val" style="color:${indicatorColor('macd', s.macd_hist)}">${macdIcon} MACD</div>
           <div class="ind-lbl">${s.macd_hist?.toFixed(3)}</div>
         </div>
         <div class="ind">
-          <div class="ind-val">${s.atr_pct?.toFixed(1)}%</div>
+          <div class="ind-val" style="color:${indicatorColor('atr', s.atr_pct)}">${s.atr_pct?.toFixed(1)}%</div>
           <div class="ind-lbl">ATR %</div>
         </div>
         <div class="ind">
-          <div class="ind-val">${s.bb_pos?.toFixed(0)}%</div>
+          <div class="ind-val" style="color:${indicatorColor('bb', s.bb_pos * 100)}">${s.bb_pos?.toFixed(0)}%</div>
           <div class="ind-lbl">Bandes Boll.</div>
         </div>
         <div class="ind">
-          <div class="ind-val ${s.rr >= 2 ? 'positive' : s.rr >= 1.5 ? 'neutral' : 'negative'}">${s.rr?.toFixed(1)}</div>
+          <div class="ind-val" style="color:${indicatorColor('rr', s.rr)}">${s.rr?.toFixed(1)}</div>
           <div class="ind-lbl">Risk/Reward</div>
         </div>
         <div class="ind">
-          <div class="ind-val ${conf >= 70 ? 'positive' : conf >= 50 ? 'neutral' : 'negative'}">${conf}/100</div>
+          <div class="ind-val" style="color:${indicatorColor('score', conf)}">${conf}/100</div>
           <div class="ind-lbl">Score global</div>
         </div>
       </div>
+
+      ${buildSparkline(s.prices_6m)}
 
       <div class="section-title">📊 Fondamentaux</div>
       <div class="analysis-block">
