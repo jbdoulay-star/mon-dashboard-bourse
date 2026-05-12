@@ -483,6 +483,7 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         "score_tech": ts,
         "score_fond": fs,
         "score_mom":  ms,
+        "prices_6m": [round(float(p), 2) for p in close.tail(120).tolist()],
     }
 
 
