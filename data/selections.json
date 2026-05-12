@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T17:17:27Z",
+  "updated_at": "2026-05-12T17:36:13Z",
   "date": "2026-05-12",
   "count": 20,
   "stocks": [
@@ -46,11 +46,11 @@
       "score_mom": 7,
       "signal": "ACHETER",
       "conviction": 4,
-      "resume": "Adidas présente une valorisation raisonnable avec un PE de 18.4 et un ROE solide de 22.9%. La tendance est positive avec un potentiel de hausse selon les analystes.",
-      "bull_case": "Upside analyste de 38.5% et croissance solide du bénéfice.",
-      "bear_case": "Risque de retournement si le marché global se détériore.",
-      "chartiste": "La tendance est haussière (+10%) avec un RSI neutre à 49.6. Entrée recommandée à 142.0 EUR, stop-loss à 129.84 EUR. Surveiller la zone autour de 155.82 EUR pour des prises de bénéfices.",
-      "conseil": "Acheter maintenant avec un stop serré pour limiter les risques."
+      "resume": "Adidas affiche une valorisation raisonnable avec un PE de 18.4 et un ROE solide de 22.9%. La croissance est soutenue par un upside analyste de 38.5%.",
+      "bull_case": "La marque bénéficie d'une forte demande et d'une amélioration des marges.",
+      "bear_case": "Une baisse de la consommation pourrait impacter les ventes.",
+      "chartiste": "La tendance est haussière (+10.0%) avec un RSI équilibré à 49.6. Entrée recommandée à 142.0 EUR, stop-loss à 129.84 EUR. Surveiller la zone autour de 155.82 EUR pour des prises de profit.",
+      "conseil": "Achetez maintenant avec un stop serré pour limiter les risques."
     },
     {
       "ticker": "DSY.PA",
@@ -93,13 +93,13 @@
       "score_tech": 40,
       "score_fond": 38,
       "score_mom": 5,
-      "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Dassault Systèmes affiche une valorisation modérée avec un PE de 20.9 et un ROE de 13.4%. La tendance est haussière mais le potentiel de hausse est limité.",
-      "bull_case": "Upside analyste de 19.2% et bonne dynamique de croissance.",
-      "bear_case": "Risque de correction si les résultats déçoivent.",
-      "chartiste": "La tendance est haussière (+16.3%) avec un RSI à 53.9. Entrée possible à 19.26 EUR, stop-loss à 17.76 EUR. Surveiller la résistance à 22.08 EUR.",
-      "conseil": "Surveiller pour une meilleure opportunité d'entrée."
+      "signal": "ACHETER",
+      "conviction": 5,
+      "resume": "Dassault Systèmes présente un PE attractif de 20.9 et un ROE de 13.4%, avec une tendance haussière solide (+16.3%).",
+      "bull_case": "La demande pour ses solutions logicielles reste robuste dans un marché en expansion.",
+      "bear_case": "Une concurrence accrue pourrait limiter la croissance future.",
+      "chartiste": "La tendance est clairement haussière avec un RSI à 53.9. Entrée idéale à 19.26 EUR, stop-loss à 17.76 EUR. Objectif à 22.08 EUR à surveiller.",
+      "conseil": "Achetez sur faiblesse et surveillez la résistance à 22.08 EUR."
     },
     {
       "ticker": "AIR.PA",
@@ -144,11 +144,11 @@
       "score_mom": 5,
       "signal": "ACHETER",
       "conviction": 4,
-      "resume": "Airbus bénéficie d'une croissance solide avec un ROE de 19.7%. La valorisation est élevée (PE 27.3), mais le potentiel de hausse reste attractif.",
-      "bull_case": "Upside analyste de 21.3% et forte dynamique industrielle.",
-      "bear_case": "Valorisation élevée pourrait limiter les gains à court terme.",
-      "chartiste": "Tendance haussière (+11.6%) avec RSI neutre à 52.1. Entrée à 172.52 EUR, stop-loss à 157.13 EUR. Objectif à 191.62 EUR.",
-      "conseil": "Acheter avec un stop-loss pour sécuriser la position."
+      "resume": "Airbus bénéficie d'un PE de 27.3 et d'un ROE de 19.7%, avec un upside analyste de 21.3%.",
+      "bull_case": "La reprise du secteur aéronautique soutient les commandes et les revenus.",
+      "bear_case": "Les tensions géopolitiques ou économiques pourraient freiner les livraisons.",
+      "chartiste": "La tendance est haussière (+11.6%) avec un RSI à 52.1. Entrée recommandée à 172.52 EUR, stop-loss à 157.13 EUR. Zone cible à 191.62 EUR.",
+      "conseil": "Achetez maintenant pour profiter de la reprise du secteur aérien."
     },
     {
       "ticker": "KBC.BR",
@@ -193,11 +193,11 @@
       "score_mom": 5,
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "KBC Groupe présente une valorisation attractive (PE 12.8) et un rendement élevé. Cependant, la tendance est modérée.",
-      "bull_case": "Dividende élevé et potentiel de hausse modéré.",
-      "bear_case": "Risque de stagnation si le secteur bancaire reste sous pression.",
-      "chartiste": "Tendance haussière (+5.9%) mais RSI faible à 35.1. Entrée à 111.7 EUR, stop-loss à 105.45 EUR. Objectif à 119.57 EUR.",
-      "conseil": "Surveiller pour une confirmation de la tendance haussière."
+      "resume": "KBC Groupe affiche un PE attractif de 12.8 et un ROE de 13.6%, mais la tendance reste modérée (+5.9%).",
+      "bull_case": "La banque bénéficie d'une bonne rentabilité et d'un dividende élevé.",
+      "bear_case": "Une hausse des taux pourrait peser sur ses marges.",
+      "chartiste": "La tendance est haussière mais lente, avec un RSI à 35.1. Entrée possible à 111.7 EUR, stop-loss à 105.45 EUR. Surveiller la zone de 119.57 EUR.",
+      "conseil": "Surveillez une accélération avant de prendre position."
     },
     {
       "ticker": "INGA.AS",
@@ -242,11 +242,11 @@
       "score_mom": 7,
       "signal": "EVITER",
       "conviction": 2,
-      "resume": "ING Groep affiche une valorisation faible (PE 11.5) mais le potentiel de gain est limité avec un R/R très faible.",
-      "bull_case": "Rendement élevé et valorisation attractive.",
-      "bear_case": "Potentiel de gain limité et risque de correction.",
-      "chartiste": "Tendance haussière (+14.3%) avec RSI à 56.2. Entrée à 25.16 EUR, stop-loss à 23.66 EUR. Objectif à 25.18 EUR.",
-      "conseil": "Éviter pour le moment en raison du faible potentiel de gain."
+      "resume": "ING affiche un PE bas de 11.5 et un ROE solide de 16.6%, mais le gain net est négatif (-7.87%).",
+      "bull_case": "La banque est bien positionnée pour profiter de la hausse des taux.",
+      "bear_case": "La volatilité des marchés pourrait peser sur ses résultats.",
+      "chartiste": "La tendance est haussière (+14.3%) avec un RSI à 56.2. Cependant, le ratio risque/rendement est défavorable. Stop recommandé à 23.66 EUR.",
+      "conseil": "Évitez pour l'instant en raison du risque élevé."
     },
     {
       "ticker": "SOP.PA",
@@ -291,11 +291,11 @@
       "score_mom": 5,
       "signal": "ACHETER",
       "conviction": 5,
-      "resume": "Sopra Steria affiche une valorisation très attractive (PE 8.8) et un potentiel de hausse élevé selon les analystes.",
-      "bull_case": "Upside analyste de 46.2% et valorisation très basse.",
-      "bear_case": "Risque lié à la volatilité du secteur technologique.",
-      "chartiste": "Tendance haussière (+14.6%) avec RSI neutre à 52.8. Entrée à 134.0 EUR, stop-loss à 118.57 EUR. Objectif à 140.84 EUR.",
-      "conseil": "Acheter avec une forte conviction pour profiter du potentiel de hausse."
+      "resume": "Sopra Steria affiche un PE très attractif de 8.8 et un upside analyste élevé de 46.2%.",
+      "bull_case": "La société est bien positionnée pour profiter de la digitalisation croissante.",
+      "bear_case": "Une pression sur les marges pourrait limiter la croissance.",
+      "chartiste": "La tendance est haussière (+14.6%) avec un RSI à 52.8. Entrée idéale à 134.0 EUR, stop-loss à 118.57 EUR. Objectif à 140.84 EUR.",
+      "conseil": "Achetez maintenant pour profiter d'une valorisation attractive."
     },
     {
       "ticker": "UMI.BR",
@@ -340,11 +340,11 @@
       "score_mom": 15,
       "signal": "EVITER",
       "conviction": 1,
-      "resume": "Umicore présente une valorisation modérée (PE 14.1) mais le RSI élevé et le potentiel de baisse rendent l'action risquée.",
-      "bull_case": "Croissance solide du bénéfice.",
-      "bear_case": "Risque de correction avec un RSI à 90.",
-      "chartiste": "Tendance haussière (+24.6%) mais RSI élevé à 90. Entrée à 22.46 EUR, stop-loss à 20.3 EUR. Objectif à 21.79 EUR.",
-      "conseil": "Éviter en raison du risque élevé de retournement."
+      "resume": "Umicore affiche un PE de 14.1 et un ROE de 18.6%, mais l'upside analyste est négatif (-5.9%).",
+      "bull_case": "La demande pour les matériaux avancés pourrait soutenir la croissance.",
+      "bear_case": "La volatilité des matières premières pourrait peser sur les marges.",
+      "chartiste": "La tendance est haussière (+24.6%) mais le RSI est suracheté à 90.0. Stop recommandé à 20.3 EUR.",
+      "conseil": "Évitez en raison du risque de correction imminent."
     },
     {
       "ticker": "DEME.BR",
@@ -389,11 +389,11 @@
       "score_mom": 10,
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "DEME Group affiche une valorisation raisonnable (PE 16.0) et une tendance modérée. Potentiel de hausse limité.",
-      "bull_case": "Upside analyste de 12.2% et bonne dynamique sectorielle.",
-      "bear_case": "Risque de stagnation dans un marché peu actif.",
-      "chartiste": "Tendance haussière (+6.2%) avec RSI à 64.1. Entrée à 193.8 EUR, stop-loss à 183.15 EUR. Objectif à 200.06 EUR.",
-      "conseil": "Surveiller pour une meilleure opportunité d'entrée."
+      "resume": "DEME affiche un PE de 16.0 et un ROE de 15.3%, avec une tendance modérée (+6.2%).",
+      "bull_case": "La société bénéficie de la croissance des projets d'infrastructure.",
+      "bear_case": "Une baisse des investissements publics pourrait limiter la demande.",
+      "chartiste": "La tendance est haussière avec un RSI à 64.1. Entrée possible à 193.8 EUR, stop-loss à 183.15 EUR. Objectif à 200.06 EUR à surveiller.",
+      "conseil": "Surveillez une confirmation de la tendance avant d'acheter."
     },
     {
       "ticker": "TEMN.SW",
@@ -438,11 +438,11 @@
       "score_mom": 7,
       "signal": "ACHETER",
       "conviction": 4,
-      "resume": "Temenos affiche un ROE exceptionnel de 53% et un potentiel de hausse attractif selon les analystes.",
-      "bull_case": "Upside analyste de 14.7% et ROE très élevé.",
-      "bear_case": "Risque lié à la volatilité du secteur technologique.",
-      "chartiste": "Tendance haussière (+8.4%) avec RSI à 35.9. Entrée à 72.1 EUR, stop-loss à 65.54 EUR. Objectif à 79.34 EUR.",
-      "conseil": "Acheter avec un stop-loss pour limiter les risques."
+      "resume": "Temenos affiche un ROE exceptionnel de 53.0% et un upside analyste de 14.7%.",
+      "bull_case": "La demande pour ses solutions bancaires numériques reste forte.",
+      "bear_case": "La concurrence pourrait peser sur ses marges.",
+      "chartiste": "La tendance est haussière (+8.4%) avec un RSI à 35.9. Entrée idéale à 72.1 EUR, stop-loss à 65.54 EUR. Objectif à 79.34 EUR.",
+      "conseil": "Achetez sur faiblesse pour maximiser le potentiel de hausse."
     },
     {
       "ticker": "BNP.PA",
@@ -485,13 +485,13 @@
       "score_tech": 38,
       "score_fond": 40,
       "score_mom": 4,
-      "signal": "ACHETER",
-      "conviction": 4,
-      "resume": "BNP Paribas affiche une valorisation très attractive (PE 8.5) et un rendement élevé. Potentiel de hausse solide.",
-      "bull_case": "Dividende élevé et potentiel de hausse attractif.",
-      "bear_case": "Risque lié à la volatilité du secteur bancaire.",
-      "chartiste": "Tendance haussière (+9.5%) avec RSI à 46.0. Entrée à 90.41 EUR, stop-loss à 84.06 EUR. Objectif à 94.43 EUR.",
-      "conseil": "Acheter pour profiter du rendement élevé et du potentiel de hausse."
+      "signal": "SURVEILLER",
+      "conviction": 3,
+      "resume": "Donnees fondamentales en cours de chargement.",
+      "bull_case": "",
+      "bear_case": "",
+      "chartiste": "",
+      "conseil": "Zone d'entree actuelle correcte"
     },
     {
       "ticker": "VK.PA",
