@@ -562,18 +562,41 @@ def get_ai_analysis(stocks: list[dict]) -> dict:
             model=AI_MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            max_tokens=4000,
+            max_tokens=6000,
         )
         raw = resp.choices[0].message.content.strip()
+        finish_reason = resp.choices[0].finish_reason
+
+        if finish_reason == "length":
+            print("  AVERTISSEMENT : reponse tronquee par limite de tokens")
 
         if raw.startswith("```"):
             raw = raw.split("```")[1]
             if raw.startswith("json"):
                 raw = raw[4:]
 
-        data = json.loads(raw)
-        analyses = data.get("analyses", data) if isinstance(data, dict) else data
-        return {a["ticker"]: a for a in analyses if "ticker" in a}
+        # Tentative de parsing direct
+        try:
+            data = json.loads(raw)
+            analyses = data.get("analyses", data) if isinstance(data, dict) else data
+            result = {a["ticker"]: a for a in analyses if "ticker" in a}
+            print(f"  {len(result)} analyses parsees avec succes")
+            return result
+
+        except json.JSONDecodeError:
+            print("  JSON incomplet, tentative de recuperation partielle...")
+            import re
+            objects = re.findall(r'\{[^{}]{50,}\}', raw)
+            analyses = []
+            for obj in objects:
+                try:
+                    parsed = json.loads(obj)
+                    if "ticker" in parsed and "signal" in parsed:
+                        analyses.append(parsed)
+                except:
+                    continue
+            print(f"  {len(analyses)} analyses recuperees par parsing partiel")
+            return {a["ticker"]: a for a in analyses}
 
     except Exception as e:
         print(f"  Erreur IA : {e}")
