@@ -597,19 +597,13 @@ Reponds UNIQUEMENT avec le JSON valide, sans markdown, sans explication."""
 
 
 def get_ai_analysis(stocks: list[dict]) -> dict:
-    if not MAMMOUTH_API_KEY:
-        print("  Pas de cle API - analyse IA ignoree")
+    if not stocks:
         return {}
 
     prompt = f"""Tu es un analyste financier expert. Analyse ces {len(stocks)} actions et réponds UNIQUEMENT en JSON valide.
 
 Actions:
-{chr(10).join([
-    f"- {s['ticker']} ({s['name']}): PE={s.get('pe','N/A')}, ROE={s.get('roe','N/A')}%, "
-    f"upside={s.get('upside','N/A')}%, trend={s.get('trend','N/A')}%, RSI={s.get('rsi','N/A')}, "
-    f"support={s.get('support','N/A')}, resist={s.get('resist','N/A')}, bb_pos={s.get('bb_pos','N/A')}"
-    for s in stocks
-])}
+{chr(10).join([f"- {s['ticker']} ({s['name']}): PE={s.get('pe','N/A')}, ROE={s.get('roe','N/A')}%, upside={s.get('upside','N/A')}%, trend={s.get('trend','N/A')}%, RSI={s.get('rsi','N/A')}, support={s.get('support','N/A')}, resist={s.get('resist','N/A')}, bb_pos={s.get('bb_pos','N/A')}" for s in stocks])}
 
 Format JSON STRICT :
 {{
@@ -618,10 +612,10 @@ Format JSON STRICT :
       "ticker": "XXX.XX",
       "signal": "ACHETER|SURVEILLER|EVITER",
       "conviction": 1-5,
-      "resume": "Avantage compétitif distinctif. Max 20 mots.",
-      "bull_case": "Catalyseur haussier concret. Max 15 mots.",
-      "bear_case": "Risque réel et actuel. Max 15 mots.",
-      "chartiste": "Niveau technique clé : support/résistance. Max 20 mots."
+      "resume": "Avantage compétitif distinctif de l'entreprise : moat, brevets, position dominante, marque, part de marché. Max 20 mots. Ex: 'Marque iconique avec un pricing power fort et une distribution mondiale difficile à répliquer.'",
+      "bull_case": "Catalyseur concret issu de l'actualité ou du contexte macro qui pourrait faire monter le titre. Max 15 mots. Ex: 'Le retour en grâce du luxe en Chine et la réouverture des marchés asiatiques dopent les perspectives.'",
+      "bear_case": "Risque réel et actuel lié à l'actualité ou au contexte sectoriel. Max 15 mots. Ex: 'Un ralentissement de la consommation américaine et la guerre des prix avec Nike pèsent sur les marges.'",
+      "chartiste": "Niveau technique clé à surveiller : support à défendre, résistance à franchir, rebond attendu ou consolidation en cours. Ne pas répéter l'entrée/stop/cible. Max 20 mots. Ex: 'Support solide à 127€ à défendre. Résistance majeure à 161€ à franchir pour confirmer la tendance haussière.'"
     }}
   ]
 }}
@@ -643,13 +637,11 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
         if finish_reason == "length":
             print("  AVERTISSEMENT : reponse tronquee par limite de tokens")
 
-        # Retire les balises markdown si présentes
         if raw.startswith("```"):
             raw = raw.split("```")[1]
             if raw.startswith("json"):
                 raw = raw[4:]
 
-        # Parsing direct
         try:
             data = json.loads(raw)
             analyses = data.get("analyses", data) if isinstance(data, dict) else data
@@ -667,7 +659,7 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
                     parsed = json.loads(obj)
                     if "ticker" in parsed and "signal" in parsed:
                         analyses.append(parsed)
-                except Exception:
+                except:
                     continue
             print(f"  {len(analyses)} analyses recuperees par parsing partiel")
             return {a["ticker"]: a for a in analyses}
@@ -676,10 +668,15 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
         print(f"  Erreur IA : {e}")
         return {}
 
-
-# ============================================================
-# SAUVEGARDE JSON
-# ============================================================
+def clean_for_json(obj):
+    if isinstance(obj, dict):
+        return {k: clean_for_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [clean_for_json(v) for v in obj]
+    if isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            return None
+    return obj
 
 def save_results(stocks: list[dict], ai_map: dict):
     output = []
@@ -704,7 +701,7 @@ def save_results(stocks: list[dict], ai_map: dict):
         "stocks":     output,
     }
 
-    # ✅ NETTOYAGE ANTI-NaN avant sérialisation JSON
+    # Correction bug NaN/Infinity — seule modification technique
     result_clean = clean_for_json(result)
 
     os.makedirs("data", exist_ok=True)
