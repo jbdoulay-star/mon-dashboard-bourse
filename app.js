@@ -44,16 +44,19 @@ function indicatorColor(indicator, value) {
 
 function buildSparkline(prices) {
   if (!prices || prices.length < 2) return '';
+  // Filtre les null/NaN qui viendraient du JSON
+  const clean = prices.filter(p => p !== null && p !== undefined && !isNaN(p));
+  if (clean.length < 2) return '';
   const w = 400, h = 55;
-  const mn = Math.min(...prices);
-  const mx = Math.max(...prices);
+  const mn = Math.min(...clean);
+  const mx = Math.max(...clean);
   const rng = mx - mn || 1;
-  const pts = prices.map((p, i) => {
-    const x = (i / (prices.length - 1)) * w;
+  const pts = clean.map((p, i) => {
+    const x = (i / (clean.length - 1)) * w;
     const y = h - ((p - mn) / rng * (h - 10)) - 5;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
-  const isUp = prices[prices.length - 1] >= prices[0];
+  const isUp = clean[clean.length - 1] >= clean[0];
   const color = isUp ? '#00c853' : '#ff1744';
   const uid = Math.random().toString(36).slice(2, 7);
   const fillPts = `0,${h} ${pts} ${w},${h}`;
@@ -74,14 +77,24 @@ function buildSparkline(prices) {
       </svg>
     </div>`;
 }
+
 async function loadData() {
   try {
     const res = await fetch(`data/selections.json?t=${Date.now()}`);
-    const data = await res.json();
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    // Nettoie les NaN/Infinity/booléens malformés que Python peut générer
+    const cleaned = text
+      .replace(/:\s*NaN/g, ': null')
+      .replace(/:\s*Infinity/g, ': null')
+      .replace(/:\s*-Infinity/g, ': null');
+    const data = JSON.parse(cleaned);
+    if (!data.stocks || data.stocks.length === 0) throw new Error('Données vides');
     render(data);
   } catch(e) {
-    document.getElementById('loading').textContent = 
-      '❌ Erreur de chargement des données.';
+    console.error('Erreur chargement:', e);
+    document.getElementById('loading').innerHTML =
+      '❌ Erreur de chargement des données.<br><small style="color:#666">Réessayez dans quelques instants ou consultez la console pour plus de détails.</small>';
   }
 }
 
@@ -89,7 +102,7 @@ function render(data) {
   document.getElementById('loading').classList.add('hidden');
 
   document.getElementById('update-date').textContent =
-    `Mise à jour : ${data.generated_at || data.date}`;
+    `Mise à jour : ${data.generated_at || data.date || '—'}`;
 
   const statsBar = document.getElementById('stats-bar');
   if (data.meta) {
@@ -114,35 +127,53 @@ function render(data) {
   grid.innerHTML = data.stocks.map((s, i) => buildCard(s, i)).join('');
 }
 
+// Helpers sécurisés pour éviter les crashes sur valeurs null/undefined
+function fmt(val, decimals = 2) {
+  const v = parseFloat(val);
+  return isNaN(v) ? '—' : v.toFixed(decimals);
+}
+
+function fmtSign(val, decimals = 2) {
+  const v = parseFloat(val);
+  if (isNaN(v)) return '—';
+  return (v > 0 ? '+' : '') + v.toFixed(decimals);
+}
+
 function buildCard(s, rank) {
-  const chgClass = s.chg1d > 0 ? 'positive' : s.chg1d < 0 ? 'negative' : 'neutral';
-  const rsiClass = s.rsi > 70 ? 'negative' : s.rsi < 30 ? 'positive' : 'neutral';
+  const chg1d  = parseFloat(s.chg1d);
+  const chg1m  = parseFloat(s.chg1m);
+  const rsi    = parseFloat(s.rsi);
+  const macdH  = parseFloat(s.macd_hist);
+  const atrPct = parseFloat(s.atr_pct);
+  const bbPos  = parseFloat(s.bb_pos);
+  const rr     = parseFloat(s.rr);
+
+  const chgClass = chg1d > 0 ? 'positive' : chg1d < 0 ? 'negative' : 'neutral';
   const conf     = Math.round(s.score || s.score_total || 50);
 
-  const badgeClass = s.signal === 'ACHETER' ? 'badge-buy'
+  const badgeClass = s.signal === 'ACHETER'    ? 'badge-buy'
                    : s.signal === 'SURVEILLER' ? 'badge-wait'
-                   : s.signal === 'EVITER' ? 'badge-avoid'
+                   : s.signal === 'EVITER'     ? 'badge-avoid'
                    : 'badge-wait';
 
-  const macdIcon  = s.macd_hist > 0 ? '▲' : '▼';
-  const macdClass = s.macd_hist > 0 ? 'positive' : 'negative';
+  const macdIcon  = macdH > 0 ? '▲' : '▼';
 
-  // Gain net : priorité au champ Python, fallback calcul JS
-  const netGain = (s.net_gain !== undefined && s.net_gain !== null)
+  // Gain net
+  const netGain = (s.net_gain !== undefined && s.net_gain !== null && !isNaN(s.net_gain))
     ? s.net_gain
-    : (s.net_gain_pct !== undefined && s.net_gain_pct !== null)
+    : (s.net_gain_pct !== undefined && s.net_gain_pct !== null && !isNaN(s.net_gain_pct))
       ? s.net_gain_pct
       : (s.target_1m && s.entry)
         ? parseFloat((((s.target_1m - s.entry) / s.entry * 100) - 2).toFixed(2))
         : null;
 
-  const netGainHTML = netGain !== null
+  const netGainHTML = netGain !== null && !isNaN(netGain)
     ? `<span class="${netGain > 0 ? 'positive' : 'negative'}">
          ${netGain > 0 ? '+' : ''}${netGain.toFixed(2)}%
        </span>`
     : `<span style="color:#888">N/A</span>`;
 
-  // Fondamentaux : champs Python nouveaux + fallback ancien champ
+  // Fondamentaux
   const resumeLine = s.resume && s.resume !== 'Donnees fondamentales en cours de chargement.'
     ? `<p style="margin:0 0 6px 0;color:#cbd5e1;font-size:0.82rem;line-height:1.5;">${s.resume}</p>`
     : s.ai_fundamentals
@@ -163,7 +194,6 @@ function buildCard(s, rank) {
        </p>`
     : '';
 
-  // Analyse chartiste : champ Python nouveau + fallback ancien champ
   const chartisteLine = s.chartiste && s.chartiste !== ''
     ? s.chartiste
     : s.ai_chartist && s.ai_chartist !== '—'
@@ -174,41 +204,41 @@ function buildCard(s, rank) {
     <div class="card">
       <div class="card-header">
         <div class="card-title">
-          <div style="font-size:.75rem;color:#888">#${rank+1}</div>
-          <h3>${s.name}</h3>
+          <div style="font-size:.75rem;color:#888">#${rank + 1}</div>
+          <h3>${s.name || '—'}</h3>
           <div class="ticker">${s.ticker}</div>
-          <div class="sector">${s.sector}</div>
+          <div class="sector">${s.sector || '—'}</div>
         </div>
         <div class="price-block">
-          <div class="price">${s.price?.toFixed(2)} €</div>
+          <div class="price">${fmt(s.price)} €</div>
           <div class="chg ${chgClass}">
-            ${s.chg1d > 0 ? '+' : ''}${s.chg1d?.toFixed(2)}% aujourd'hui
+            ${fmtSign(chg1d)}% aujourd'hui
           </div>
-          <div class="chg ${s.chg1m > 0 ? 'positive' : 'negative'}" style="font-size:.75rem">
-            1M : ${s.chg1m > 0 ? '+' : ''}${s.chg1m?.toFixed(1)}%
+          <div class="chg ${chg1m > 0 ? 'positive' : 'negative'}" style="font-size:.75rem">
+            1M : ${fmtSign(chg1m, 1)}%
           </div>
         </div>
       </div>
 
- <div class="indicators">
+      <div class="indicators">
         <div class="ind">
-          <div class="ind-val" style="color:${indicatorColor('rsi', s.rsi)}">${s.rsi?.toFixed(0)}</div>
+          <div class="ind-val" style="color:${indicatorColor('rsi', rsi)}">${fmt(rsi, 0)}</div>
           <div class="ind-lbl">RSI 14</div>
         </div>
         <div class="ind">
-          <div class="ind-val" style="color:${indicatorColor('macd', s.macd_hist)}">${macdIcon} MACD</div>
-          <div class="ind-lbl">${s.macd_hist?.toFixed(3)}</div>
+          <div class="ind-val" style="color:${indicatorColor('macd', macdH)}">${isNaN(macdH) ? '—' : macdIcon} MACD</div>
+          <div class="ind-lbl">${fmt(macdH, 3)}</div>
         </div>
         <div class="ind">
-          <div class="ind-val" style="color:${indicatorColor('atr', s.atr_pct)}">${s.atr_pct?.toFixed(1)}%</div>
+          <div class="ind-val" style="color:${indicatorColor('atr', atrPct)}">${fmt(atrPct, 1)}%</div>
           <div class="ind-lbl">ATR %</div>
         </div>
         <div class="ind">
-          <div class="ind-val" style="color:${indicatorColor('bb', s.bb_pos * 100)}">${s.bb_pos?.toFixed(0)}%</div>
+          <div class="ind-val" style="color:${indicatorColor('bb', bbPos * 100)}">${isNaN(bbPos) ? '—' : fmt(bbPos * 100, 0)}%</div>
           <div class="ind-lbl">Bandes Boll.</div>
         </div>
         <div class="ind">
-          <div class="ind-val" style="color:${indicatorColor('rr', s.rr)}">${s.rr?.toFixed(1)}</div>
+          <div class="ind-val" style="color:${indicatorColor('rr', rr)}">${fmt(rr, 1)}</div>
           <div class="ind-lbl">Risk/Reward</div>
         </div>
         <div class="ind">
@@ -236,15 +266,15 @@ function buildCard(s, rank) {
       <div class="section-title">🎯 Points d'entrée / sortie</div>
       <div class="trade-block">
         <div class="trade-item">
-          <div class="t-val positive">${s.entry?.toFixed(2)} €</div>
+          <div class="t-val positive">${fmt(s.entry)} €</div>
           <div class="t-lbl">Entrée</div>
         </div>
         <div class="trade-item">
-          <div class="t-val negative">${s.stop_loss?.toFixed(2)} €</div>
+          <div class="t-val negative">${fmt(s.stop_loss)} €</div>
           <div class="t-lbl">Stop Loss</div>
         </div>
         <div class="trade-item">
-          <div class="t-val" style="color:#4da6ff">${s.target_1m?.toFixed(2)} €</div>
+          <div class="t-val" style="color:#4da6ff">${fmt(s.target_1m)} €</div>
           <div class="t-lbl">Objectif 1M</div>
         </div>
       </div>
