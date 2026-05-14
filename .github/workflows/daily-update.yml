@@ -35,5 +35,3 @@ jobs:
           git config user.name "PEA Bot"
           git add data/selections.json
           git diff --staged --quiet || (git commit -m "📈 Sélection du $(date +'%d/%m/%Y %H:%M') UTC" && git push)
-          git diff --staged --quiet || \
-            git commit -m "📈 Sélection du $(date +'%d/%m/%Y %H:%M') UTC" && git push
