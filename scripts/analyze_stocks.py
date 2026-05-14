@@ -5,7 +5,7 @@ PEA Tracker - Analyse quotidienne optimisee
 - 1 seul appel MammouthIA pour les 20 finalistes
 """
 
-import json, os, time, warnings
+import json, os, time, warnings, math
 from datetime import datetime, date
 import yfinance as yf
 import pandas as pd
@@ -241,7 +241,7 @@ FINAL_COUNT = 20
 
 
 # ============================================================
-# FONCTION UTILITAIRE - CORRECTION PRINCIPALE
+# FONCTIONS UTILITAIRES
 # ============================================================
 
 def to_float(val):
@@ -249,10 +249,47 @@ def to_float(val):
     try:
         if val is None:
             return None
-        return float(val)
+        f = float(val)
+        if math.isnan(f) or math.isinf(f):
+            return None
+        return f
     except (ValueError, TypeError):
         return None
 
+
+def clean_for_json(obj):
+    """
+    Nettoie récursivement un objet pour le rendre JSON-compatible :
+    - Remplace NaN et Infinity par None
+    - Laisse les bool intacts
+    - Traite les dict et list récursivement
+    """
+    if isinstance(obj, dict):
+        return {k: clean_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_for_json(v) for v in obj]
+    elif isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            return None
+        return obj
+    elif isinstance(obj, bool):
+        return obj
+    elif isinstance(obj, (int, str)) or obj is None:
+        return obj
+    else:
+        # Pour numpy scalars et autres types exotiques
+        try:
+            f = float(obj)
+            if math.isnan(f) or math.isinf(f):
+                return None
+            return f
+        except (ValueError, TypeError):
+            return str(obj)
+
+
+# ============================================================
+# COLLECTE DONNEES
+# ============================================================
 
 def get_stock_data(ticker: str) -> dict | None:
     try:
@@ -313,6 +350,10 @@ def compute_trend_slope(series: pd.Series, days: int = 30) -> float:
     return float(c[0] * days / s[-1] * 100)
 
 
+# ============================================================
+# SCORING
+# ============================================================
+
 def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     data = get_stock_data(ticker)
     if data is None:
@@ -346,7 +387,7 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     chg1m = float((price / close.iloc[-22] - 1) * 100) if len(close) >= 22 else 0.0
     chg3m = float((price / close.iloc[-63] - 1) * 100) if len(close) >= 63 else 0.0
 
-    vol20  = float(hist["Volume"].rolling(20).mean().iloc[-1])
+    vol20   = float(hist["Volume"].rolling(20).mean().iloc[-1])
     vol_rel = float(hist["Volume"].iloc[-1] / vol20) if vol20 > 0 else 1.0
 
     # Score technique (0-45)
@@ -372,7 +413,7 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 
     ts = min(45, ts)
 
-    # Score fondamental (0-40) - CORRECTION : to_float() sur toutes les métriques
+    # Score fondamental (0-40)
     pe     = to_float(info.get("trailingPE") or info.get("forwardPE"))
     roe    = to_float(info.get("returnOnEquity"))
     rev_g  = to_float(info.get("revenueGrowth"))
@@ -392,10 +433,10 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         elif pe > 28:        fs -= 5
         elif 0 < pe < 10:    fs += 7
 
-    if roe   is not None and roe > 0.15:     fs += 6
-    if rev_g is not None and rev_g > 0.05:   fs += 6
+    if roe    is not None and roe > 0.15:    fs += 6
+    if rev_g  is not None and rev_g > 0.05:  fs += 6
     if earn_g is not None and earn_g > 0.05: fs += 5
-    if de    is not None and de < 80:        fs += 3
+    if de     is not None and de < 80:       fs += 3
     if upside is not None and upside > 15:   fs += 5
     elif upside is not None and upside > 8:  fs += 3
 
@@ -407,8 +448,8 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     elif chg1m > 0:  ms += 2
     if chg3m > 5:    ms += 5
     elif chg3m > 0:  ms += 2
-    if vol_rel > 1.3:   ms += 5
-    elif vol_rel > 1.0: ms += 2
+    if vol_rel > 1.3:    ms += 5
+    elif vol_rel > 1.0:  ms += 2
     ms = min(15, ms)
 
     total = ts + fs + ms
@@ -438,9 +479,14 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     fees_pct = TR_FEE_TOTAL / entry * 100
     net_gain = round((reward / entry * 100) - fees_pct, 2)
 
-    pertinent = net_gain >= MIN_GAIN_PCT and rr >= 1.0
+    pertinent = bool(net_gain >= MIN_GAIN_PCT and rr >= 1.0)
     if not pertinent:
         total = max(0, total - 15)
+
+    # Nettoyage des prix historiques : on retire les NaN éventuels
+    prices_raw = close.tail(120).tolist()
+    prices_6m  = [round(float(p), 2) for p in prices_raw
+                  if p is not None and not math.isnan(float(p))]
 
     return {
         "ticker":     ticker,
@@ -466,12 +512,12 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         "support":    round(support, 2),
         "resist":     round(resist, 2),
         "vol_rel":    round(vol_rel, 2),
-        "pe":         round(pe, 1) if pe is not None else None,
-        "roe":        round(roe * 100, 1) if roe is not None else None,
-        "upside":     round(upside, 1) if upside is not None else None,
-        "div":        round(div * 100, 2) if div is not None else None,
-        "beta":       round(beta, 2) if beta is not None else None,
-        "mktcap":     mktcap,
+        "pe":         round(pe, 1)       if pe     is not None else None,
+        "roe":        round(roe * 100, 1) if roe   is not None else None,
+        "upside":     round(upside, 1)   if upside is not None else None,
+        "div":        round(div * 100, 2) if div   is not None else None,
+        "beta":       round(beta, 2)     if beta   is not None else None,
+        "mktcap":     int(mktcap)        if mktcap is not None else None,
         "entry":      entry,
         "entry_tip":  entry_tip,
         "stop_loss":  stop_loss,
@@ -483,7 +529,7 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         "score_tech": ts,
         "score_fond": fs,
         "score_mom":  ms,
-        "prices_6m": [round(float(p), 2) for p in close.tail(120).tolist()],
+        "prices_6m":  prices_6m,
     }
 
 
@@ -541,10 +587,10 @@ Pour chacune, fournis en JSON un tableau "analyses" avec ces champs :
 - ticker (string)
 - signal (string): "ACHETER", "SURVEILLER" ou "EVITER"
 - conviction (int): 1 a 5
-- resume (string): 1-2 phrases resumant les fondamentaux cles (valorisation, croissance, sante financiere)
+- resume (string): 1-2 phrases resumant les fondamentaux cles
 - bull_case (string): 1 phrase - raison principale scenario optimiste
 - bear_case (string): 1 phrase - raison principale scenario pessimiste
-- chartiste (string): 3-4 phrases max : tendance actuelle, conseil precis sur timing entree, zone surveillance, vigilance stop-loss
+- chartiste (string): niveau technique cle a surveiller, support/resistance, max 20 mots
 - conseil (string): conseil operationnel court (1 phrase)
 
 Reponds UNIQUEMENT avec le JSON valide, sans markdown, sans explication."""
@@ -555,11 +601,15 @@ def get_ai_analysis(stocks: list[dict]) -> dict:
         print("  Pas de cle API - analyse IA ignoree")
         return {}
 
-    # Prompt raccourci pour eviter la troncature
     prompt = f"""Tu es un analyste financier expert. Analyse ces {len(stocks)} actions et réponds UNIQUEMENT en JSON valide.
 
 Actions:
-{chr(10).join([f"- {s['ticker']} ({s['name']}): PE={s.get('pe','N/A')}, ROE={s.get('roe','N/A')}%, upside={s.get('upside','N/A')}%, trend={s.get('trend','N/A')}%, RSI={s.get('rsi','N/A')}, support={s.get('support','N/A')}, resist={s.get('resist','N/A')}, bb_pos={s.get('bb_pos','N/A')}" for s in stocks])}
+{chr(10).join([
+    f"- {s['ticker']} ({s['name']}): PE={s.get('pe','N/A')}, ROE={s.get('roe','N/A')}%, "
+    f"upside={s.get('upside','N/A')}%, trend={s.get('trend','N/A')}%, RSI={s.get('rsi','N/A')}, "
+    f"support={s.get('support','N/A')}, resist={s.get('resist','N/A')}, bb_pos={s.get('bb_pos','N/A')}"
+    for s in stocks
+])}
 
 Format JSON STRICT :
 {{
@@ -568,10 +618,10 @@ Format JSON STRICT :
       "ticker": "XXX.XX",
       "signal": "ACHETER|SURVEILLER|EVITER",
       "conviction": 1-5,
-      "resume": "Avantage compétitif distinctif de l'entreprise : moat, brevets, position dominante, marque, part de marché. Max 20 mots. Ex: 'Marque iconique avec un pricing power fort et une distribution mondiale difficile à répliquer.'",
-      "bull_case": "Catalyseur concret issu de l'actualité ou du contexte macro qui pourrait faire monter le titre. Max 15 mots. Ex: 'Le retour en grâce du luxe en Chine et la réouverture des marchés asiatiques dopent les perspectives.'",
-      "bear_case": "Risque réel et actuel lié à l'actualité ou au contexte sectoriel. Max 15 mots. Ex: 'Un ralentissement de la consommation américaine et la guerre des prix avec Nike pèsent sur les marges.'",
-      "chartiste": "Niveau technique clé à surveiller : support à défendre, résistance à franchir, rebond attendu ou consolidation en cours. Ne pas répéter l'entrée/stop/cible. Max 20 mots. Ex: 'Support solide à 127€ à défendre. Résistance majeure à 161€ à franchir pour confirmer la tendance haussière.'"
+      "resume": "Avantage compétitif distinctif. Max 20 mots.",
+      "bull_case": "Catalyseur haussier concret. Max 15 mots.",
+      "bear_case": "Risque réel et actuel. Max 15 mots.",
+      "chartiste": "Niveau technique clé : support/résistance. Max 20 mots."
     }}
   ]
 }}
@@ -593,12 +643,13 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
         if finish_reason == "length":
             print("  AVERTISSEMENT : reponse tronquee par limite de tokens")
 
+        # Retire les balises markdown si présentes
         if raw.startswith("```"):
             raw = raw.split("```")[1]
             if raw.startswith("json"):
                 raw = raw[4:]
 
-        # Tentative de parsing direct
+        # Parsing direct
         try:
             data = json.loads(raw)
             analyses = data.get("analyses", data) if isinstance(data, dict) else data
@@ -616,7 +667,7 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
                     parsed = json.loads(obj)
                     if "ticker" in parsed and "signal" in parsed:
                         analyses.append(parsed)
-                except:
+                except Exception:
                     continue
             print(f"  {len(analyses)} analyses recuperees par parsing partiel")
             return {a["ticker"]: a for a in analyses}
@@ -624,6 +675,7 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
     except Exception as e:
         print(f"  Erreur IA : {e}")
         return {}
+
 
 # ============================================================
 # SAUVEGARDE JSON
@@ -652,10 +704,13 @@ def save_results(stocks: list[dict], ai_map: dict):
         "stocks":     output,
     }
 
+    # ✅ NETTOYAGE ANTI-NaN avant sérialisation JSON
+    result_clean = clean_for_json(result)
+
     os.makedirs("data", exist_ok=True)
     path = "data/selections.json"
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
+        json.dump(result_clean, f, ensure_ascii=False, indent=2)
 
     print(f"\n  Sauvegarde : {path} ({len(output)} actions)")
     return path
