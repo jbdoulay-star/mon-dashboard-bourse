@@ -3,6 +3,7 @@
 PEA Tracker - Analyse quotidienne optimisee
 - Preselection 100% quantitative (yfinance, aucun cout)
 - 2 appels MammouthIA : actions 1-10 puis 11-20
+- Remplacement des EVITER par les suivants du secteur
 """
 
 import json, os, time, warnings, math
@@ -522,8 +523,15 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 # SELECTION PAR SECTEUR
 # ============================================================
 
-def select_candidates() -> list[dict]:
+def select_candidates() -> tuple[list[dict], dict]:
+    """
+    Retourne :
+    - la liste des 20 finalistes (triés par score)
+    - un dict sector -> liste des actions scorées du secteur (réserve pour remplacements)
+    """
     all_results = []
+    sector_reserves = {}  # ticker déjà dans les top N exclus
+
     for sector, stocks in PEA_UNIVERSE.items():
         print(f"\n  Secteur : {sector} ({len(stocks)} actions)")
         sector_results = []
@@ -539,50 +547,20 @@ def select_candidates() -> list[dict]:
         print(f"    Top {TOP_PER_SECTOR} retenus : {[x['ticker'] for x in top]}")
         all_results.extend(top)
 
+        # La réserve = actions scorées au-delà du top N, dans l'ordre du score
+        reserve = sector_results[TOP_PER_SECTOR:]
+        sector_reserves[sector] = reserve
+
     all_results.sort(key=lambda x: x["score"], reverse=True)
-    return all_results[:FINAL_COUNT]
+    return all_results[:FINAL_COUNT], sector_reserves
 
 
 # ============================================================
-# ANALYSE IA - 2 appels distincts (lot 1-10 et lot 11-20)
+# APPEL IA
 # ============================================================
-
-def build_prompt(stocks: list[dict]) -> str:
-    lines = []
-    for i, s in enumerate(stocks, 1):
-        lines.append(
-            f"{i}. {s['name']} ({s['ticker']}) | Score={s['score']}/100 | "
-            f"Prix={s['price']}EUR | RSI={s['rsi']} | Tendance={s['trend']:+.1f}% | "
-            f"R/R={s['rr']} | Gain net={s['net_gain']}% | "
-            f"Entree={s['entry']} | Stop={s['stop_loss']} | Obj={s['target_1m']} | "
-            f"PE={s.get('pe','N/A')} | ROE={s.get('roe','N/A')}% | "
-            f"Upside analyst={s.get('upside','N/A')}% | Div={s.get('div','N/A')}% | "
-            f"MA50={'AU-DESSUS' if s.get('ma50') and s['price'] > s['ma50'] else 'EN-DESSOUS'} | "
-            f"BB_pos={s.get('bb_pos','N/A')} | ATR%={s.get('atr_pct','N/A')}"
-        )
-    stocks_text = "\n".join(lines)
-
-    return f"""Tu es un analyste financier expert en actions europeennes eligibles PEA.
-
-Voici les {len(stocks)} meilleures actions selectionnees aujourd'hui par scoring quantitatif :
-
-{stocks_text}
-
-Pour chacune, fournis en JSON un tableau "analyses" avec ces champs :
-- ticker (string)
-- signal (string): "ACHETER", "SURVEILLER" ou "EVITER"
-- conviction (int): 1 a 5
-- resume (string): 1-2 phrases resumant les fondamentaux cles
-- bull_case (string): 1 phrase - raison principale scenario optimiste
-- bear_case (string): 1 phrase - raison principale scenario pessimiste
-- chartiste (string): niveau technique cle a surveiller, support/resistance, max 20 mots
-- conseil (string): conseil operationnel court (1 phrase)
-
-Reponds UNIQUEMENT avec le JSON valide, sans markdown, sans explication."""
-
 
 def call_ai_batch(stocks: list[dict], batch_label: str) -> dict:
-    """Appelle l'IA pour un lot d'actions et retourne le dict ticker -> analyse."""
+    """Appelle l'IA pour un lot d'actions (max 10) et retourne dict ticker -> analyse."""
     if not stocks:
         return {}
 
@@ -655,20 +633,127 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
         return {}
 
 
-def get_ai_analysis(stocks: list[dict]) -> dict:
-    """Lance 2 appels IA distincts : actions 1-10 puis 11-20, fusionne les résultats."""
-    lot1 = stocks[:10]
-    lot2 = stocks[10:]
+def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list[dict], dict]:
+    """
+    1. Analyse les 20 candidats en 2 lots (1-10, 11-20)
+    2. Remplace les EVITER par les suivants du secteur, par vagues de max 10
+    3. Si réserve épuisée sans trouver ACHETER/SURVEILLER, revient sur la 1ère action du secteur
+    4. Retourne la liste finale et le dict ai_map complet
+    """
+    MAX_BATCH = 10
+    MAX_REPLACEMENT_ROUNDS = 5
+
+    # --- Etape 1 : analyse initiale ---
+    lot1 = candidates[:10]
+    lot2 = candidates[10:]
 
     print(f"\n  Lot 1 : actions 1-10 ({len(lot1)} actions)")
-    result1 = call_ai_batch(lot1, "actions 1-10")
+    ai_map = call_ai_batch(lot1, "actions 1-10")
 
     print(f"\n  Lot 2 : actions 11-20 ({len(lot2)} actions)")
-    result2 = call_ai_batch(lot2, "actions 11-20")
+    ai_map.update(call_ai_batch(lot2, "actions 11-20"))
 
-    merged = {**result1, **result2}
-    print(f"\n  Total fusionné : {len(merged)} analyses IA")
-    return merged
+    # Index des données quantitatives par ticker
+    stock_data_map = {s["ticker"]: s for s in candidates}
+
+    # Suivi de l'index courant dans la réserve par secteur
+    reserve_index = {sector: 0 for sector in sector_reserves}
+
+    # Première action de chaque secteur dans les candidats initiaux (fallback)
+    # On la récupère depuis PEA_UNIVERSE via sector_reserves + candidates
+    # Plus simple : on garde la tête de liste scorée par secteur
+    sector_first = {}  # secteur -> stock (le mieux scoré du secteur, toutes réserves confondues)
+    for s in candidates:
+        sec = s["sector"]
+        if sec not in sector_first:
+            sector_first[sec] = s
+    for sec, reserve in sector_reserves.items():
+        if sec not in sector_first and reserve:
+            sector_first[sec] = reserve[0]
+
+    # Liste finale courante
+    final_list = list(candidates)
+
+    # --- Etapes de remplacement ---
+    for round_num in range(1, MAX_REPLACEMENT_ROUNDS + 1):
+        # Identifier les EVITER dans la liste finale
+        to_replace = []
+        for i, s in enumerate(final_list):
+            ticker = s["ticker"]
+            signal = ai_map.get(ticker, {}).get("signal", "SURVEILLER")
+            if signal == "EVITER":
+                to_replace.append((i, s))
+
+        if not to_replace:
+            print(f"\n  Aucun EVITER restant. Remplacement termine apres {round_num - 1} tour(s).")
+            break
+
+        print(f"\n  Tour {round_num} : {len(to_replace)} action(s) a remplacer : "
+              f"{[x[1]['ticker'] for x in to_replace]}")
+
+        replacements = []
+        tickers_already_in_final = {s["ticker"] for s in final_list}
+
+        for idx, evited_stock in to_replace:
+            sector = evited_stock["sector"]
+            reserve = sector_reserves.get(sector, [])
+            ri = reserve_index[sector]
+
+            # Chercher le prochain candidat non déjà présent dans la réserve
+            found = None
+            while ri < len(reserve):
+                candidate = reserve[ri]
+                ri += 1
+                if candidate["ticker"] not in tickers_already_in_final:
+                    found = candidate
+                    stock_data_map[candidate["ticker"]] = candidate
+                    tickers_already_in_final.add(candidate["ticker"])
+                    break
+
+            reserve_index[sector] = ri
+
+            if found:
+                replacements.append((idx, found))
+                print(f"    Remplacement : {evited_stock['ticker']} -> {found['ticker']} ({found['name']})")
+            else:
+                # Réserve épuisée : fallback sur la 1ère action du secteur
+                fallback = sector_first.get(sector)
+                if fallback and fallback["ticker"] != evited_stock["ticker"]:
+                    print(f"    Reserve epuisee pour {sector}. "
+                          f"Fallback sur {fallback['ticker']} ({fallback['name']})")
+                    replacements.append((idx, fallback))
+                else:
+                    # Même action ou pas de fallback : on garde l'EVITER faute de mieux
+                    print(f"    Aucun remplacant possible pour {evited_stock['ticker']}, "
+                          f"conservation forcee.")
+                    replacements.append((idx, evited_stock))
+
+        # Appliquer les remplacements dans final_list
+        new_stocks_to_analyze = []
+        for idx, new_stock in replacements:
+            old_ticker = final_list[idx]["ticker"]
+            if new_stock["ticker"] != old_ticker:
+                final_list[idx] = new_stock
+                # N'analyser que si pas déjà dans ai_map
+                if new_stock["ticker"] not in ai_map:
+                    new_stocks_to_analyze.append(new_stock)
+
+        if not new_stocks_to_analyze:
+            print(f"  Aucun nouveau stock a analyser au tour {round_num}.")
+            break
+
+        # Analyser les nouveaux stocks en lots de max 10
+        print(f"\n  Analyse IA des {len(new_stocks_to_analyze)} remplacants...")
+        for batch_start in range(0, len(new_stocks_to_analyze), MAX_BATCH):
+            batch = new_stocks_to_analyze[batch_start:batch_start + MAX_BATCH]
+            label = f"remplacants tour {round_num} ({batch_start + 1}-{batch_start + len(batch)})"
+            ai_map.update(call_ai_batch(batch, label))
+
+    else:
+        print(f"\n  Limite de {MAX_REPLACEMENT_ROUNDS} tours atteinte.")
+
+    print(f"\n  Selection finale : {[s['ticker'] for s in final_list]}")
+    return final_list, ai_map
 
 
 # ============================================================
@@ -719,15 +804,15 @@ def main():
     print("=" * 60)
 
     print("\nETAPE 1-2 : Collecte et scoring quantitatif...")
-    candidates = select_candidates()
+    candidates, sector_reserves = select_candidates()
     print(f"\n  {len(candidates)} actions selectionnees")
 
-    print("\nETAPE 3 : Analyse IA (2 lots)...")
-    ai_map = get_ai_analysis(candidates)
+    print("\nETAPE 3 : Analyse IA avec remplacement des EVITER...")
+    final_list, ai_map = get_ai_analysis(candidates, sector_reserves)
     print(f"  {len(ai_map)} analyses IA recues au total")
 
     print("\nETAPE 4 : Sauvegarde...")
-    save_results(candidates, ai_map)
+    save_results(final_list, ai_map)
 
     print("\nTermine !")
     print("=" * 60)
