@@ -2,7 +2,7 @@
 """
 PEA Tracker - Analyse quotidienne optimisee
 - Preselection 100% quantitative (yfinance, aucun cout)
-- 1 seul appel MammouthIA pour les 20 finalistes
+- 2 appels MammouthIA : actions 1-10 puis 11-20
 """
 
 import json, os, time, warnings, math
@@ -239,7 +239,6 @@ FINAL_COUNT = 20
 # ============================================================
 
 def to_float(val):
-    """Convertit une valeur en float de manière sécurisée."""
     try:
         if val is None:
             return None
@@ -252,12 +251,6 @@ def to_float(val):
 
 
 def clean_for_json(obj):
-    """
-    Nettoie récursivement un objet pour le rendre JSON-compatible :
-    - Remplace NaN et Infinity par None
-    - Laisse les bool intacts
-    - Traite les dict et list récursivement
-    """
     if isinstance(obj, dict):
         return {k: clean_for_json(v) for k, v in obj.items()}
     elif isinstance(obj, list):
@@ -271,7 +264,6 @@ def clean_for_json(obj):
     elif isinstance(obj, (int, str)) or obj is None:
         return obj
     else:
-        # Pour numpy scalars et autres types exotiques
         try:
             f = float(obj)
             if math.isnan(f) or math.isinf(f):
@@ -477,7 +469,6 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     if not pertinent:
         total = max(0, total - 15)
 
-    # Nettoyage des prix historiques : on retire les NaN éventuels
     prices_raw = close.tail(120).tolist()
     prices_6m  = [round(float(p), 2) for p in prices_raw
                   if p is not None and not math.isnan(float(p))]
@@ -553,7 +544,7 @@ def select_candidates() -> list[dict]:
 
 
 # ============================================================
-# ANALYSE IA (1 seul appel)
+# ANALYSE IA - 2 appels distincts (lot 1-10 et lot 11-20)
 # ============================================================
 
 def build_prompt(stocks: list[dict]) -> str:
@@ -590,7 +581,8 @@ Pour chacune, fournis en JSON un tableau "analyses" avec ces champs :
 Reponds UNIQUEMENT avec le JSON valide, sans markdown, sans explication."""
 
 
-def get_ai_analysis(stocks: list[dict]) -> dict:
+def call_ai_batch(stocks: list[dict], batch_label: str) -> dict:
+    """Appelle l'IA pour un lot d'actions et retourne le dict ticker -> analyse."""
     if not stocks:
         return {}
 
@@ -616,7 +608,7 @@ Format JSON STRICT :
 
 Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte avant ou après."""
 
-    print(f"  Appel MammouthIA ({AI_MODEL})...")
+    print(f"  Appel MammouthIA ({AI_MODEL}) - {batch_label}...")
 
     try:
         resp = client.chat.completions.create(
@@ -629,7 +621,7 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
         finish_reason = resp.choices[0].finish_reason
 
         if finish_reason == "length":
-            print("  AVERTISSEMENT : reponse tronquee par limite de tokens")
+            print(f"  AVERTISSEMENT : reponse tronquee ({batch_label})")
 
         if raw.startswith("```"):
             raw = raw.split("```")[1]
@@ -640,11 +632,11 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
             data = json.loads(raw)
             analyses = data.get("analyses", data) if isinstance(data, dict) else data
             result = {a["ticker"]: a for a in analyses if "ticker" in a}
-            print(f"  {len(result)} analyses parsees avec succes")
+            print(f"  {len(result)} analyses parsees avec succes ({batch_label})")
             return result
 
         except json.JSONDecodeError:
-            print("  JSON incomplet, tentative de recuperation partielle...")
+            print(f"  JSON incomplet, tentative de recuperation partielle ({batch_label})...")
             import re
             objects = re.findall(r'\{[^{}]{50,}\}', raw)
             analyses = []
@@ -655,22 +647,33 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
                         analyses.append(parsed)
                 except:
                     continue
-            print(f"  {len(analyses)} analyses recuperees par parsing partiel")
+            print(f"  {len(analyses)} analyses recuperees par parsing partiel ({batch_label})")
             return {a["ticker"]: a for a in analyses}
 
     except Exception as e:
-        print(f"  Erreur IA : {e}")
+        print(f"  Erreur IA ({batch_label}) : {e}")
         return {}
 
-def clean_for_json(obj):
-    if isinstance(obj, dict):
-        return {k: clean_for_json(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [clean_for_json(v) for v in obj]
-    if isinstance(obj, float):
-        if math.isnan(obj) or math.isinf(obj):
-            return None
-    return obj
+
+def get_ai_analysis(stocks: list[dict]) -> dict:
+    """Lance 2 appels IA distincts : actions 1-10 puis 11-20, fusionne les résultats."""
+    lot1 = stocks[:10]
+    lot2 = stocks[10:]
+
+    print(f"\n  Lot 1 : actions 1-10 ({len(lot1)} actions)")
+    result1 = call_ai_batch(lot1, "actions 1-10")
+
+    print(f"\n  Lot 2 : actions 11-20 ({len(lot2)} actions)")
+    result2 = call_ai_batch(lot2, "actions 11-20")
+
+    merged = {**result1, **result2}
+    print(f"\n  Total fusionné : {len(merged)} analyses IA")
+    return merged
+
+
+# ============================================================
+# SAUVEGARDE
+# ============================================================
 
 def save_results(stocks: list[dict], ai_map: dict):
     output = []
@@ -695,7 +698,6 @@ def save_results(stocks: list[dict], ai_map: dict):
         "stocks":     output,
     }
 
-    # Correction bug NaN/Infinity — seule modification technique
     result_clean = clean_for_json(result)
 
     os.makedirs("data", exist_ok=True)
@@ -720,9 +722,9 @@ def main():
     candidates = select_candidates()
     print(f"\n  {len(candidates)} actions selectionnees")
 
-    print("\nETAPE 3 : Analyse IA...")
+    print("\nETAPE 3 : Analyse IA (2 lots)...")
     ai_map = get_ai_analysis(candidates)
-    print(f"  {len(ai_map)} analyses IA recues")
+    print(f"  {len(ai_map)} analyses IA recues au total")
 
     print("\nETAPE 4 : Sauvegarde...")
     save_results(candidates, ai_map)
