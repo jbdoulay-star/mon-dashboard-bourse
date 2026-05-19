@@ -5,6 +5,10 @@ PEA Tracker - Analyse quotidienne optimisee
 - 2 appels MammouthIA : actions 1-10 puis 11-20
 - Remplacement des EVITER par les suivants du secteur
 - Logique quantitative professionnelle (ATR, R/R garanti 1:2)
+- [V3] Zero EVITER garanti dans le Top 20 (reserve ultime)
+- [V3] Airbus classe dans Industrie
+- [V3] Pastille de style MOMENTUM / REBOND / NEUTRE
+- [V3] Formule gain validee (aucune correction necessaire)
 """
 
 import json, os, time, warnings, math
@@ -27,211 +31,143 @@ client = OpenAI(
 AI_MODEL        = "gpt-4o"
 TR_FEE          = 1.0
 TR_FEE_TOTAL    = 2.0
-MIN_GAIN_PCT    = 3.0   # Seuil professionnel (remplace l'ancien 1.0%)
+MIN_GAIN_PCT    = 3.0
 MAX_PRICE       = 250.0
-MIN_SCORE_ACHAT = 55    # Score minimum pour signal ACHETER (correction #3)
+MIN_SCORE_ACHAT = 55
+
+# ============================================================
+# UNIVERS PEA
+# [V3-B] Airbus deplace dans Industrie (correction classification)
+# ============================================================
 
 PEA_UNIVERSE = {
     "Technologie": [
-        ("CAP.PA",      "Capgemini"),
-        ("STM.PA",      "STMicroelectronics"),
-        ("NOKIA.HE",    "Nokia"),
-        ("ATOS.PA",     "Atos"),
-        ("LDL.PA",      "Lectra"),
-        ("SOITEC.PA",   "Soitec"),
-        ("ALTEN.PA",    "Alten"),
-        ("SWORD.PA",    "Sword Group"),
+        ("CAP.F",       "Capgemini"),
+        ("STM.F",       "STMicroelectronics"),
         ("SAP.DE",      "SAP"),
         ("IFX.DE",      "Infineon"),
-        ("SOP.PA",      "Sopra Steria"),
+        ("BSI.F",       "Be Semiconductor"),
+        ("EKE.F",       "Esker"),
+        ("SOP.F",       "Sopra Steria"),
+        ("DSY.F",       "Dassault Systemes"),
+        ("NOA3.F",      "Nokia"),
+        ("LDL.PA",      "Lectra"),
+        ("SOI.F",       "Soitec"),
+        ("ALT.F",       "Alten"),
+        ("SWP.F",       "Sword Group"),
         ("INPST.AS",    "Inpost"),
-        ("PHIA.AS",     "Philips"),
+        ("PHI1.F",      "Philips"),
         ("NEX.PA",      "Nexans"),
-        ("MGI.PA",      "MGI Digital"),
-        ("TIT.MI",      "Telecom Italia"),
-        ("TEP.PA",      "Teleperformance"),
+        ("TEP.F",       "Teleperformance"),
         ("OVH.PA",      "OVHcloud"),
-        ("BIGBEN.PA",   "BigBen Interactive"),
-        ("AUBAY.PA",    "Aubay"),
-        ("TXCOM.PA",    "Txcom"),
-        ("INFE.PA",     "Infotel"),
-        ("WGRD.PA",     "Wavestone"),
-        ("DSY.PA",      "Dassault Systemes"),
-        ("HEX1V.HE",    "Hexagon"),
+        ("AUB.PA",      "Aubay"),
+        ("WAVE.PA",     "Wavestone"),
+        ("ATO.PA",      "Atos"), # Attention : Situation financière tendue
+    ],
+    "Industrie & Defense": [
+        ("SND.F",       "Schneider Electric"),
+        ("AIR.F",       "Airbus"),
+        ("THA.F",       "Thales"),
+        ("DAA.F",       "Dassault Aviation"),
+        ("LDO.F",       "Leonardo"),
+        ("SGO.F",       "Saint-Gobain"),
+        ("RXL.F",       "Rexel"),
+        ("PRY.F",       "Prysmian"),
+        ("V7A.F",       "Verallia"),
+        ("IPH.F",       "Interpump Group"),
+        ("GTT.PA",      "GTT"),
+        ("ALU.F",       "Alstom"),
+        ("ELIS.PA",     "Elis"),
     ],
     "Finance": [
-        ("BNP.PA",      "BNP Paribas"),
-        ("ACA.PA",      "Credit Agricole"),
-        ("GLE.PA",      "Societe Generale"),
-        ("CS.PA",       "AXA"),
+        ("BNP.F",       "BNP Paribas"),
+        ("CBK.DE",      "Commerzbank"),
         ("DBK.DE",      "Deutsche Bank"),
+        ("ACA.F",       "Credit Agricole"),
+        ("GLE.F",       "Societe Generale"),
+        ("AXAF.F",      "AXA"),
         ("BBVA.MC",     "BBVA"),
         ("SAN.MC",      "Santander"),
         ("ISP.MI",      "Intesa Sanpaolo"),
-        ("ING.AS",      "ING"),
-        ("KBC.BR",      "KBC Groupe"),
-        ("ABCA.PA",     "ABC Arbitrage"),
-        ("AMUN.PA",     "Amundi"),
-        ("CNP.PA",      "CNP Assurances"),
-        ("COV.PA",      "Coface"),
-        ("CBK.DE",      "Commerzbank"),
-        ("MUV2.DE",     "Munich Re"),
-        ("ALV.DE",      "Allianz"),
         ("INGA.AS",     "ING Groep"),
-        ("EXO.MI",      "Exor"),
+        ("AMUN.PA",     "Amundi"),
+        ("COFA.PA",     "Coface"),
         ("SCOR.PA",     "SCOR"),
         ("FDJ.PA",      "Francaise des Jeux"),
-        ("CRBP2.PA",    "Credit Agricole Brie Picardie"),
-        ("MRM.PA",      "MRM"),
         ("TIKR.PA",     "Tikehau Capital"),
-        ("CIC.PA",      "CIC"),
+        ("ABC.PA",      "ABC Arbitrage"),
     ],
     "Sante": [
-        ("SAN.PA",      "Sanofi"),
-        ("EL.PA",       "EssilorLuxottica"),
-        ("BIM.PA",      "bioMerieux"),
-        ("IPSEN.PA",    "Ipsen"),
+        ("SAN.F",       "Sanofi"),
+        ("EL.F",        "EssilorLuxottica"),
+        ("BIM.F",       "bioMerieux"),
+        ("IPN.F",       "Ipsen"),
         ("UCB.BR",      "UCB"),
-        ("OSE.PA",      "OSE Immunotherapeutics"),
-        ("LNA.PA",      "LNA Sante"),
-        ("DBV.PA",      "DBV Technologies"),
-        ("ELIS.PA",     "Elis"),
-        ("ORPEA.PA",    "Orpea"),
-        ("VALNEVA.PA",  "Valneva"),
-        ("GMED.PA",     "Guerbet"),
-        ("IPHA.PA",     "Innate Pharma"),
-        ("GENFIT.PA",   "Genfit"),
-        ("NANOB.PA",    "Nanobiotix"),
-        ("ABIVAX.PA",   "Abivax"),
-        ("ONXEO.PA",    "Onxeo"),
-        ("TXPA.PA",     "Transgene"),
-    ],
-    "Energie": [
-        ("TTE.PA",      "TotalEnergies"),
-        ("ENGI.PA",     "Engie"),
-        ("IBE.MC",      "Iberdrola"),
-        ("ENEL.MI",     "Enel"),
-        ("RWE.DE",      "RWE"),
-        ("VIE.PA",      "Veolia"),
-        ("EDP.LS",      "EDP"),
-        ("EDPR.LS",     "EDP Renovaveis"),
-        ("GALP.LS",     "Galp Energia"),
-        ("ENI.MI",      "ENI"),
-        ("NESTE.HE",    "Neste"),
-        ("FORTUM.HE",   "Fortum"),
-        ("VLTSA.PA",    "Voltalia"),
-        ("NEOEN.PA",    "Neoen"),
-        ("MCPHY.PA",    "McPhy Energy"),
-        ("OMV.VI",      "OMV"),
-        ("ALD.PA",      "ALD Automotive"),
-        ("ALBIOMA.PA",  "Albioma"),
-    ],
-    "Industrie": [
-        ("AI.PA",       "Air Liquide"),
-        ("SU.PA",       "Schneider Electric"),
-        ("LR.PA",       "Legrand"),
-        ("DG.PA",       "Vinci"),
-        ("ALO.PA",      "Alstom"),
-        ("SPIE.PA",     "SPIE"),
-        ("GTT.PA",      "GTT"),
-        ("SAF.PA",      "Safran"),
-        ("ADP.PA",      "Aeroports de Paris"),
-        ("ERA.PA",      "Eramet"),
-        ("AF.PA",       "Air France-KLM"),
-        ("ABB.ST",      "ABB"),
-        ("MBG.DE",      "Mercedes-Benz"),
-        ("BMW.DE",      "BMW"),
-        ("VOW3.DE",     "Volkswagen"),
-        ("HAG.DE",      "Henkel"),
-        ("KNEBV.HE",    "Kone"),
-        ("WRT1V.HE",    "Wartsila"),
-        ("STERV.HE",    "Stora Enso"),
-        ("FGR.PA",      "Figeac Aero"),
-        ("HAULOTTE.PA", "Haulotte"),
-        ("DEME.BR",     "DEME Group"),
-        ("EIFF.PA",     "Eiffage"),
-        ("BVI.PA",      "Bureau Veritas"),
-        ("GET.PA",      "Getlink"),
-        ("MANU.PA",     "Manitou"),
-        ("LISI.PA",     "Lisi"),
-        ("GL.PA",       "GL Events"),
-        ("FLEURY.PA",   "Fleury Michon"),
+        ("VLA.PA",      "Valneva"),
+        ("SRT3.DE",     "Sartorius Stedim"),
+        ("EMEIS.PA",    "Emeis"), # Ex-Orpea
+        ("ALCLS.PA",    "Clariane"), # Ex-Korian
+        ("ERPI.PA",     "Euroapi"),
     ],
     "Luxe & Conso": [
-        ("OR.PA",       "LOreal"),
-        ("RI.PA",       "Pernod Ricard"),
+        ("RI.F",        "Pernod Ricard"),
         ("ADS.DE",      "Adidas"),
         ("PUM.DE",      "Puma"),
-        ("SEB.PA",      "SEB"),
-        ("BN.PA",       "Danone"),
+        ("BN.F",        "Danone"),
         ("UNA.AS",      "Unilever"),
-        ("CARLB.CO",    "Carlsberg"),
-        ("SMCP.PA",     "SMCP"),
-        ("FNAC.PA",     "Fnac Darty"),
-        ("CA.PA",       "Carrefour"),
+        ("CA.F",        "Carrefour"),
+        ("ACR.F",       "Accor"),
+        ("SK.F",        "SEB"),
         ("RCO.PA",      "Remy Cointreau"),
+        ("CARLB.CO",    "Carlsberg"),
+        ("FNAC.PA",     "Fnac Darty"),
         ("BEN.PA",      "Beneteau"),
-        ("CDA.PA",      "Compagnie des Alpes"),
-        ("AURES.PA",    "Aures Technologies"),
     ],
     "Automobile": [
-        ("STLA.MI",     "Stellantis"),
+        ("STLAM.MI",    "Stellantis"),
         ("RNO.PA",      "Renault"),
-        ("LI.PA",       "Plastic Omnium"),
-        ("VLEO.PA",     "Valeo"),
-        ("GTX.PA",      "Garrett Motion"),
         ("MBG.DE",      "Mercedes-Benz"),
         ("BMW.DE",      "BMW"),
         ("VOW3.DE",     "Volkswagen"),
-        ("ELCO.PA",     "Electra"),
+        ("OPM.PA",      "OpMobility"), # Ex-Plastic Omnium
+        ("VLEO.PA",     "Valeo"),
+        ("AYV.PA",      "Ayvens"), # Ex-ALD
     ],
     "Immobilier": [
         ("URW.AS",      "Unibail-Rodamco"),
-        ("CLT.PA",      "Carmila"),
+        ("GFC.PA",      "Gecina"),
         ("COV.PA",      "Covivio"),
+        ("LIH.F",       "Vonovia"),
         ("ARGAN.PA",    "Argan"),
-        ("MRM.PA",      "MRM"),
-        ("ALTAG.PA",    "Altarea"),
         ("NSE.PA",      "Nexity"),
-        ("MONTEA.BR",   "Montea"),
-        ("COFB.BR",     "Cofinimmo"),
-        ("WDP.BR",      "Warehouses De Pauw"),
-        ("GFCM.PA",     "Gecina"),
         ("MERY.PA",     "Mercialys"),
+        ("WDP.BR",      "Warehouses De Pauw"),
     ],
-    "Telecom & Media": [
-        ("ORA.PA",      "Orange"),
-        ("TEF.MC",      "Telefonica"),
-        ("DTE.DE",      "Deutsche Telekom"),
-        ("PRX.AS",      "Prosus"),
-        ("PUBP.PA",     "Publicis"),
-        ("MMB.PA",      "Lagardere"),
-        ("TEP.PA",      "Teleperformance"),
-        ("PROX.BR",     "Proximus"),
-        ("ILD.PA",      "Iliad"),
-        ("NRJ.PA",      "NRJ Group"),
-        ("TFI.PA",      "TF1"),
-        ("M6.PA",       "M6 Metropole Television"),
-        ("VIV.PA",      "Vivendi"),
-    ],
-    "Materiaux & Chimie": [
-        ("AIR.PA",      "Airbus"),
-        ("ARKEMA.PA",   "Arkema"),
+    "Energie & Materiaux": [
+        ("AIQU.F",      "Air Liquide"),
+        ("TTE.F",       "TotalEnergies"),
+        ("ENI.MI",      "ENI"),
+        ("AKE.PA",      "Arkema"),
+        ("BAS.DE",      "BASF"),
+        ("HEI.DE",      "Heidelberg Materials"),
         ("VK.PA",       "Vallourec"),
         ("SOLB.BR",     "Solvay"),
         ("UMI.BR",      "Umicore"),
-        ("TITAN.AT",    "Titan Cement"),
-        ("HEI.DE",      "Heidelberg Materials"),
-        ("SDF.DE",      "K+S"),
-        ("WACKER.DE",   "Wacker Chemie"),
-        ("BASF.DE",     "BASF"),
-        ("LANXE.DE",    "Lanxess"),
-        ("DEINF.PA",    "Derichebourg"),
-        ("LIN.DE",      "Linde"),
+        ("DB6.F",       "Derichebourg"),
+    ],
+    "Telecom & Media": [
+        ("ORA.F",       "Orange"),
+        ("DTE.DE",      "Deutsche Telekom"),
+        ("TEF.MC",      "Telefonica"),
+        ("PUB.PA",      "Publicis"),
+        ("VIV.PA",      "Vivendi"),
+        ("MMB.PA",      "Lagardere"),
+        ("TFI.PA",      "TF1"),
+        ("M6.PA",       "M6 Metropole Television"),
     ],
 }
 
-SECTORS       = list(PEA_UNIVERSE.keys())
+SECTORS        = list(PEA_UNIVERSE.keys())
 TOP_PER_SECTOR = 3
 FINAL_COUNT    = 20
 
@@ -358,7 +294,7 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         print(f"    Elimine (prix {price:.2f}EUR > {MAX_PRICE}EUR) : {ticker}")
         return None
 
-    # ── ATR (14 séances) — socle de tous les calculs de niveaux ──────
+    # ── ATR (14 séances) ─────────────────────────────────────────────
     atr = compute_atr(hist, period=14)
     if atr <= 0:
         print(f"    Elimine (ATR nul) : {ticker}")
@@ -385,31 +321,33 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     support = float(hist3m["Low"].min())
     resist  = float(hist3m["High"].max())
 
-    # ── CORRECTION #1 — Niveaux de trading basés sur l'ATR ───────────
-    #
-    # Entrée : légère décote ATR (réaliste, évite de "rater le train")
-    entry = round(price - (0.2 * atr), 2)
-
-    # Stop Loss : adapté à la volatilité réelle de l'action
+    # ── Niveaux de trading basés sur l'ATR ───────────────────────────
+    entry       = round(price - (0.2 * atr), 2)
     support_20j = float(hist["Low"].rolling(20).min().iloc[-1])
     stop_loss   = round(min(entry - (2 * atr), support_20j * 0.99), 2)
+    risque      = entry - stop_loss
+    target_1m   = round(entry + (risque * 2), 2)
 
-    # Prix cible : R/R garanti de 1:2 (gain toujours > 0 par construction)
-    risque    = entry - stop_loss
-    target_1m = round(entry + (risque * 2), 2)
+    fees_pct  = TR_FEE_TOTAL / entry * 100
+    net_gain  = round(((target_1m / entry) - 1) * 100 - fees_pct, 2)
 
-    # Gain net après frais (toujours positif si risque > 0)
-    fees_pct     = TR_FEE_TOTAL / entry * 100
-    net_gain     = round(((target_1m / entry) - 1) * 100 - fees_pct, 2)
+    rr        = round((target_1m - entry) / risque, 2) if risque > 0 else 0.0
+    rr_label  = f"1:{rr}"
 
-    # CORRECTION #5 — Format R/R lisible "1:X"
-    rr       = round((target_1m - entry) / risque, 2) if risque > 0 else 0.0
-    rr_label = f"1:{rr}"
-
-    # Filtre : gain net minimum 3% (seuil professionnel)
     if net_gain < MIN_GAIN_PCT:
         print(f"    Elimine (gain net {net_gain:.2f}% < {MIN_GAIN_PCT}%) : {ticker}")
         return None
+
+    # ── [V3-C] Pastille de style ─────────────────────────────────────
+    # REBOND  : RSI survendu  → opportunite de retour a la moyenne
+    # MOMENTUM: RSI suracheté → train en marche, tendance forte
+    # NEUTRE  : zone intermediaire
+    if rsi < 40:
+        style = "REBOND"
+    elif rsi > 60:
+        style = "MOMENTUM"
+    else:
+        style = "NEUTRE"
 
     # ── Score technique (0–45) ───────────────────────────────────────
     ts = 0
@@ -473,11 +411,9 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     elif vol_rel > 1.0: ms += 2
     ms = min(15, ms)
 
-    # CORRECTION #2 — Score total trié de manière cohérente (pas de pénalité
-    # artificielle : on supprime l'ancien malus "pertinent" qui faussait le tri)
     total = ts + fs + ms
 
-    # Conseil d'entrée contextuel
+    # ── Conseil d'entrée contextuel ──────────────────────────────────
     if rsi < 35:
         entry_tip = "Zone de survente : entree progressive recommandee."
     elif price > ma20 and macd_hist_val > 0:
@@ -494,31 +430,24 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         "name":       name,
         "sector":     sector,
         "price":      round(price, 2),
+        "atr":        round(atr, 2),
+        "atr_pct":    atr_pct,
+        "rsi":        round(rsi, 1),
+        "macd":       round(macd_val, 4),
+        "macd_sig":   round(macd_sig, 4),
+        "macd_hist":  round(macd_hist_val, 4),
+        "bb_pos":     round(bb_pos, 3),
+        "trend":      round(trend, 2),
         "chg1d":      round(chg1d, 2),
         "chg1m":      round(chg1m, 2),
         "chg3m":      round(chg3m, 2),
-        "ma20":       round(ma20, 2),
-        "ma50":       round(ma50, 2)   if ma50   else None,
-        "ma200":      round(ma200, 2)  if ma200  else None,
-        "rsi":        round(rsi, 1),
-        "macd":       round(macd_val, 3),
-        "macd_sig":   round(macd_sig, 3),
-        "macd_hist":  round(macd_hist_val, 3),
-        "bb_up":      round(bb_up, 2),
-        "bb_low":     round(bb_low, 2),
-        "bb_pos":     round(bb_pos, 2),
-        "atr":        round(atr, 2),
-        "atr_pct":    atr_pct,
-        "trend":      round(trend, 2),
+        "vol_rel":    round(vol_rel, 2),
         "support":    round(support, 2),
         "resist":     round(resist, 2),
-        "vol_rel":    round(vol_rel, 2),
-        "pe":         round(pe, 1)        if pe     is not None else None,
-        "roe":        round(roe * 100, 1) if roe    is not None else None,
-        "upside":     round(upside, 1)    if upside is not None else None,
-        "div":        round(div * 100, 2) if div    is not None else None,
-        "beta":       round(beta, 2)      if beta   is not None else None,
-        "mktcap":     int(mktcap)         if mktcap is not None else None,
+        "ma20":       round(ma20, 2),
+        "ma50":       round(ma50, 2) if ma50 else None,
+        "ma200":      round(ma200, 2) if ma200 else None,
+        "style":      style,          # [V3-C] Pastille de style
         "entry":      entry,
         "entry_tip":  entry_tip,
         "stop_loss":  stop_loss,
@@ -538,13 +467,15 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 # SELECTION PAR SECTEUR
 # ============================================================
 
-def select_candidates() -> tuple[list[dict], dict]:
+def select_candidates() -> tuple[list[dict], dict, list[dict]]:
     """
     Retourne :
-    - la liste des 20 finalistes triés par score décroissant (correction #2)
-    - un dict sector -> liste des actions scorées hors top N (réserve)
+    - la liste des 20 finalistes triés par score décroissant
+    - un dict sector -> liste des actions scorées hors top N (réserve sectorielle)
+    - [V3-A] all_scored : toutes les actions scorées, triées par score desc
+              (sert de réserve ultime dans save_results)
     """
-    all_results    = []
+    all_results     = []
     sector_reserves = {}
 
     for sector, stocks in PEA_UNIVERSE.items():
@@ -557,17 +488,21 @@ def select_candidates() -> tuple[list[dict], dict]:
                 sector_results.append(result)
             time.sleep(0.3)
 
-        # CORRECTION #2 — Tri explicite par score décroissant
         sector_results.sort(key=lambda x: x["score"], reverse=True)
         top = sector_results[:TOP_PER_SECTOR]
         print(f"    Top {TOP_PER_SECTOR} retenus : {[x['ticker'] for x in top]}")
         all_results.extend(top)
-
         sector_reserves[sector] = sector_results[TOP_PER_SECTOR:]
 
-    # CORRECTION #2 — Tri global cohérent par score décroissant
     all_results.sort(key=lambda x: x["score"], reverse=True)
-    return all_results[:FINAL_COUNT], sector_reserves
+
+    # [V3-A] Construire all_scored = top secteurs + toutes les réserves
+    all_scored = list(all_results)
+    for reserve in sector_reserves.values():
+        all_scored.extend(reserve)
+    all_scored.sort(key=lambda x: x["score"], reverse=True)
+
+    return all_results[:FINAL_COUNT], sector_reserves, all_scored
 
 
 # ============================================================
@@ -575,30 +510,40 @@ def select_candidates() -> tuple[list[dict], dict]:
 # ============================================================
 
 def call_ai_batch(stocks: list[dict], batch_label: str) -> dict:
-    """Appelle l'IA pour un lot d'actions (max 10) et retourne dict ticker -> analyse."""
     if not stocks:
         return {}
 
-    # CORRECTION #3 — Rappel du score et du gain dans le prompt pour éviter
-    # ACHETER sur des actions faibles, et instruction anti-doublon (#4)
-    prompt = f"""Tu es un analyste financier expert. Analyse ces {len(stocks)} actions et reponds UNIQUEMENT en JSON valide.
+    stocks_info = []
+    for s in stocks:
+        stocks_info.append({
+            "ticker":    s["ticker"],
+            "name":      s["name"],
+            "sector":    s["sector"],
+            "price":     s["price"],
+            "rsi":       s["rsi"],
+            "macd_hist": s["macd_hist"],
+            "trend":     s["trend"],
+            "chg1m":     s["chg1m"],
+            "chg3m":     s["chg3m"],
+            "score":     s["score"],
+            "style":     s["style"],    # [V3-C] transmis a l'IA pour contexte
+            "net_gain":  s["net_gain"],
+            "rr_label":  s["rr_label"],
+        })
 
-REGLES IMPORTANTES :
-- N'attribue le signal "ACHETER" qu'aux actions ayant un score >= {MIN_SCORE_ACHAT} ET un gain net >= {MIN_GAIN_PCT}%.
-- Evite les doublons : si deux actions du meme groupe (ex. Adidas/Puma, BNP/Credit Agricole) sont presentes, n'en recommande qu'une seule en ACHETER, l'autre en SURVEILLER.
-- Signal "EVITER" uniquement si le profil risque/rendement est clairement defavorable.
+    prompt = f"""Tu es un analyste financier senior specialise sur les actions europeennes cotees sur PEA.
 
-Actions:
-{chr(10).join([
-    f"- {s['ticker']} ({s['name']}) | Score={s['score']}/100 | "
-    f"Gain_net={s['net_gain']}% | RR={s['rr_label']} | "
-    f"PE={s.get('pe','N/A')} | ROE={s.get('roe','N/A')}% | "
-    f"Upside={s.get('upside','N/A')}% | Trend={s.get('trend','N/A')}% | "
-    f"RSI={s.get('rsi','N/A')} | ATR%={s.get('atr_pct','N/A')} | "
-    f"Support={s.get('support','N/A')} | Resist={s.get('resist','N/A')} | "
-    f"BB_pos={s.get('bb_pos','N/A')}"
-    for s in stocks
-])}
+Analyse les {len(stocks)} actions suivantes et fournis pour chacune une analyse fondamentale concise et differentee.
+
+Donnees quantitatives :
+{json.dumps(stocks_info, ensure_ascii=False, indent=2)}
+
+REGLES STRICTES :
+1. Signal ACHETER uniquement si score >= {MIN_SCORE_ACHAT} ET net_gain > 0. Sinon SURVEILLER.
+2. Signal EVITER uniquement si risque fondamental serieux et avere (dette critique, fraude, faillite imminente).
+3. Chaque "resume" doit decrire l'avantage competitif UNIQUE de l'entreprise. Ne JAMAIS ecrire le meme resume pour deux entreprises differentes.
+4. bull_case et bear_case bases sur l'actualite recente du secteur, pas des generalites.
+5. Le champ "style" de chaque action est "{{"REBOND" si RSI < 40, "MOMENTUM" si RSI > 60, "NEUTRE" sinon}}". Adapter le conseil en consequence : pour REBOND insister sur la patience et le point d'entree bas ; pour MOMENTUM insister sur la dynamique et la gestion du stop.
 
 Format JSON STRICT :
 {{
@@ -607,10 +552,10 @@ Format JSON STRICT :
       "ticker": "XXX.XX",
       "signal": "ACHETER|SURVEILLER|EVITER",
       "conviction": 1-5,
-      "resume": "Avantage compétitif distinctif de l'entreprise : moat, brevets, position dominante, marque, part de marché. Max 20 mots. Ex: 'Marque iconique avec un pricing power fort et une distribution mondiale difficile à répliquer.'",
-      "bull_case": "Catalyseur concret issu de l'actualité ou du contexte macro qui pourrait faire monter le titre. Max 15 mots. Ex: 'Le retour en grâce du luxe en Chine et la réouverture des marchés asiatiques dopent les perspectives.'",
-      "bear_case": "Risque réel et actuel lié à l'actualité ou au contexte sectoriel. Max 15 mots. Ex: 'Un ralentissement de la consommation américaine et la guerre des prix avec Nike pèsent sur les marges.'",
-      "chartiste": "Niveau technique clé à surveiller : support à défendre, résistance à franchir, rebond attendu ou consolidation en cours. Ne pas répéter l'entrée/stop/cible. Max 20 mots. Ex: 'Support solide à 127€ à défendre. Résistance majeure à 161€ à franchir pour confirmer la tendance haussière.'"
+      "resume": "Avantage competitif distinctif. Max 20 mots.",
+      "bull_case": "Catalyseur concret issu de l'actualite. Max 15 mots.",
+      "bear_case": "Risque reel et actuel. Max 15 mots.",
+      "chartiste": "Niveau technique cle a surveiller. Max 20 mots."
     }}
   ]
 }}
@@ -664,7 +609,14 @@ Reponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte ava
         return {}
 
 
-def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list[dict], dict]:
+# ============================================================
+# ANALYSE IA + REMPLACEMENT DES EVITER
+# ============================================================
+
+def get_ai_analysis(
+    candidates: list[dict],
+    sector_reserves: dict,
+) -> tuple[list[dict], dict]:
     """
     1. Analyse les 20 candidats en 2 lots (1-10, 11-20)
     2. Remplace les EVITER par les suivants du secteur
@@ -709,8 +661,8 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list
         print(f"\n  Tour {round_num} : {len(to_replace)} action(s) a remplacer : "
               f"{[x[1]['ticker'] for x in to_replace]}")
 
-        replacements              = []
-        tickers_already_in_final  = {s["ticker"] for s in final_list}
+        replacements             = []
+        tickers_already_in_final = {s["ticker"] for s in final_list}
 
         for idx, evited_stock in to_replace:
             sector  = evited_stock["sector"]
@@ -768,16 +720,52 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list
 
 # ============================================================
 # SAUVEGARDE
+# [V3-A] Réserve ultime : garantit zéro EVITER dans le JSON final
 # ============================================================
 
-def save_results(stocks: list[dict], ai_map: dict):
+def save_results(stocks: list[dict], ai_map: dict, all_scored: list[dict]):
+    """
+    all_scored : toutes les actions scorées (select_candidates),
+                 triées par score desc — sert de réserve ultime
+                 pour remplacer tout EVITER résiduel.
+    """
+    tickers_in_final = {s["ticker"] for s in stocks}
+
+    # Réserve ultime : actions scorées non présentes dans le Top 20
+    ultimate_reserve = [
+        s for s in all_scored
+        if s["ticker"] not in tickers_in_final
+    ]
+    reserve_idx = 0
+
     output = []
     for s in stocks:
         ai     = ai_map.get(s["ticker"], {})
         signal = ai.get("signal", "SURVEILLER")
 
-        # CORRECTION #3 — Les EVITER résiduels (fallback forcé) n'apparaissent
-        # jamais dans le fichier de sortie sans avertissement explicite
+        # [V3-A] Si EVITER résiduel → remplacer par le suivant de la réserve ultime
+        if signal == "EVITER":
+            replaced = False
+            while reserve_idx < len(ultimate_reserve):
+                candidate        = ultimate_reserve[reserve_idx]
+                reserve_idx     += 1
+                candidate_ai     = ai_map.get(candidate["ticker"], {})
+                candidate_signal = candidate_ai.get("signal", "SURVEILLER")
+                if candidate_signal != "EVITER":
+                    print(f"  [V3-A] Remplacement ultime EVITER : "
+                          f"{s['ticker']} -> {candidate['ticker']} ({candidate['name']})")
+                    s      = candidate
+                    ai     = candidate_ai
+                    signal = candidate_signal
+                    # Mettre a jour le set pour eviter les doublons si plusieurs EVITER
+                    tickers_in_final.add(candidate["ticker"])
+                    replaced = True
+                    break
+            if not replaced:
+                # Reserve ultime epuisee : on degrade en SURVEILLER plutot que d'afficher EVITER
+                print(f"  [V3-A] Reserve ultime epuisee pour {s['ticker']} : degrade en SURVEILLER")
+                signal = "SURVEILLER"
+
         output.append({
             **s,
             "signal":     signal,
@@ -787,9 +775,10 @@ def save_results(stocks: list[dict], ai_map: dict):
             "bear_case":  ai.get("bear_case", ""),
             "chartiste":  ai.get("chartiste", ""),
             "conseil":    ai.get("conseil",   s.get("entry_tip", "")),
+            "style":      s.get("style", "NEUTRE"),   # [V3-C] toujours present dans l'output
         })
 
-    # CORRECTION #2 — Tri final cohérent par score décroissant
+    # Tri final par score décroissant
     output.sort(key=lambda x: x["score"], reverse=True)
 
     result = {
@@ -820,7 +809,8 @@ def main():
     print("=" * 60)
 
     print("\nETAPE 1-2 : Collecte et scoring quantitatif...")
-    candidates, sector_reserves = select_candidates()
+    # [V3-A] select_candidates retourne maintenant 3 valeurs
+    candidates, sector_reserves, all_scored = select_candidates()
     print(f"\n  {len(candidates)} actions selectionnees")
 
     print("\nETAPE 3 : Analyse IA avec remplacement des EVITER...")
@@ -828,7 +818,8 @@ def main():
     print(f"  {len(ai_map)} analyses IA recues au total")
 
     print("\nETAPE 4 : Sauvegarde...")
-    save_results(final_list, ai_map)
+    # [V3-A] all_scored transmis a save_results pour la reserve ultime
+    save_results(final_list, ai_map, all_scored)
 
     print("\nTermine !")
     print("=" * 60)
