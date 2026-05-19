@@ -328,8 +328,11 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     risque      = entry - stop_loss
     target_1m   = round(entry + (risque * 2), 2)
 
-    fees_pct  = TR_FEE_TOTAL / entry * 100
-    net_gain  = round(((target_1m / entry) - 1) * 100 - fees_pct, 2)
+    frais_entree = 0.005 # 0.5%
+    frais_sortie = 0.005 # 0.5%
+    prix_revient = entry * (1 + frais_entree)
+    net_sortie   = target_1m * (1 - frais_sortie)
+    net_gain     = round(((net_sortie / prix_revient) - 1) * 100, 2)
 
     rr        = round((target_1m - entry) / risque, 2) if risque > 0 else 0.0
     rr_label  = f"1:{rr}"
@@ -743,6 +746,10 @@ def save_results(stocks: list[dict], ai_map: dict, all_scored: list[dict]):
         ai     = ai_map.get(s["ticker"], {})
         signal = ai.get("signal", "SURVEILLER")
 
+        # CORRECTION : Sécurité RSI (Si RSI > 75, on passe en SURVEILLER)
+        if s["rsi"] > 75:
+            signal = "SURVEILLER"
+        
         # [V3-A] Si EVITER résiduel → remplacer par le suivant de la réserve ultime
         if signal == "EVITER":
             replaced = False
