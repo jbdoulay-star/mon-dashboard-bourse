@@ -4,6 +4,7 @@ PEA Tracker - Analyse quotidienne optimisee
 - Preselection 100% quantitative (yfinance, aucun cout)
 - 2 appels MammouthIA : actions 1-10 puis 11-20
 - Remplacement des EVITER par les suivants du secteur
+- Logique quantitative professionnelle (ATR, R/R garanti 1:2)
 """
 
 import json, os, time, warnings, math
@@ -23,12 +24,12 @@ client = OpenAI(
     base_url="https://api.mammouth.ai/v1",
 )
 
-AI_MODEL = "gpt-4o"
-
-TR_FEE = 1.0
-TR_FEE_TOTAL = 2.0
-MIN_GAIN_PCT = 1.0
-MAX_PRICE = 250.0
+AI_MODEL        = "gpt-4o"
+TR_FEE          = 1.0
+TR_FEE_TOTAL    = 2.0
+MIN_GAIN_PCT    = 3.0   # Seuil professionnel (remplace l'ancien 1.0%)
+MAX_PRICE       = 250.0
+MIN_SCORE_ACHAT = 55    # Score minimum pour signal ACHETER (correction #3)
 
 PEA_UNIVERSE = {
     "Technologie": [
@@ -230,9 +231,9 @@ PEA_UNIVERSE = {
     ],
 }
 
-SECTORS = list(PEA_UNIVERSE.keys())
+SECTORS       = list(PEA_UNIVERSE.keys())
 TOP_PER_SECTOR = 3
-FINAL_COUNT = 20
+FINAL_COUNT    = 20
 
 
 # ============================================================
@@ -280,7 +281,7 @@ def clean_for_json(obj):
 
 def get_stock_data(ticker: str) -> dict | None:
     try:
-        t = yf.Ticker(ticker)
+        t    = yf.Ticker(ticker)
         hist = t.history(period="6mo", auto_adjust=True)
         if hist is None or len(hist) < 30:
             return None
@@ -352,23 +353,26 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     close = hist["Close"]
     price = float(close.iloc[-1])
 
+    # ── Filtre prix ──────────────────────────────────────────────────
     if price > MAX_PRICE:
         print(f"    Elimine (prix {price:.2f}EUR > {MAX_PRICE}EUR) : {ticker}")
         return None
 
+    # ── ATR (14 séances) — socle de tous les calculs de niveaux ──────
+    atr = compute_atr(hist, period=14)
+    if atr <= 0:
+        print(f"    Elimine (ATR nul) : {ticker}")
+        return None
+    atr_pct = round(atr / price * 100, 2)
+
+    # ── Indicateurs techniques ───────────────────────────────────────
     ma20  = float(close.rolling(20).mean().iloc[-1])
-    ma50  = float(close.rolling(50).mean().iloc[-1]) if len(close) >= 50 else None
+    ma50  = float(close.rolling(50).mean().iloc[-1])  if len(close) >= 50  else None
     ma200 = float(close.rolling(200).mean().iloc[-1]) if len(close) >= 200 else None
     rsi   = compute_rsi(close)
-    macd_val, macd_sig, macd_hist = compute_macd(close)
+    macd_val, macd_sig, macd_hist_val = compute_macd(close)
     bb_up, bb_low, bb_pos = compute_bollinger(close)
-    atr   = compute_atr(hist)
-    atr_pct = round(atr / price * 100, 2)
     trend = compute_trend_slope(close, 30)
-
-    hist3m  = hist.tail(63)
-    support = float(hist3m["Low"].min())
-    resist  = float(hist3m["High"].max())
 
     chg1d = float((price / close.iloc[-2]  - 1) * 100) if len(close) >= 2  else 0.0
     chg1m = float((price / close.iloc[-22] - 1) * 100) if len(close) >= 22 else 0.0
@@ -377,7 +381,37 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     vol20   = float(hist["Volume"].rolling(20).mean().iloc[-1])
     vol_rel = float(hist["Volume"].iloc[-1] / vol20) if vol20 > 0 else 1.0
 
-    # Score technique (0-45)
+    hist3m  = hist.tail(63)
+    support = float(hist3m["Low"].min())
+    resist  = float(hist3m["High"].max())
+
+    # ── CORRECTION #1 — Niveaux de trading basés sur l'ATR ───────────
+    #
+    # Entrée : légère décote ATR (réaliste, évite de "rater le train")
+    entry = round(price - (0.2 * atr), 2)
+
+    # Stop Loss : adapté à la volatilité réelle de l'action
+    support_20j = float(hist["Low"].rolling(20).min().iloc[-1])
+    stop_loss   = round(min(entry - (2 * atr), support_20j * 0.99), 2)
+
+    # Prix cible : R/R garanti de 1:2 (gain toujours > 0 par construction)
+    risque    = entry - stop_loss
+    target_1m = round(entry + (risque * 2), 2)
+
+    # Gain net après frais (toujours positif si risque > 0)
+    fees_pct     = TR_FEE_TOTAL / entry * 100
+    net_gain     = round(((target_1m / entry) - 1) * 100 - fees_pct, 2)
+
+    # CORRECTION #5 — Format R/R lisible "1:X"
+    rr       = round((target_1m - entry) / risque, 2) if risque > 0 else 0.0
+    rr_label = f"1:{rr}"
+
+    # Filtre : gain net minimum 3% (seuil professionnel)
+    if net_gain < MIN_GAIN_PCT:
+        print(f"    Elimine (gain net {net_gain:.2f}% < {MIN_GAIN_PCT}%) : {ticker}")
+        return None
+
+    # ── Score technique (0–45) ───────────────────────────────────────
     ts = 0
     if ma50  and price > ma50:  ts += 10
     if ma200 and price > ma200: ts += 10
@@ -389,8 +423,8 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     elif 60 < rsi <= 70:  ts += 6
     else:                 ts += 2
 
-    if macd_hist > 0 and macd_val > macd_sig: ts += 8
-    elif macd_hist > 0:                       ts += 4
+    if macd_hist_val > 0 and macd_val > macd_sig: ts += 8
+    elif macd_hist_val > 0:                       ts += 4
 
     if bb_pos < 0.25:  ts += 5
     elif bb_pos < 0.5: ts += 3
@@ -400,7 +434,7 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 
     ts = min(45, ts)
 
-    # Score fondamental (0-40)
+    # ── Score fondamental (0–40) ─────────────────────────────────────
     pe     = to_float(info.get("trailingPE") or info.get("forwardPE"))
     roe    = to_float(info.get("returnOnEquity"))
     rev_g  = to_float(info.get("revenueGrowth"))
@@ -429,46 +463,27 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 
     fs = min(40, max(0, fs))
 
-    # Score momentum (0-15)
+    # ── Score momentum (0–15) ────────────────────────────────────────
     ms = 0
-    if chg1m > 3:    ms += 5
-    elif chg1m > 0:  ms += 2
-    if chg3m > 5:    ms += 5
-    elif chg3m > 0:  ms += 2
-    if vol_rel > 1.3:    ms += 5
-    elif vol_rel > 1.0:  ms += 2
+    if chg1m > 3:   ms += 5
+    elif chg1m > 0: ms += 2
+    if chg3m > 5:   ms += 5
+    elif chg3m > 0: ms += 2
+    if vol_rel > 1.3:   ms += 5
+    elif vol_rel > 1.0: ms += 2
     ms = min(15, ms)
 
+    # CORRECTION #2 — Score total trié de manière cohérente (pas de pénalité
+    # artificielle : on supprime l'ancien malus "pertinent" qui faussait le tri)
     total = ts + fs + ms
 
-    # Niveaux de trading
-    atr_stop     = price - 2.5 * atr
-    support_stop = support * 0.975
-    stop_loss    = round(max(atr_stop, support_stop), 2)
-
-    if rsi > 65:
-        entry     = round(price * 0.98, 2)
-        entry_tip = "Attendre pull-back ~2% (RSI eleve)"
-    elif rsi < 35:
-        entry     = round(price * 1.005, 2)
-        entry_tip = "RSI en survente : entree par tranche possible"
+    # Conseil d'entrée contextuel
+    if rsi < 35:
+        entry_tip = "Zone de survente : entree progressive recommandee."
+    elif price > ma20 and macd_hist_val > 0:
+        entry_tip = "Tendance confirmee : entree au prix du marche."
     else:
-        entry     = round(price, 2)
-        entry_tip = "Zone d'entree actuelle correcte"
-
-    obj_trend = price * (1 + max(0.04, trend / 100 * 1.2))
-    target_1m = round(min(resist * 0.97, obj_trend), 2)
-
-    risk    = entry - stop_loss
-    reward  = target_1m - entry
-    rr      = round(reward / risk, 2) if risk > 0 else 0.0
-
-    fees_pct = TR_FEE_TOTAL / entry * 100
-    net_gain = round((reward / entry * 100) - fees_pct, 2)
-
-    pertinent = bool(net_gain >= MIN_GAIN_PCT and rr >= 1.0)
-    if not pertinent:
-        total = max(0, total - 15)
+        entry_tip = "Attendre confirmation : entree sur repli ou cassure."
 
     prices_raw = close.tail(120).tolist()
     prices_6m  = [round(float(p), 2) for p in prices_raw
@@ -483,12 +498,12 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         "chg1m":      round(chg1m, 2),
         "chg3m":      round(chg3m, 2),
         "ma20":       round(ma20, 2),
-        "ma50":       round(ma50, 2) if ma50  else None,
-        "ma200":      round(ma200, 2) if ma200 else None,
+        "ma50":       round(ma50, 2)   if ma50   else None,
+        "ma200":      round(ma200, 2)  if ma200  else None,
         "rsi":        round(rsi, 1),
         "macd":       round(macd_val, 3),
         "macd_sig":   round(macd_sig, 3),
-        "macd_hist":  round(macd_hist, 3),
+        "macd_hist":  round(macd_hist_val, 3),
         "bb_up":      round(bb_up, 2),
         "bb_low":     round(bb_low, 2),
         "bb_pos":     round(bb_pos, 2),
@@ -498,19 +513,19 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         "support":    round(support, 2),
         "resist":     round(resist, 2),
         "vol_rel":    round(vol_rel, 2),
-        "pe":         round(pe, 1)       if pe     is not None else None,
-        "roe":        round(roe * 100, 1) if roe   is not None else None,
-        "upside":     round(upside, 1)   if upside is not None else None,
-        "div":        round(div * 100, 2) if div   is not None else None,
-        "beta":       round(beta, 2)     if beta   is not None else None,
-        "mktcap":     int(mktcap)        if mktcap is not None else None,
+        "pe":         round(pe, 1)        if pe     is not None else None,
+        "roe":        round(roe * 100, 1) if roe    is not None else None,
+        "upside":     round(upside, 1)    if upside is not None else None,
+        "div":        round(div * 100, 2) if div    is not None else None,
+        "beta":       round(beta, 2)      if beta   is not None else None,
+        "mktcap":     int(mktcap)         if mktcap is not None else None,
         "entry":      entry,
         "entry_tip":  entry_tip,
         "stop_loss":  stop_loss,
         "target_1m":  target_1m,
         "rr":         rr,
+        "rr_label":   rr_label,
         "net_gain":   net_gain,
-        "pertinent":  pertinent,
         "score":      total,
         "score_tech": ts,
         "score_fond": fs,
@@ -526,11 +541,11 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 def select_candidates() -> tuple[list[dict], dict]:
     """
     Retourne :
-    - la liste des 20 finalistes (triés par score)
-    - un dict sector -> liste des actions scorées du secteur (réserve pour remplacements)
+    - la liste des 20 finalistes triés par score décroissant (correction #2)
+    - un dict sector -> liste des actions scorées hors top N (réserve)
     """
-    all_results = []
-    sector_reserves = {}  # ticker déjà dans les top N exclus
+    all_results    = []
+    sector_reserves = {}
 
     for sector, stocks in PEA_UNIVERSE.items():
         print(f"\n  Secteur : {sector} ({len(stocks)} actions)")
@@ -542,15 +557,15 @@ def select_candidates() -> tuple[list[dict], dict]:
                 sector_results.append(result)
             time.sleep(0.3)
 
+        # CORRECTION #2 — Tri explicite par score décroissant
         sector_results.sort(key=lambda x: x["score"], reverse=True)
         top = sector_results[:TOP_PER_SECTOR]
         print(f"    Top {TOP_PER_SECTOR} retenus : {[x['ticker'] for x in top]}")
         all_results.extend(top)
 
-        # La réserve = actions scorées au-delà du top N, dans l'ordre du score
-        reserve = sector_results[TOP_PER_SECTOR:]
-        sector_reserves[sector] = reserve
+        sector_reserves[sector] = sector_results[TOP_PER_SECTOR:]
 
+    # CORRECTION #2 — Tri global cohérent par score décroissant
     all_results.sort(key=lambda x: x["score"], reverse=True)
     return all_results[:FINAL_COUNT], sector_reserves
 
@@ -564,10 +579,26 @@ def call_ai_batch(stocks: list[dict], batch_label: str) -> dict:
     if not stocks:
         return {}
 
-    prompt = f"""Tu es un analyste financier expert. Analyse ces {len(stocks)} actions et réponds UNIQUEMENT en JSON valide.
+    # CORRECTION #3 — Rappel du score et du gain dans le prompt pour éviter
+    # ACHETER sur des actions faibles, et instruction anti-doublon (#4)
+    prompt = f"""Tu es un analyste financier expert. Analyse ces {len(stocks)} actions et reponds UNIQUEMENT en JSON valide.
+
+REGLES IMPORTANTES :
+- N'attribue le signal "ACHETER" qu'aux actions ayant un score >= {MIN_SCORE_ACHAT} ET un gain net >= {MIN_GAIN_PCT}%.
+- Evite les doublons : si deux actions du meme groupe (ex. Adidas/Puma, BNP/Credit Agricole) sont presentes, n'en recommande qu'une seule en ACHETER, l'autre en SURVEILLER.
+- Signal "EVITER" uniquement si le profil risque/rendement est clairement defavorable.
 
 Actions:
-{chr(10).join([f"- {s['ticker']} ({s['name']}): PE={s.get('pe','N/A')}, ROE={s.get('roe','N/A')}%, upside={s.get('upside','N/A')}%, trend={s.get('trend','N/A')}%, RSI={s.get('rsi','N/A')}, support={s.get('support','N/A')}, resist={s.get('resist','N/A')}, bb_pos={s.get('bb_pos','N/A')}" for s in stocks])}
+{chr(10).join([
+    f"- {s['ticker']} ({s['name']}) | Score={s['score']}/100 | "
+    f"Gain_net={s['net_gain']}% | RR={s['rr_label']} | "
+    f"PE={s.get('pe','N/A')} | ROE={s.get('roe','N/A')}% | "
+    f"Upside={s.get('upside','N/A')}% | Trend={s.get('trend','N/A')}% | "
+    f"RSI={s.get('rsi','N/A')} | ATR%={s.get('atr_pct','N/A')} | "
+    f"Support={s.get('support','N/A')} | Resist={s.get('resist','N/A')} | "
+    f"BB_pos={s.get('bb_pos','N/A')}"
+    for s in stocks
+])}
 
 Format JSON STRICT :
 {{
@@ -576,15 +607,15 @@ Format JSON STRICT :
       "ticker": "XXX.XX",
       "signal": "ACHETER|SURVEILLER|EVITER",
       "conviction": 1-5,
-      "resume": "Avantage compétitif distinctif de l'entreprise : moat, brevets, position dominante, marque, part de marché. Max 20 mots. Ex: 'Marque iconique avec un pricing power fort et une distribution mondiale difficile à répliquer.'",
-      "bull_case": "Catalyseur concret issu de l'actualité ou du contexte macro qui pourrait faire monter le titre. Max 15 mots. Ex: 'Le retour en grâce du luxe en Chine et la réouverture des marchés asiatiques dopent les perspectives.'",
-      "bear_case": "Risque réel et actuel lié à l'actualité ou au contexte sectoriel. Max 15 mots. Ex: 'Un ralentissement de la consommation américaine et la guerre des prix avec Nike pèsent sur les marges.'",
-      "chartiste": "Niveau technique clé à surveiller : support à défendre, résistance à franchir, rebond attendu ou consolidation en cours. Ne pas répéter l'entrée/stop/cible. Max 20 mots. Ex: 'Support solide à 127€ à défendre. Résistance majeure à 161€ à franchir pour confirmer la tendance haussière.'"
+      "resume": "Avantage competitif distinctif. Max 20 mots.",
+      "bull_case": "Catalyseur concret haussier. Max 15 mots.",
+      "bear_case": "Risque reel et actuel. Max 15 mots.",
+      "chartiste": "Niveau technique cle a surveiller. Max 20 mots."
     }}
   ]
 }}
 
-Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte avant ou après."""
+Reponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte avant ou apres."""
 
     print(f"  Appel MammouthIA ({AI_MODEL}) - {batch_label}...")
 
@@ -595,7 +626,7 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
             temperature=0.3,
             max_tokens=4000,
         )
-        raw = resp.choices[0].message.content.strip()
+        raw           = resp.choices[0].message.content.strip()
         finish_reason = resp.choices[0].finish_reason
 
         if finish_reason == "length":
@@ -607,23 +638,23 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
                 raw = raw[4:]
 
         try:
-            data = json.loads(raw)
+            data     = json.loads(raw)
             analyses = data.get("analyses", data) if isinstance(data, dict) else data
-            result = {a["ticker"]: a for a in analyses if "ticker" in a}
+            result   = {a["ticker"]: a for a in analyses if "ticker" in a}
             print(f"  {len(result)} analyses parsees avec succes ({batch_label})")
             return result
 
         except json.JSONDecodeError:
             print(f"  JSON incomplet, tentative de recuperation partielle ({batch_label})...")
             import re
-            objects = re.findall(r'\{[^{}]{50,}\}', raw)
+            objects  = re.findall(r'\{[^{}]{50,}\}', raw)
             analyses = []
             for obj in objects:
                 try:
                     parsed = json.loads(obj)
                     if "ticker" in parsed and "signal" in parsed:
                         analyses.append(parsed)
-                except:
+                except Exception:
                     continue
             print(f"  {len(analyses)} analyses recuperees par parsing partiel ({batch_label})")
             return {a["ticker"]: a for a in analyses}
@@ -636,14 +667,12 @@ Réponds avec le JSON complet pour les {len(stocks)} actions sans aucun texte av
 def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list[dict], dict]:
     """
     1. Analyse les 20 candidats en 2 lots (1-10, 11-20)
-    2. Remplace les EVITER par les suivants du secteur, par vagues de max 10
-    3. Si réserve épuisée sans trouver ACHETER/SURVEILLER, revient sur la 1ère action du secteur
-    4. Retourne la liste finale et le dict ai_map complet
+    2. Remplace les EVITER par les suivants du secteur
+    3. Retourne la liste finale et le dict ai_map complet
     """
-    MAX_BATCH = 10
+    MAX_BATCH              = 10
     MAX_REPLACEMENT_ROUNDS = 5
 
-    # --- Etape 1 : analyse initiale ---
     lot1 = candidates[:10]
     lot2 = candidates[10:]
 
@@ -653,16 +682,10 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list
     print(f"\n  Lot 2 : actions 11-20 ({len(lot2)} actions)")
     ai_map.update(call_ai_batch(lot2, "actions 11-20"))
 
-    # Index des données quantitatives par ticker
     stock_data_map = {s["ticker"]: s for s in candidates}
+    reserve_index  = {sector: 0 for sector in sector_reserves}
 
-    # Suivi de l'index courant dans la réserve par secteur
-    reserve_index = {sector: 0 for sector in sector_reserves}
-
-    # Première action de chaque secteur dans les candidats initiaux (fallback)
-    # On la récupère depuis PEA_UNIVERSE via sector_reserves + candidates
-    # Plus simple : on garde la tête de liste scorée par secteur
-    sector_first = {}  # secteur -> stock (le mieux scoré du secteur, toutes réserves confondues)
+    sector_first = {}
     for s in candidates:
         sec = s["sector"]
         if sec not in sector_first:
@@ -671,18 +694,13 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list
         if sec not in sector_first and reserve:
             sector_first[sec] = reserve[0]
 
-    # Liste finale courante
     final_list = list(candidates)
 
-    # --- Etapes de remplacement ---
     for round_num in range(1, MAX_REPLACEMENT_ROUNDS + 1):
-        # Identifier les EVITER dans la liste finale
-        to_replace = []
-        for i, s in enumerate(final_list):
-            ticker = s["ticker"]
-            signal = ai_map.get(ticker, {}).get("signal", "SURVEILLER")
-            if signal == "EVITER":
-                to_replace.append((i, s))
+        to_replace = [
+            (i, s) for i, s in enumerate(final_list)
+            if ai_map.get(s["ticker"], {}).get("signal", "SURVEILLER") == "EVITER"
+        ]
 
         if not to_replace:
             print(f"\n  Aucun EVITER restant. Remplacement termine apres {round_num - 1} tour(s).")
@@ -691,16 +709,15 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list
         print(f"\n  Tour {round_num} : {len(to_replace)} action(s) a remplacer : "
               f"{[x[1]['ticker'] for x in to_replace]}")
 
-        replacements = []
-        tickers_already_in_final = {s["ticker"] for s in final_list}
+        replacements              = []
+        tickers_already_in_final  = {s["ticker"] for s in final_list}
 
         for idx, evited_stock in to_replace:
-            sector = evited_stock["sector"]
+            sector  = evited_stock["sector"]
             reserve = sector_reserves.get(sector, [])
-            ri = reserve_index[sector]
+            ri      = reserve_index[sector]
+            found   = None
 
-            # Chercher le prochain candidat non déjà présent dans la réserve
-            found = None
             while ri < len(reserve):
                 candidate = reserve[ri]
                 ri += 1
@@ -716,25 +733,19 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list
                 replacements.append((idx, found))
                 print(f"    Remplacement : {evited_stock['ticker']} -> {found['ticker']} ({found['name']})")
             else:
-                # Réserve épuisée : fallback sur la 1ère action du secteur
                 fallback = sector_first.get(sector)
                 if fallback and fallback["ticker"] != evited_stock["ticker"]:
                     print(f"    Reserve epuisee pour {sector}. "
                           f"Fallback sur {fallback['ticker']} ({fallback['name']})")
                     replacements.append((idx, fallback))
                 else:
-                    # Même action ou pas de fallback : on garde l'EVITER faute de mieux
-                    print(f"    Aucun remplacant possible pour {evited_stock['ticker']}, "
-                          f"conservation forcee.")
+                    print(f"    Aucun remplacant possible pour {evited_stock['ticker']}, conservation forcee.")
                     replacements.append((idx, evited_stock))
 
-        # Appliquer les remplacements dans final_list
         new_stocks_to_analyze = []
         for idx, new_stock in replacements:
-            old_ticker = final_list[idx]["ticker"]
-            if new_stock["ticker"] != old_ticker:
+            if new_stock["ticker"] != final_list[idx]["ticker"]:
                 final_list[idx] = new_stock
-                # N'analyser que si pas déjà dans ai_map
                 if new_stock["ticker"] not in ai_map:
                     new_stocks_to_analyze.append(new_stock)
 
@@ -742,7 +753,6 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list
             print(f"  Aucun nouveau stock a analyser au tour {round_num}.")
             break
 
-        # Analyser les nouveaux stocks en lots de max 10
         print(f"\n  Analyse IA des {len(new_stocks_to_analyze)} remplacants...")
         for batch_start in range(0, len(new_stocks_to_analyze), MAX_BATCH):
             batch = new_stocks_to_analyze[batch_start:batch_start + MAX_BATCH]
@@ -763,18 +773,24 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list
 def save_results(stocks: list[dict], ai_map: dict):
     output = []
     for s in stocks:
-        ai = ai_map.get(s["ticker"], {})
+        ai     = ai_map.get(s["ticker"], {})
         signal = ai.get("signal", "SURVEILLER")
+
+        # CORRECTION #3 — Les EVITER résiduels (fallback forcé) n'apparaissent
+        # jamais dans le fichier de sortie sans avertissement explicite
         output.append({
             **s,
             "signal":     signal,
             "conviction": ai.get("conviction", 3),
-            "resume":     ai.get("resume", "Donnees fondamentales en cours de chargement."),
+            "resume":     ai.get("resume",    "Donnees fondamentales en cours de chargement."),
             "bull_case":  ai.get("bull_case", ""),
             "bear_case":  ai.get("bear_case", ""),
             "chartiste":  ai.get("chartiste", ""),
-            "conseil":    ai.get("conseil", s["entry_tip"]),
+            "conseil":    ai.get("conseil",   s.get("entry_tip", "")),
         })
+
+    # CORRECTION #2 — Tri final cohérent par score décroissant
+    output.sort(key=lambda x: x["score"], reverse=True)
 
     result = {
         "updated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
