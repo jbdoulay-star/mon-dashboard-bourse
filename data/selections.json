@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-06-29T19:17:47Z",
-  "date": "2026-06-29",
+  "updated_at": "2026-06-30T05:57:15Z",
+  "date": "2026-06-30",
   "count": 20,
   "stocks": [
     {
@@ -161,10 +161,10 @@
       ],
       "signal": "ACHETER",
       "conviction": 4,
-      "resume": "Position dominante dans l'édition et les médias avec des marques reconnues mondialement.",
-      "bull_case": "Croissance des revenus grâce à la digitalisation et à la diversification des contenus.",
-      "bear_case": "Pression sur les marges liée à la concurrence accrue dans le secteur des médias numériques.",
-      "chartiste": "Résistance à 20.50€ à surveiller pour confirmer la poursuite de la dynamique haussière.",
+      "resume": "Leader dans l'édition et les médias avec des marques fortes et un portefeuille diversifié.",
+      "bull_case": "Reprise des dépenses publicitaires et forte demande pour les contenus premium.",
+      "bear_case": "Pression sur les marges due à la hausse des coûts de production des contenus.",
+      "chartiste": "Résistance à 20.5€ à surveiller. Consolidation probable si cassure échoue.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -325,10 +325,10 @@
       ],
       "signal": "ACHETER",
       "conviction": 3,
-      "resume": "Expertise unique dans l'aéronautique avec des partenariats stratégiques avec Airbus et Boeing.",
-      "bull_case": "Reprise du trafic aérien post-COVID et augmentation des commandes d'avions commerciaux.",
-      "bear_case": "Dépendance aux cycles économiques et aux budgets des compagnies aériennes.",
-      "chartiste": "Consolidation possible autour de 125€, résistance à 135€ à franchir pour confirmer la tendance.",
+      "resume": "Spécialiste des pièces aéronautiques avec un positionnement clé dans la chaîne d'approvisionnement.",
+      "bull_case": "Reprise du trafic aérien mondial soutenant la demande en pièces de rechange.",
+      "bear_case": "Ralentissement des commandes des grands avionneurs en cas de récession.",
+      "chartiste": "Support à 125€. Résistance à 135€ à franchir pour confirmer la dynamique.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -489,10 +489,10 @@
       ],
       "signal": "ACHETER",
       "conviction": 3,
-      "resume": "Leader en technologies médicales avec une forte innovation dans les solutions de santé connectée.",
-      "bull_case": "Demande croissante pour les équipements médicaux et solutions de diagnostic avancées.",
-      "bear_case": "Litiges liés à des rappels de produits et pression réglementaire accrue.",
-      "chartiste": "Support à 22.50€, cassure de 25€ nécessaire pour valider une continuation haussière.",
+      "resume": "Expertise en technologies médicales avec un portefeuille innovant et diversifié.",
+      "bull_case": "Croissance des investissements dans les équipements de santé post-pandémie.",
+      "bear_case": "Rappel de produits et risques réglementaires pesant sur la réputation et les marges.",
+      "chartiste": "Résistance clé à 25€. Consolidation possible avant une nouvelle impulsion haussière.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -654,9 +654,9 @@
       "signal": "ACHETER",
       "conviction": 5,
       "resume": "Banque universelle avec une forte présence en Europe et des activités diversifiées.",
-      "bull_case": "Hausse des taux d'intérêt en Europe soutenant les marges d'intérêt nettes.",
-      "bear_case": "Exposition aux risques géopolitiques et à la volatilité des marchés émergents.",
-      "chartiste": "Support clé à 74€, résistance à 80€ pour confirmer la dynamique positive.",
+      "bull_case": "Hausse des taux d'intérêt augmentant les marges d'intermédiation bancaire.",
+      "bear_case": "Exposition aux risques géopolitiques en Europe de l'Est.",
+      "chartiste": "Résistance à 80€. Support intermédiaire à 74€ à surveiller.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -817,10 +817,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Spécialiste des établissements de santé avec une expertise dans les soins de longue durée.",
-      "bull_case": "Vieillissement de la population augmentant la demande pour les services de santé.",
-      "bear_case": "Réglementations strictes et pressions sur les coûts dans le secteur des soins.",
-      "chartiste": "Support à 32€, consolidation probable avant une éventuelle reprise vers 36€.",
+      "resume": "Opérateur reconnu dans les soins de santé pour personnes âgées avec un réseau en expansion.",
+      "bull_case": "Vieillissement de la population augmentant la demande pour les services de soins.",
+      "bear_case": "Réglementations strictes et pression sur les coûts dans le secteur de la santé.",
+      "chartiste": "Support à 32€. Consolidation entre 32€ et 36€ probable à court terme.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -981,10 +981,10 @@
       ],
       "signal": "ACHETER",
       "conviction": 4,
-      "resume": "Leader dans les solutions de mobilité durable et les composants automobiles innovants.",
-      "bull_case": "Transition vers les véhicules électriques et demande accrue pour les technologies légères.",
-      "bear_case": "Dépendance aux cycles de production automobile et tensions sur les chaînes d'approvisionnement.",
-      "chartiste": "Résistance à 39€, cassure nécessaire pour confirmer une poursuite de la tendance haussière.",
+      "resume": "Leader dans les solutions de mobilité durable et les systèmes automobiles innovants.",
+      "bull_case": "Transition vers les véhicules électriques boostant la demande pour ses produits.",
+      "bear_case": "Ralentissement des ventes automobiles en Europe impactant les volumes.",
+      "chartiste": "Résistance à 40€. Support à 35€ en cas de correction.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1145,10 +1145,10 @@
       ],
       "signal": "ACHETER",
       "conviction": 5,
-      "resume": "Banque européenne majeure avec une forte diversification géographique et sectorielle.",
-      "bull_case": "Hausse des taux d'intérêt et croissance des activités de banque d'investissement.",
+      "resume": "Banque leader en Europe avec une forte diversification géographique et sectorielle.",
+      "bull_case": "Hausse des taux et forte demande pour les services bancaires d'investissement.",
       "bear_case": "Exposition aux risques de crédit en cas de ralentissement économique.",
-      "chartiste": "Support à 98€, franchissement des 102€ pour valider une continuation haussière.",
+      "chartiste": "Résistance à 105€. Support à 98€ à surveiller pour éviter une correction.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1309,10 +1309,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Assureur global avec une expertise dans la gestion d'actifs et les produits d'assurance vie.",
-      "bull_case": "Demande accrue pour les produits d'assurance et hausse des rendements obligataires.",
-      "bear_case": "Exposition aux catastrophes naturelles et volatilité des marchés financiers.",
-      "chartiste": "Surachat technique, consolidation probable avant un test de la résistance à 45€.",
+      "resume": "Assureur global avec une expertise reconnue en gestion d'actifs et produits d'assurance.",
+      "bull_case": "Hausse des primes d'assurance et des revenus d'investissement grâce aux taux élevés.",
+      "bear_case": "Exposition aux catastrophes naturelles augmentant les sinistres.",
+      "chartiste": "Résistance à 45€. Consolidation probable entre 42€ et 45€.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1472,11 +1472,11 @@
         180.9
       ],
       "signal": "ACHETER",
-      "conviction": 5,
-      "resume": "Marque mondiale dans le sport avec une forte innovation produit et un marketing puissant.",
+      "conviction": 4,
+      "resume": "Marque sportive mondiale avec une forte innovation produit et une distribution omnicanale.",
       "bull_case": "Reprise de la consommation en Chine et succès des nouvelles collections.",
-      "bear_case": "Ralentissement économique en Europe pesant sur la consommation discrétionnaire.",
-      "chartiste": "Support à 170€, cassure de 185€ pour confirmer une accélération haussière.",
+      "bear_case": "Pression concurrentielle accrue dans le segment des vêtements de sport.",
+      "chartiste": "Résistance à 190€. Support clé à 175€ à surveiller.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1637,10 +1637,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Acteur clé dans les énergies renouvelables avec une forte présence en Europe et en Amérique latine.",
+      "resume": "Acteur majeur des énergies renouvelables en Europe avec un pipeline solide de projets.",
       "bull_case": "Transition énergétique soutenant les investissements dans les énergies renouvelables.",
-      "bear_case": "Réglementations énergétiques imprévisibles et pression sur les subventions publiques.",
-      "chartiste": "Support à 4.40€, consolidation en cours avant un potentiel test des 4.70€.",
+      "bear_case": "Réglementations défavorables ou hausse des coûts de financement des projets.",
+      "chartiste": "Consolidation entre 4.4€ et 4.6€. Résistance clé à 4.7€.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1799,12 +1799,12 @@
         65.96,
         64.88
       ],
-      "signal": "SURVEILLER",
+      "signal": "ACHETER",
       "conviction": 4,
       "resume": "Marque iconique avec un pricing power fort et une distribution mondiale difficile à répliquer.",
-      "bull_case": "Reprise des ventes en Chine et forte demande pour les spiritueux haut de gamme.",
-      "bear_case": "Ralentissement économique en Europe pourrait peser sur la consommation discrétionnaire.",
-      "chartiste": "Résistance à 66€ à surveiller. Consolidation en cours autour de 64€.",
+      "bull_case": "Reprise de la demande en Chine et hausse des ventes premium.",
+      "bear_case": "Ralentissement économique en Europe pourrait peser sur la consommation.",
+      "chartiste": "Support à 63€, résistance à 66€ pour confirmer la dynamique haussière.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1965,10 +1965,10 @@
       ],
       "signal": "ACHETER",
       "conviction": 3,
-      "resume": "Leader européen de la grande distribution avec une stratégie omnicanale robuste et des économies d'échelle.",
-      "bull_case": "Hausse des ventes alimentaires et expansion dans les marchés émergents.",
-      "bear_case": "Pression sur les marges liée à l'inflation des coûts des produits alimentaires.",
-      "chartiste": "Support à 15.8€ solide. Résistance à 17€ pourrait être testée prochainement.",
+      "resume": "Leader européen de la grande distribution avec une stratégie omnicanale robuste.",
+      "bull_case": "Expansion des formats discount et croissance des ventes en ligne.",
+      "bear_case": "Pression sur les marges liée à l'inflation alimentaire.",
+      "chartiste": "Consolidation entre 15.8€ et 17€, cassure à surveiller pour une accélération.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2127,12 +2127,12 @@
         143.6,
         143.8
       ],
-      "signal": "ACHETER",
-      "conviction": 4,
-      "resume": "Expertise dans la transformation digitale des entreprises avec des solutions technologiques sur mesure.",
-      "bull_case": "Croissance des contrats IT dans les secteurs publics et privés en Europe.",
-      "bear_case": "Ralentissement des budgets IT des entreprises en période de crise économique.",
-      "chartiste": "Support à 140€. Potentiel de rebond vers 150€ si le RSI se redresse.",
+      "signal": "SURVEILLER",
+      "conviction": 2,
+      "resume": "Expertise reconnue dans les solutions digitales complexes pour les grandes entreprises.",
+      "bull_case": "Croissance des budgets IT dans les secteurs publics et financiers.",
+      "bear_case": "Ralentissement des projets IT en Europe pourrait freiner la dynamique.",
+      "chartiste": "Rebond attendu vers 140€, résistance clé à 150€ à surveiller.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2293,10 +2293,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 5,
-      "resume": "Position dominante dans le transport aérien européen avec des hubs stratégiques à Paris et Amsterdam.",
-      "bull_case": "Reprise du trafic aérien post-COVID et forte demande pour les vols long-courriers.",
-      "bear_case": "Hausse des coûts du carburant pourrait peser sur les marges.",
-      "chartiste": "Résistance à 14€ à franchir pour confirmer la dynamique haussière.",
+      "resume": "Position dominante sur les routes transatlantiques et forte reprise post-COVID.",
+      "bull_case": "Hausse des prix des billets et forte demande estivale boostent les revenus.",
+      "bear_case": "Prix du carburant élevé pourrait peser sur les marges.",
+      "chartiste": "Support à 12.8€, objectif haussier à 14.5€ avec dynamique forte en cours.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2305,7 +2305,7 @@
       "sector": "Energie",
       "price": 27.4,
       "atr": 0.52,
-      "atr_pct": 1.88,
+      "atr_pct": 1.89,
       "rsi": 59.0,
       "macd": 0.0411,
       "macd_sig": 0.0028,
@@ -2455,12 +2455,12 @@
         27.31,
         27.4
       ],
-      "signal": "SURVEILLER",
+      "signal": "ACHETER",
       "conviction": 3,
-      "resume": "Leader dans la transition énergétique avec un portefeuille diversifié d'énergies renouvelables.",
-      "bull_case": "Investissements accrus dans les infrastructures vertes en Europe.",
-      "bear_case": "Réglementations imprévisibles sur les prix de l'énergie en Europe.",
-      "chartiste": "Consolidation autour de 27€. Résistance à 28€ à surveiller.",
+      "resume": "Leader dans les solutions énergétiques renouvelables et transition énergétique.",
+      "bull_case": "Investissements massifs dans les énergies renouvelables en Europe.",
+      "bear_case": "Réglementations européennes pourraient ralentir certains projets.",
+      "chartiste": "Consolidation autour de 27€, cassure au-dessus de 28€ à surveiller.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2619,12 +2619,12 @@
         26.12,
         26.36
       ],
-      "signal": "SURVEILLER",
+      "signal": "ACHETER",
       "conviction": 3,
-      "resume": "Expertise mondiale dans les services de certification et d'inspection avec une forte présence industrielle.",
-      "bull_case": "Augmentation des besoins en conformité réglementaire dans les secteurs critiques.",
-      "bear_case": "Ralentissement industriel pourrait réduire la demande pour les services de certification.",
-      "chartiste": "Support à 25.5€. Résistance à 27€ pourrait être testée.",
+      "resume": "Expertise mondiale dans les certifications qualité et conformité réglementaire.",
+      "bull_case": "Croissance des besoins en certifications ESG et durabilité.",
+      "bear_case": "Ralentissement industriel pourrait réduire la demande de services.",
+      "chartiste": "Support à 25.5€, résistance à 27€ pour confirmer la tendance haussière.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2785,10 +2785,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Leader mondial dans la gestion de l'eau et des déchets avec des solutions innovantes.",
-      "bull_case": "Croissance des projets d'infrastructure verte et gestion durable des ressources.",
-      "bear_case": "Risque lié à l'augmentation des coûts opérationnels dans les marchés émergents.",
-      "chartiste": "Résistance à 37€ à surveiller pour confirmer la dynamique haussière.",
+      "resume": "Leader mondial dans la gestion de l'eau et des déchets avec un modèle résilient.",
+      "bull_case": "Hausse des investissements dans la gestion durable des ressources.",
+      "bear_case": "Risque réglementaire sur les tarifs des services publics.",
+      "chartiste": "Support à 35€, résistance à 37€ pour valider la dynamique haussière.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2947,12 +2947,12 @@
         84.5,
         84.4
       ],
-      "signal": "SURVEILLER",
+      "signal": "ACHETER",
       "conviction": 3,
-      "resume": "Portefeuille immobilier diversifié avec une spécialisation dans les actifs de santé et bureaux.",
-      "bull_case": "Demande accrue pour les infrastructures de santé et bureaux modernes.",
-      "bear_case": "Hausse des taux d'intérêt pourrait peser sur les valorisations immobilières.",
-      "chartiste": "Support à 82€. Résistance à 86€ pourrait être testée.",
+      "resume": "Portefeuille immobilier diversifié avec une forte exposition aux actifs de santé.",
+      "bull_case": "Demande croissante pour les infrastructures de santé en Europe.",
+      "bear_case": "Hausse des taux d'intérêt pourrait peser sur les valorisations.",
+      "chartiste": "Support à 82€, résistance à 86€ pour confirmer la tendance haussière.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -3113,10 +3113,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Portefeuille pharmaceutique diversifié avec des positions fortes dans les vaccins et les maladies rares.",
-      "bull_case": "Lancement de nouveaux produits et forte demande pour les vaccins.",
+      "resume": "Pipeline solide dans les traitements innovants et forte position dans les vaccins.",
+      "bull_case": "Lancement de nouveaux médicaments et croissance des vaccins.",
       "bear_case": "Pression réglementaire sur les prix des médicaments en Europe.",
-      "chartiste": "Support à 74€. Consolidation en cours, résistance à 77€ à surveiller.",
+      "chartiste": "Consolidation autour de 74€, cassure au-dessus de 76€ à surveiller.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -3277,10 +3277,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 5,
-      "resume": "Leader mondial de l'aéronautique avec une expertise dans les avions commerciaux et militaires.",
-      "bull_case": "Carnet de commandes robuste et reprise des livraisons post-pandémie.",
-      "bear_case": "Risque lié aux chaînes d'approvisionnement et aux tensions géopolitiques.",
-      "chartiste": "Résistance à 195€ à franchir pour confirmer la tendance haussière.",
+      "resume": "Leader mondial dans l'aéronautique avec un carnet de commandes record.",
+      "bull_case": "Reprise des commandes d'avions et hausse des livraisons.",
+      "bear_case": "Perturbations dans les chaînes d'approvisionnement pourraient ralentir les livraisons.",
+      "chartiste": "Support à 185€, résistance à 195€ pour confirmer la dynamique haussière.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     }
   ]
