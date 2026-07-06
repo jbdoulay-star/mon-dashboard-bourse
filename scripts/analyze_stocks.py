@@ -168,7 +168,6 @@ PEA_UNIVERSE = {
         ("PUM.DE",      "Puma"),
         ("SEB.PA",      "SEB"),
         ("BN.PA",       "Danone"),
-        ("UNA.AS",      "Unilever"),
         ("CARLB.CO",    "Carlsberg"),
         ("SMCP.PA",     "SMCP"),
         ("FNAC.PA",     "Fnac Darty"),
