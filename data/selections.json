@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-10T05:59:35Z",
+  "updated_at": "2026-07-10T06:04:29Z",
   "date": "2026-07-10",
   "count": 20,
   "stocks": [
@@ -162,9 +162,9 @@
       "signal": "ACHETER",
       "conviction": 4,
       "resume": "Leader européen des infrastructures immobilières de santé avec un portefeuille diversifié et résilient.",
-      "bull_case": "La demande croissante pour les infrastructures de santé soutient la croissance des revenus.",
-      "bear_case": "Une hausse des taux d'intérêt pourrait peser sur le coût de financement.",
-      "chartiste": "Support à 80€, résistance à 85€. Consolidation probable avant une nouvelle impulsion haussière.",
+      "bull_case": "La demande croissante pour les infrastructures de santé soutient les revenus locatifs.",
+      "bear_case": "Risque de hausse des taux d'intérêt pesant sur le coût du financement.",
+      "chartiste": "Support à 80€. Résistance à 85€. Consolidation probable avant une nouvelle impulsion haussière.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -324,10 +324,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Expertise unique dans les systèmes de confinement pour le transport de gaz liquéfié.",
-      "bull_case": "La transition énergétique stimule la demande pour le transport de GNL.",
-      "bear_case": "La concurrence asiatique pourrait réduire les marges sur les nouveaux contrats.",
-      "chartiste": "Manque de données techniques fiables. Attendre des signaux clairs avant de se positionner.",
+      "resume": "Expertise unique dans les systèmes de confinement pour le transport de gaz naturel liquéfié (GNL).",
+      "bull_case": "La transition énergétique favorise la demande pour le GNL et les infrastructures associées.",
+      "bear_case": "Pression réglementaire accrue sur les émissions de méthane dans le transport maritime.",
+      "chartiste": "Manque de données techniques pour identifier des niveaux clés. Attendre plus de clarté.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -487,10 +487,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Leader mondial des logiciels ERP avec une base d'abonnés récurrente en forte croissance.",
-      "bull_case": "La migration vers le cloud booste les revenus récurrents.",
-      "bear_case": "Les pressions concurrentielles dans le cloud pourraient limiter la croissance des marges.",
-      "chartiste": "Résistance à 130€. Consolidation probable avant une reprise de tendance haussière.",
+      "resume": "Leader mondial des logiciels ERP avec une base de clients fidèle et diversifiée.",
+      "bull_case": "Adoption croissante des solutions cloud stimule la croissance des revenus récurrents.",
+      "bear_case": "Concurrence accrue de Microsoft et Oracle dans le segment cloud.",
+      "chartiste": "Manque de données techniques. Surveiller un éventuel retour au-dessus de 120€ pour confirmer un rebond.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -650,10 +650,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Réassureur mondialement reconnu avec une expertise dans la gestion des risques complexes.",
-      "bull_case": "La hausse des primes d'assurance soutient les revenus.",
-      "bear_case": "Les catastrophes naturelles fréquentes augmentent les coûts de réassurance.",
-      "chartiste": "Support clé à 300€. Une cassure pourrait signaler une faiblesse prolongée.",
+      "resume": "Réassureur de premier plan avec une expertise en gestion des risques climatiques et catastrophiques.",
+      "bull_case": "Augmentation des primes dans un contexte de sinistralité accrue liée au climat.",
+      "bear_case": "Exposition significative aux catastrophes naturelles pourrait peser sur les résultats.",
+      "chartiste": "Manque de données techniques. Surveiller une cassure au-dessus de 320€ pour valider un momentum haussier.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -813,10 +813,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Acteur majeur de l'assurance avec une diversification géographique et sectorielle solide.",
-      "bull_case": "La hausse des taux d'intérêt améliore les rendements des portefeuilles obligataires.",
-      "bear_case": "Une récession européenne pourrait peser sur les primes collectées.",
-      "chartiste": "Résistance à 220€. Une cassure confirmerait une reprise haussière.",
+      "resume": "Groupe d'assurance intégré avec une forte présence en Europe et une diversification géographique.",
+      "bull_case": "Hausse des taux d'intérêt améliore la rentabilité des produits d'épargne.",
+      "bear_case": "Exposition aux marchés financiers volatils pourrait affecter les résultats.",
+      "chartiste": "Manque de données techniques. Résistance clé à 220€ à surveiller pour un potentiel breakout.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -976,10 +976,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Banque paneuropéenne avec une forte présence dans les services digitaux bancaires.",
-      "bull_case": "La digitalisation bancaire réduit les coûts opérationnels et améliore l'efficacité.",
-      "bear_case": "Un ralentissement économique en Europe pourrait peser sur les prêts et les marges.",
-      "chartiste": "Support à 10€. Une cassure pourrait signaler une faiblesse prolongée.",
+      "resume": "Banque universelle avec une forte présence dans les services bancaires numériques en Europe.",
+      "bull_case": "Digitalisation et réduction des coûts soutiennent la rentabilité à long terme.",
+      "bear_case": "Exposition aux risques macroéconomiques européens et à la hausse des défauts de paiement.",
+      "chartiste": "Manque de données techniques. Support clé à 10€ à surveiller pour éviter une cassure baissière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1138,11 +1138,11 @@
         35.8
       ],
       "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Spécialiste des soins de longue durée avec une forte demande structurelle en Europe.",
-      "bull_case": "Le vieillissement de la population soutient la demande pour les services de santé.",
-      "bear_case": "Les pressions réglementaires pourraient augmenter les coûts d'exploitation.",
-      "chartiste": "Support à 35€. Une cassure pourrait signaler une faiblesse prolongée.",
+      "conviction": 2,
+      "resume": "Spécialiste des établissements de santé pour personnes âgées avec une expertise reconnue en France.",
+      "bull_case": "Vieillissement de la population soutient la demande pour les services de santé spécialisés.",
+      "bear_case": "Pression réglementaire accrue sur les établissements de santé en France.",
+      "chartiste": "Manque de données techniques. Surveiller un rebond au-dessus de 40€ pour confirmer une reprise.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1302,10 +1302,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Acteur clé dans l'édition et les médias avec une diversification dans les événements.",
-      "bull_case": "La reprise des événements en présentiel booste les revenus.",
-      "bear_case": "La transition numérique reste un défi pour les revenus publicitaires traditionnels.",
-      "chartiste": "Résistance à 22€. Une cassure confirmerait une reprise haussière.",
+      "resume": "Diversification dans les médias et l'édition avec des marques fortes comme Hachette.",
+      "bull_case": "Reprise des activités événementielles post-COVID stimule les revenus.",
+      "bear_case": "Concurrence accrue dans le secteur des médias numériques pèse sur les marges.",
+      "chartiste": "Manque de données techniques. Résistance à 20€ à surveiller pour un potentiel breakout.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1466,10 +1466,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Groupe média avec une forte notoriété dans la radio et une diversification numérique.",
-      "bull_case": "La reprise publicitaire post-COVID soutient les revenus.",
-      "bear_case": "La concurrence accrue dans le numérique pourrait limiter la croissance.",
-      "chartiste": "Support à 42€. Rebond technique possible si ce niveau tient.",
+      "resume": "Acteur clé dans les médias radio et télévisuels avec une forte notoriété en France.",
+      "bull_case": "Reprise des investissements publicitaires post-pandémie soutient les revenus.",
+      "bear_case": "Transition numérique lente face à la concurrence des plateformes de streaming.",
+      "chartiste": "RSI bas suggère un rebond potentiel. Support à 42€. Résistance à 46€ à surveiller.",
       "conseil": "Zone de survente : entree progressive recommandee."
     },
     {
@@ -1629,10 +1629,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Pharmaceutique mondialement reconnu avec un portefeuille diversifié et des vaccins innovants.",
-      "bull_case": "L'innovation dans les vaccins et les traitements spécialisés stimule la croissance.",
-      "bear_case": "Les pressions sur les prix des médicaments en Europe pèsent sur les marges.",
-      "chartiste": "Support à 90€. Une cassure pourrait signaler une faiblesse prolongée.",
+      "resume": "Pharma leader avec un portefeuille diversifié et des franchises solides en vaccins et diabète.",
+      "bull_case": "Pipeline robuste avec des lancements de médicaments prometteurs dans les maladies rares.",
+      "bear_case": "Pression sur les prix des médicaments en Europe et aux États-Unis.",
+      "chartiste": "Manque de données techniques. Surveiller une cassure au-dessus de 100€ pour valider un momentum haussier.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1792,10 +1792,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Leader nordique dans l'énergie propre avec un portefeuille diversifié en hydroélectricité et nucléaire.",
-      "bull_case": "Transition énergétique en Europe favorise les investissements dans les énergies renouvelables.",
-      "bear_case": "Exposition au marché russe et volatilité des prix de l'énergie pèsent sur les perspectives.",
-      "chartiste": "Résistance clé à 16,50€ à surveiller pour confirmer un retournement haussier.",
+      "resume": "Leader nordique dans l'énergie propre avec un portefeuille diversifié en nucléaire et renouvelables.",
+      "bull_case": "Transition énergétique européenne favorise les investissements dans les énergies renouvelables.",
+      "bear_case": "Exposition aux prix volatils de l'énergie et incertitudes réglementaires en Europe.",
+      "chartiste": "MACD positif, mais absence de tendance claire. Surveillance d'un éventuel breakout au-dessus de 16€.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1955,10 +1955,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Expertise dans les engrais et produits chimiques avec une forte présence en Europe centrale.",
-      "bull_case": "Hausse des prix des matières premières agricoles soutient la demande pour les engrais.",
-      "bear_case": "Coût élevé de l'énergie en Europe impacte les marges de production.",
-      "chartiste": "Support technique à 17,20€ à surveiller pour éviter une cassure baissière.",
+      "resume": "Expertise unique dans les engrais potassiques avec une forte présence en Europe et Amérique du Nord.",
+      "bull_case": "Hausse des prix des matières premières agricoles soutient la demande en engrais.",
+      "bear_case": "Pression réglementaire sur les émissions et volatilité des prix des matières premières.",
+      "chartiste": "MACD positif, mais consolidation probable. Support clé à 18€, résistance à 22€.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2118,10 +2118,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Diversification dans les énergies renouvelables tout en restant un acteur majeur du pétrole et gaz.",
-      "bull_case": "Hausse des prix du pétrole et expansion dans les énergies renouvelables soutiennent la croissance.",
-      "bear_case": "Réglementations environnementales strictes en Europe pourraient limiter les activités fossiles.",
-      "chartiste": "Résistance à 63,50€ à franchir pour confirmer une dynamique haussière.",
+      "resume": "Diversification stratégique dans les énergies renouvelables et forte génération de cash dans le pétrole et gaz.",
+      "bull_case": "Prix élevés du pétrole et expansion rapide dans les énergies vertes.",
+      "bear_case": "Risque de taxation accrue sur les superprofits énergétiques en Europe.",
+      "chartiste": "MACD haussier. Résistance majeure à 60€, consolidation probable avant un nouveau test.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2281,10 +2281,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Acteur clé en Europe centrale dans le pétrole, gaz et pétrochimie avec une intégration verticale.",
-      "bull_case": "Hausse des prix du gaz naturel en Europe booste les revenus.",
-      "bear_case": "Dépendance aux importations de gaz russe reste un risque géopolitique majeur.",
-      "chartiste": "Consolidation autour de 48,00€ avec une résistance à 50,00€ à surveiller.",
+      "resume": "Acteur clé en Europe centrale avec une intégration verticale dans le pétrole, gaz et pétrochimie.",
+      "bull_case": "Hausse des marges raffinage et diversification vers les énergies renouvelables.",
+      "bear_case": "Exposition au gaz russe et incertitudes géopolitiques en Europe.",
+      "chartiste": "MACD en forte progression. Résistance technique à 50€, support à 45€ à surveiller.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2444,10 +2444,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Portefeuille diversifié d'investissements technologiques, notamment dans Tencent et d'autres plateformes numériques.",
-      "bull_case": "Reprise des investissements technologiques en Chine pourrait soutenir la valorisation.",
-      "bear_case": "Réglementations chinoises sur les entreprises technologiques créent une incertitude prolongée.",
-      "chartiste": "Support clé à 65,00€ à surveiller pour éviter une correction prolongée.",
+      "resume": "Participation stratégique dans Tencent et portefeuille diversifié en e-commerce et tech.",
+      "bull_case": "Rebond potentiel des valeurs technologiques en Chine et réduction des décotes sur actifs.",
+      "bear_case": "Régulation stricte en Chine et volatilité des marchés technologiques.",
+      "chartiste": "MACD positif. Résistance clé à 70€, consolidation probable autour de 65€.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2607,10 +2607,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Expertise en transformation numérique et services IT pour les grandes entreprises européennes.",
-      "bull_case": "Augmentation des budgets IT des entreprises européennes favorise la demande.",
-      "bear_case": "Ralentissement économique pourrait réduire les dépenses en transformation numérique.",
-      "chartiste": "Résistance à 195,00€ à franchir pour confirmer une reprise haussière.",
+      "resume": "Leader européen des services IT avec une expertise forte en transformation numérique.",
+      "bull_case": "Demande accrue pour la digitalisation des entreprises et projets cloud.",
+      "bear_case": "Ralentissement des budgets IT des grandes entreprises en Europe.",
+      "chartiste": "MACD haussier. Résistance technique à 200€, support solide à 180€.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2769,11 +2769,11 @@
         69.15
       ],
       "signal": "SURVEILLER",
-      "conviction": 4,
-      "resume": "Leader mondial dans les diagnostics médicaux avec une forte innovation en biotechnologie.",
-      "bull_case": "Demande accrue pour les diagnostics post-COVID et expansion dans les marchés émergents.",
-      "bear_case": "Pression sur les prix des tests COVID et concurrence accrue dans le secteur.",
-      "chartiste": "Support solide à 90,00€ à surveiller pour éviter une cassure baissière.",
+      "conviction": 3,
+      "resume": "Spécialiste mondial des diagnostics médicaux avec un portefeuille innovant et diversifié.",
+      "bull_case": "Croissance des besoins en diagnostics post-COVID et expansion sur les marchés émergents.",
+      "bear_case": "Ralentissement des ventes liées au COVID et pression sur les marges.",
+      "chartiste": "MACD positif. Résistance clé à 110€, support à 100€ à surveiller.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2933,10 +2933,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Position dominante dans les services de conseil technologique et transformation digitale mondiale.",
-      "bull_case": "Croissance continue des services cloud et transformation digitale soutient la demande.",
-      "bear_case": "Ralentissement des dépenses IT pourrait affecter les nouveaux contrats.",
-      "chartiste": "Résistance à 175,00€ à franchir pour confirmer une tendance haussière.",
+      "resume": "Acteur mondial des services numériques avec une expertise en cloud, IA et cybersécurité.",
+      "bull_case": "Croissance continue des investissements en transformation digitale et IA.",
+      "bear_case": "Risque de ralentissement économique pesant sur les budgets IT.",
+      "chartiste": "MACD très haussier. Résistance à 200€, consolidation possible avant un nouveau test.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -3096,10 +3096,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Leader mondial des ascenseurs et escaliers mécaniques avec un fort focus sur l'innovation.",
-      "bull_case": "Urbanisation croissante et besoins en modernisation des infrastructures soutiennent la demande.",
-      "bear_case": "Ralentissement de la construction en Chine pourrait peser sur les commandes.",
-      "chartiste": "Support à 45,00€ à surveiller pour éviter une pression baissière prolongée.",
+      "resume": "Leader mondial des ascenseurs et escaliers mécaniques avec un focus sur l'innovation durable.",
+      "bull_case": "Urbanisation croissante et demande accrue pour des solutions écoénergétiques.",
+      "bear_case": "Ralentissement de la construction immobilière en Europe et en Chine.",
+      "chartiste": "MACD positif. Résistance clé à 55€, support à 50€ à surveiller.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -3259,10 +3259,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Spécialiste des solutions énergétiques marines et industrielles avec un focus sur la durabilité.",
-      "bull_case": "Transition énergétique maritime favorise les solutions durables proposées par l'entreprise.",
-      "bear_case": "Ralentissement des commandes dans le secteur maritime impacte les revenus.",
-      "chartiste": "Rebond attendu si le support à 8,50€ tient, mais tendance baissière dominante.",
+      "resume": "Expertise dans les solutions maritimes et énergétiques avec un focus sur la transition verte.",
+      "bull_case": "Transition énergétique maritime et adoption croissante des carburants alternatifs.",
+      "bear_case": "Ralentissement des commandes dans le secteur maritime et pression sur les marges.",
+      "chartiste": "MACD négatif. Support critique à 10€, risque de cassure si la pression persiste.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     }
   ]
