@@ -341,37 +341,6 @@ def compute_trend_slope(series: pd.Series, days: int = 30) -> float:
     return float(c[0] * days / s[-1] * 100)
 
 
-def compute_rebound_signal(hist: pd.DataFrame) -> dict:
-    close = hist["Close"]
-    volume = hist["Volume"]
-    price = float(close.iloc[-1])
-
-    high_63 = float(close.tail(63).max())
-    decote_pct = (price / high_63 - 1) * 100 if high_63 != 0 else 0.0
-
-    recent_low = float(close.tail(5).min())
-    if len(close) >= 25:
-        previous_low = float(close.iloc[-25:-5].min())
-    else:
-        previous_low = float(close.min())
-    is_stabilized = recent_low >= 0.98 * previous_low
-
-    vol_5j = float(volume.tail(5).mean())
-    vol_20j = float(volume.tail(20).mean())
-    vol_ratio_recent = round(vol_5j / vol_20j, 2) if vol_20j != 0 else 1.0
-    volume_pickup = vol_ratio_recent > 1.15
-
-    chg_5j = (price / float(close.iloc[-6]) - 1) * 100 if len(close) >= 6 else 0.0
-
-    return {
-        "decote_pct": decote_pct,
-        "is_stabilized": is_stabilized,
-        "vol_ratio_recent": vol_ratio_recent,
-        "volume_pickup": volume_pickup,
-        "chg_5j": chg_5j,
-    }
-
-
 # ============================================================
 # SCORING
 # ============================================================
@@ -407,7 +376,6 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     macd_val, macd_sig, macd_hist_val = compute_macd(close)
     bb_up, bb_low, bb_pos = compute_bollinger(close)
     trend = compute_trend_slope(close, 30)
-    rebound = compute_rebound_signal(hist)
 
     chg1d = float((price / close.iloc[-2]  - 1) * 100) if len(close) >= 2  else 0.0
     chg1m = float((price / close.iloc[-22] - 1) * 100) if len(close) >= 22 else 0.0
@@ -451,28 +419,30 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     else:
         style = "NEUTRE"
 
-    # ── Score technique (0–35) : détection de creux / retournement ───
+    # ── Score technique (0–45) ───────────────────────────────────────
     ts = 0
-    if   rebound["decote_pct"] <= -20: ts += 9
-    elif rebound["decote_pct"] <= -12: ts += 7
-    elif rebound["decote_pct"] <= -6:  ts += 4
+    if ma50  and price > ma50:  ts += 10
+    if ma200 and price > ma200: ts += 10
+    elif not ma200 and price > ma20: ts += 5
 
-    if rebound["is_stabilized"]: ts += 6
+    if 40 <= rsi <= 60:   ts += 12
+    elif 30 <= rsi < 40:  ts += 10
+    elif rsi < 30:        ts += 8
+    elif 60 < rsi <= 70:  ts += 6
+    else:                 ts += 2
 
-    if   rebound["vol_ratio_recent"] > 1.5:  ts += 8
-    elif rebound["vol_ratio_recent"] > 1.15: ts += 5
+    if macd_hist_val > 0 and macd_val > macd_sig: ts += 8
+    elif macd_hist_val > 0:                       ts += 4
 
-    if   rebound["chg_5j"] > 1:  ts += 5
-    elif rebound["chg_5j"] > -1: ts += 2
+    if bb_pos < 0.25:  ts += 5
+    elif bb_pos < 0.5: ts += 3
 
-    if   30 <= rsi < 45:  ts += 7
-    elif rsi < 30:        ts += 5
-    elif 45 <= rsi <= 55: ts += 2
-    else:                 ts += 0
+    if trend > 3:   ts += 5
+    elif trend > 0: ts += 2
 
-    ts = min(35, ts)
+    ts = min(45, ts)
 
-    # ── Score fondamental (0–50) ─────────────────────────────────────
+    # ── Score fondamental (0–40) ─────────────────────────────────────
     pe     = to_float(info.get("trailingPE") or info.get("forwardPE"))
     roe    = to_float(info.get("returnOnEquity"))
     rev_g  = to_float(info.get("revenueGrowth"))
@@ -485,21 +455,21 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
 
     upside = ((target / price) - 1) * 100 if target and price > 0 else None
 
-    fs = 25
+    fs = 20
     if pe is not None:
-        if   10 <= pe <= 18: fs += 12
-        elif 18 < pe <= 28:  fs += 6
-        elif pe > 28:        fs -= 6
-        elif 0 < pe < 10:    fs += 9
+        if   10 <= pe <= 18: fs += 10
+        elif 18 < pe <= 28:  fs += 5
+        elif pe > 28:        fs -= 5
+        elif 0 < pe < 10:    fs += 7
 
-    if roe    is not None and roe > 0.15:    fs += 8
-    if rev_g  is not None and rev_g > 0.05:  fs += 8
-    if earn_g is not None and earn_g > 0.05: fs += 7
-    if de     is not None and de < 80:       fs += 4
-    if upside is not None and upside > 15:   fs += 6
-    elif upside is not None and upside > 8:  fs += 4
+    if roe    is not None and roe > 0.15:    fs += 6
+    if rev_g  is not None and rev_g > 0.05:  fs += 6
+    if earn_g is not None and earn_g > 0.05: fs += 5
+    if de     is not None and de < 80:       fs += 3
+    if upside is not None and upside > 15:   fs += 5
+    elif upside is not None and upside > 8:  fs += 3
 
-    fs = min(50, max(0, fs))
+    fs = min(40, max(0, fs))
 
     # ── Score momentum (0–15) ────────────────────────────────────────
     ms = 0
@@ -510,10 +480,6 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     if vol_rel > 1.3:   ms += 5
     elif vol_rel > 1.0: ms += 2
     ms = min(15, ms)
-
-    if rsi > 65 and rebound["decote_pct"] > -3:
-        print(f"    Elimine (surachete, pas de creux) : {ticker}")
-        return None
 
     total = ts + fs + ms
 
@@ -546,10 +512,6 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
         "chg1m":      round(chg1m, 2),
         "chg3m":      round(chg3m, 2),
         "vol_rel":    round(vol_rel, 2),
-        "decote_pct":       rebound["decote_pct"],
-        "is_stabilized":    rebound["is_stabilized"],
-        "vol_ratio_recent": rebound["vol_ratio_recent"],
-        "chg_5j":           round(rebound["chg_5j"], 2),
         "support":    round(support, 2),
         "resist":     round(resist, 2),
         "ma20":       round(ma20, 2),
@@ -614,6 +576,24 @@ def select_candidates() -> tuple[list[dict], dict, list[dict]]:
 
 
 # ============================================================
+# SIGNAL FINAL DETERMINISTE
+# ============================================================
+
+def compute_final_signal(stock: dict) -> str:
+    """Calcule le signal métier sans dépendre de la réponse de l'IA."""
+    signal = (
+        "ACHETER"
+        if stock["score"] >= MIN_SCORE_ACHAT and stock["net_gain"] > 0
+        else "SURVEILLER"
+    )
+    # Filtre de sécurité anti-surachat : un RSI très élevé ne doit jamais
+    # produire un signal d'achat, même si le score brut passe le seuil.
+    if stock["rsi"] > 75:
+        signal = "SURVEILLER"
+    return signal
+
+
+# ============================================================
 # APPEL IA
 # ============================================================
 
@@ -635,11 +615,9 @@ def call_ai_batch(stocks: list[dict], batch_label: str) -> dict:
             "chg3m":     s["chg3m"],
             "score":     s["score"],
             "style":     s["style"],    # [V3-C] transmis a l'IA pour contexte
-            "decote_pct":       s["decote_pct"],
-            "is_stabilized":    s["is_stabilized"],
-            "vol_ratio_recent": s["vol_ratio_recent"],
-            "chg_5j":           s["chg_5j"],
             "net_gain":  s["net_gain"],
+            # Signal calcule en Python avant toute generation IA.
+            "final_signal": compute_final_signal(s),
             "rr_label":  s["rr_label"],
         })
 
@@ -651,12 +629,13 @@ Donnees quantitatives :
 {json.dumps(stocks_info, ensure_ascii=False, indent=2)}
 
 REGLES STRICTES :
-1. Signal ACHETER uniquement si score >= {MIN_SCORE_ACHAT} ET net_gain > 0. Sinon SURVEILLER.
-2. Signal EVITER uniquement si risque fondamental serieux et avere (dette critique, fraude, faillite imminente).
-3. Chaque "resume" doit decrire l'avantage competitif UNIQUE de l'entreprise. Ne JAMAIS ecrire le meme resume pour deux entreprises differentes.
-4. bull_case et bear_case bases sur l'actualite recente du secteur, pas des generalites.
-5. Le champ "style" de chaque action est "{{"REBOND" si RSI < 40, "MOMENTUM" si RSI > 60, "NEUTRE" sinon}}". Adapter le conseil en consequence : pour REBOND insister sur la patience et le point d'entree bas ; pour MOMENTUM insister sur la dynamique et la gestion du stop.
-6. Le champ decote_pct indique la baisse par rapport au sommet 3 mois, vol_ratio_recent > 1.15 signale une reprise des volumes. Le resume et le chartiste doivent mettre en avant le creux actuel et le potentiel de rebond si ces conditions sont reunies, tout en confirmant que les fondamentaux restent sains.
+1. Pour chaque action, le champ "final_signal" fourni dans les donnees est le signal de reference calcule par Python. Recopier exactement sa valeur dans "signal". Ne jamais le recalculer, le modifier ou le contredire.
+2. Le signal ACHETER n'est autorise que si final_signal vaut ACHETER (score >= {MIN_SCORE_ACHAT} ET net_gain > 0). Sinon, ecrire SURVEILLER. Un RSI > 75 a deja force final_signal a SURVEILLER : respecter ce declassement.
+3. Le texte genere (resume, bull_case, bear_case, chartiste et conseil) doit rester coherent avec final_signal et ne doit jamais suggerer le signal inverse. Ne jamais presenter SURVEILLER comme un achat confirme, ni ACHETER comme une simple surveillance.
+4. Signal EVITER uniquement si risque fondamental serieux et avere (dette critique, fraude, faillite imminente). Il sera traite par le code Python ; ne l'utiliser que si ce risque est reel et documente.
+5. Chaque "resume" doit decrire l'avantage competitif UNIQUE de l'entreprise. Les resumes, bull_case, bear_case et chartiste doivent etre specifiques au ticker ; ne JAMAIS reutiliser ou paraphraser le meme texte pour deux entreprises differentes dans ce lot.
+6. bull_case et bear_case bases sur l'actualite recente du secteur, pas des generalites.
+7. Le champ "style" de chaque action est "{{"REBOND" si RSI < 40, "MOMENTUM" si RSI > 60, "NEUTRE" sinon}}". Adapter le conseil en consequence : pour REBOND insister sur la patience et le point d'entree bas ; pour MOMENTUM insister sur la dynamique et la gestion du stop.
 
 Format JSON STRICT :
 {{
@@ -854,12 +833,10 @@ def save_results(stocks: list[dict], ai_map: dict, all_scored: list[dict]):
     output = []
     for s in stocks:
         ai     = ai_map.get(s["ticker"], {})
-        signal = ai.get("signal", "SURVEILLER")
+        # Le signal final est toujours celui du code Python, jamais celui
+        # propose par l'IA. Cela couvre aussi le filtre RSI de securite.
+        signal = compute_final_signal(s)
 
-        # CORRECTION : Sécurité RSI (Si RSI > 75, on passe en SURVEILLER)
-        if s["rsi"] > 75:
-            signal = "SURVEILLER"
-        
         # [V3-A] Si EVITER résiduel → remplacer par le suivant de la réserve ultime
         if signal == "EVITER":
             replaced = False
@@ -873,7 +850,9 @@ def save_results(stocks: list[dict], ai_map: dict, all_scored: list[dict]):
                           f"{s['ticker']} -> {candidate['ticker']} ({candidate['name']})")
                     s      = candidate
                     ai     = candidate_ai
-                    signal = candidate_signal
+                    # Recalcul deterministe pour le titre remplaçant ; l'IA
+                    # ne peut pas influencer le signal final affiche.
+                    signal = compute_final_signal(s)
                     # Mettre a jour le set pour eviter les doublons si plusieurs EVITER
                     tickers_in_final.add(candidate["ticker"])
                     replaced = True
