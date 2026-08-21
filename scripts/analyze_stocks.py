@@ -666,10 +666,10 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict, all_scored: l
 
     while round_num < MAX_REPLACEMENT_ROUNDS:
         round_num += 1
-        remaining_eviter = []
+        final_list = []
+        replaced_any = False
 
         for s in candidates:
-            ai = ai_map.get(s["ticker"], {})
             signal = compute_final_signal(s)
 
             if signal == "EVITER":
@@ -677,30 +677,30 @@ def get_ai_analysis(candidates: list[dict], sector_reserves: dict, all_scored: l
                 while reserve_idx < len(ultimate_reserve):
                     candidate = ultimate_reserve[reserve_idx]
                     reserve_idx += 1
-                    candidate_ai = ai_map.get(candidate["ticker"], {})
                     candidate_signal = compute_final_signal(candidate)
 
                     if candidate_signal != "EVITER":
                         print(f"  [V3-A] Remplacement : {s['ticker']} → {candidate['ticker']} ({candidate['name']})")
-                        s = candidate
-                        ai = candidate_ai
+                        final_list.append(candidate)
                         tickers_in_final.add(candidate["ticker"])
                         replaced = True
+                        replaced_any = True
                         break
 
                 if not replaced:
-                    print(f"  [V3-A] Reserve ultime epuisee pour {s['ticker']} : degrade en SURVEILLER")
-                    remaining_eviter.append(s)
+                    print(f"  [V3-A] Reserve epuisee pour {s['ticker']} : degrade en SURVEILLER")
+                    final_list.append(s)
+            else:
+                final_list.append(s)
 
-        if not remaining_eviter:
+        candidates = final_list
+
+        if not replaced_any:
             break
-
-        candidates = remaining_eviter
 
     print(f"\n  Aucun EVITER restant. Remplacement termine apres {round_num} tour(s).")
 
     return candidates, ai_map
-
 
 # ============================================================
 # SAUVEGARDE RESULTATS
