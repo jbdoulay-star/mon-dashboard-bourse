@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-21T18:03:39Z",
+  "updated_at": "2026-08-21T18:08:18Z",
   "date": "2026-08-21",
   "count": 20,
   "stocks": [
@@ -161,10 +161,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Leader dans les engrais potassiques en Europe.",
+      "resume": "Leader européen des engrais et sels industriels.",
       "bull_case": "Hausse des prix des matières premières.",
-      "bear_case": "Volatilité des prix agricoles.",
-      "chartiste": "Résistance majeure à 17.50 EUR.",
+      "bear_case": "Volatilité élevée du marché agricole.",
+      "chartiste": "Support 15.50 / Résistance 17.50.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -325,10 +325,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Dominance sur les solutions ERP globales.",
-      "bull_case": "Demandes fortes en digitalisation.",
-      "bear_case": "Pression concurrentielle sur le cloud.",
-      "chartiste": "Support clé à 180 EUR, résistance à 190 EUR.",
+      "resume": "Dominance dans les logiciels ERP pour entreprises.",
+      "bull_case": "Croissance cloud et adoption numérique.",
+      "bear_case": "Concurrence accrue dans le secteur technologique.",
+      "chartiste": "Support 175 / Résistance 190.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -489,10 +489,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Logiciels 3D pour conception industrielle.",
-      "bull_case": "Croissance des industries high-tech.",
-      "bear_case": "Ralentissement des dépenses R&D.",
-      "chartiste": "Support à 21.50 EUR, résistance à 23 EUR.",
+      "resume": "Pionnier mondial des logiciels 3D et PLM.",
+      "bull_case": "Demande soutenue pour solutions 3D.",
+      "bear_case": "Pression sur marges en raison des coûts R&D.",
+      "chartiste": "Support 21.50 / Résistance 23.50.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -653,10 +653,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Solutions bancaires critiques pour la finance.",
-      "bull_case": "Hausse des investissements fintech.",
-      "bear_case": "Concurrence accrue des SaaS.",
-      "chartiste": "Support à 72 CHF, résistance à 76 CHF.",
+      "resume": "Expertise dans logiciels bancaires et financiers.",
+      "bull_case": "Digitalisation rapide du secteur bancaire.",
+      "bear_case": "Ralentissement économique impactant les banques.",
+      "chartiste": "Support 72 / Résistance 76.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -817,10 +817,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Leader des biocarburants renouvelables.",
-      "bull_case": "Politiques pro-énergies vertes.",
-      "bear_case": "Volatilité des marges raffinage.",
-      "chartiste": "Support à 31 EUR, résistance à 34 EUR.",
+      "resume": "Leader des biocarburants et solutions durables.",
+      "bull_case": "Transition énergétique et demande verte.",
+      "bear_case": "Fluctuations des prix du pétrole brut.",
+      "chartiste": "Support 31.50 / Résistance 34.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -981,10 +981,10 @@
       ],
       "signal": "ACHETER",
       "conviction": 5,
-      "resume": "Pipeline innovant en oncologie et générique.",
-      "bull_case": "Regain dans les ventes pharmaceutiques.",
-      "bear_case": "Risques réglementaires FDA/EMA.",
-      "chartiste": "Support fort à 125 CHF, résistance à 130 CHF.",
+      "resume": "Portefeuille diversifié de médicaments innovants.",
+      "bull_case": "Pipeline prometteur et forte demande en santé.",
+      "bear_case": "Régulations strictes et litiges possibles.",
+      "chartiste": "Support 125 / Résistance 130.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1145,10 +1145,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Expertise intégrée en exploration pétrolière.",
-      "bull_case": "Prix du pétrole en hausse récente.",
-      "bear_case": "Exposition géopolitique élevée.",
-      "chartiste": "Support à 66 EUR, résistance à 70 EUR.",
+      "resume": "Production intégrée dans pétrole et gaz.",
+      "bull_case": "Rebond des prix du pétrole.",
+      "bear_case": "Sensibilité aux crises géopolitiques.",
+      "chartiste": "Support 66.50 / Résistance 70.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1309,10 +1309,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Innovateur dans les ascenseurs intelligents.",
-      "bull_case": "Urbanisation mondiale accélérée.",
-      "bear_case": "Pression sur les coûts des matériaux.",
-      "chartiste": "Support à 50 EUR, résistance à 54 EUR.",
+      "resume": "Leader des ascenseurs et solutions de mobilité.",
+      "bull_case": "Urbanisation et croissance des infrastructures.",
+      "bear_case": "Ralentissement économique mondial.",
+      "chartiste": "Support 50 / Résistance 53.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1472,11 +1472,11 @@
         71.74
       ],
       "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Leader mondial dans l'externalisation de services clients.",
-      "bull_case": "Croissance rapide des services numériques.",
-      "bear_case": "Pressions réglementaires accrues sur les BPO.",
-      "chartiste": "Support à 65€, résistance à 75€.",
+      "conviction": 4,
+      "resume": "Leader mondial de l'externalisation de la relation client.",
+      "bull_case": "Croissance dans les services numériques.",
+      "bear_case": "Risque de pression sur les marges.",
+      "chartiste": "Proche d'une résistance à 75 €.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1637,10 +1637,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Diversification dans le gaz et les renouvelables.",
-      "bull_case": "Stabilité des cashflows pétroliers.",
-      "bear_case": "Transition énergétique lente.",
-      "chartiste": "Support à 75 EUR, résistance à 80 EUR.",
+      "resume": "Acteur majeur de l'énergie diversifiée.",
+      "bull_case": "Croissance des énergies renouvelables.",
+      "bear_case": "Volatilité des prix du pétrole et gaz.",
+      "chartiste": "Support 75 / Résistance 80.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -1800,11 +1800,11 @@
         71.74
       ],
       "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Leader mondial dans l'externalisation de services clients.",
-      "bull_case": "Croissance rapide des services numériques.",
-      "bear_case": "Pressions réglementaires accrues sur les BPO.",
-      "chartiste": "Support à 65€, résistance à 75€.",
+      "conviction": 4,
+      "resume": "Leader mondial de l'externalisation de la relation client.",
+      "bull_case": "Croissance dans les services numériques.",
+      "bear_case": "Risque de pression sur les marges.",
+      "chartiste": "Proche d'une résistance à 75 €.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1964,11 +1964,11 @@
         6.64
       ],
       "signal": "SURVEILLER",
-      "conviction": 2,
-      "resume": "Positionnement unique dans le luxe accessible.",
+      "conviction": 3,
+      "resume": "Position forte dans la mode accessible haut de gamme.",
       "bull_case": "Reprise des ventes en Asie.",
-      "bear_case": "Endettement élevé limite la flexibilité.",
-      "chartiste": "Support à 6€, résistance à 7€.",
+      "bear_case": "Endettement important limite les investissements.",
+      "chartiste": "Support clé à 6 €.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2129,10 +2129,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Réseau logistique dense et automatisé.",
-      "bull_case": "Expansion du e-commerce en Europe.",
-      "bear_case": "Hausse des coûts énergétiques impactant la rentabilité.",
-      "chartiste": "Support à 14.8€, résistance à 16€.",
+      "resume": "Premier réseau de casiers automatiques en Europe.",
+      "bull_case": "Croissance du e-commerce en Europe.",
+      "bear_case": "Concurrence accrue sur le segment logistique.",
+      "chartiste": "Résistance majeure à 16 €.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2292,11 +2292,11 @@
         78.94
       ],
       "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Pipeline robuste dans les biotechnologies.",
-      "bull_case": "Lancement de nouveaux vaccins.",
-      "bear_case": "Litiges juridiques sur certains produits.",
-      "chartiste": "Support à 75€, résistance à 80€.",
+      "conviction": 4,
+      "resume": "Pipeline solide dans les vaccins et oncologie.",
+      "bull_case": "Hausse des ventes de médicaments clés.",
+      "bear_case": "Expiration prochaine de brevets majeurs.",
+      "chartiste": "Surachat avec RSI élevé, attention à 80 €.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2457,10 +2457,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Expertise dans les diagnostics médicaux innovants.",
-      "bull_case": "Demande croissante pour des tests rapides.",
-      "bear_case": "Ralentissement post-COVID du marché des diagnostics.",
-      "chartiste": "Support à 72€, résistance à 76€.",
+      "resume": "Expertise dans le diagnostic in vitro.",
+      "bull_case": "Croissance soutenue par la demande en diagnostics.",
+      "bear_case": "Déclin post-pandémie pour certains produits.",
+      "chartiste": "Support technique à 72 €.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2621,10 +2621,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Acteur clé dans les énergies renouvelables.",
+      "resume": "Leader dans les énergies renouvelables en Europe.",
       "bull_case": "Investissements massifs dans l'éolien offshore.",
-      "bear_case": "Risque réglementaire dans l'énergie verte.",
-      "chartiste": "Support à 4.5€, résistance à 4.8€.",
+      "bear_case": "Réglementation défavorable sur le secteur énergétique.",
+      "chartiste": "Support important à 4.5 €.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2784,11 +2784,11 @@
         21.93
       ],
       "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Transition stratégique vers les énergies renouvelables.",
-      "bull_case": "Hausse des prix du pétrole.",
-      "bear_case": "Volatilité des marges de raffinage.",
-      "chartiste": "Support à 20€, résistance à 22.5€.",
+      "conviction": 2,
+      "resume": "Acteur clé sur le pétrole et le gaz portugais.",
+      "bull_case": "Hausse des prix du pétrole brut.",
+      "bear_case": "Exposition aux fluctuations des matières premières.",
+      "chartiste": "Proche d'une résistance vers 22.5 €.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -2949,10 +2949,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Leader dans les technologies de stockage de GNL.",
-      "bull_case": "Demande accrue pour le transport de GNL.",
-      "bear_case": "Concurrence croissante dans le secteur.",
-      "chartiste": "Support à 200€, résistance à 210€.",
+      "resume": "Leader technologique dans les systèmes de stockage GNL.",
+      "bull_case": "Hausse de la demande en GNL.",
+      "bear_case": "Ralentissement des commandes maritimes.",
+      "chartiste": "Résistance technique à 210 €.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -3114,9 +3114,9 @@
       "signal": "SURVEILLER",
       "conviction": 3,
       "resume": "Monopole sur le tunnel sous la Manche.",
-      "bull_case": "Hausse du trafic post-Brexit.",
-      "bear_case": "Exposition aux risques macroéconomiques.",
-      "chartiste": "Support à 18.5€, résistance à 19.5€.",
+      "bull_case": "Hausse du trafic post-COVID.",
+      "bear_case": "Risque lié au Brexit et à la concurrence.",
+      "chartiste": "Surachat avec RSI élevé, résistance à 20 €.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     },
     {
@@ -3276,11 +3276,11 @@
         24.14
       ],
       "signal": "SURVEILLER",
-      "conviction": 2,
-      "resume": "Diversification dans l'énergie renouvelable.",
-      "bull_case": "Hausse des prix des hydrocarbures.",
-      "bear_case": "Risque géopolitique en Afrique.",
-      "chartiste": "Support à 23€, résistance à 25€.",
+      "conviction": 3,
+      "resume": "Majoration dans les hydrocarbures et diversification énergétique.",
+      "bull_case": "Prix élevés du pétrole soutenant les marges.",
+      "bear_case": "Transition énergétique et pression réglementaire.",
+      "chartiste": "Support clé à 23 €.",
       "conseil": "Tendance confirmee : entree au prix du marche."
     }
   ]
