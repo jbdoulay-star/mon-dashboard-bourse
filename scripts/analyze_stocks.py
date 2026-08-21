@@ -638,7 +638,7 @@ Reponds avec le JSON complet sans aucun texte avant ou apres."""
 # ANALYSE IA + REMPLACEMENT DES EVITER
 # ============================================================
 
-def get_ai_analysis(candidates: list[dict], sector_reserves: dict) -> tuple[list[dict], dict]:
+def get_ai_analysis(candidates: list[dict], sector_reserves: dict, all_scored: list[dict]) -> tuple[list[dict], dict]:
     """
     1. Analyse les 20 candidats en 2 lots (1-10, 11-20)
     2. Remplace les EVITER par les suivants du secteur
@@ -756,12 +756,12 @@ def main():
     print("PEA Tracker - Analyse du", datetime.utcnow().strftime("%d/%m/%Y %H:%M UTC"))
     print("=" * 60)
 
-    print("\nETPE 1 : Selection par secteur...")
+    print("\nETAPE 1 : Selection par secteur...")
     candidates, sector_reserves, all_scored = select_by_sector()
     print(f"\n  Selection pre-IA : {[t['ticker'] for t in candidates]}")
 
     print("\nETAPE 2 : Analyse IA + remplacement EVITER...")
-    final_stocks, ai_map = get_ai_analysis(candidates, sector_reserves)
+    final_stocks, ai_map = get_ai_analysis(candidates, sector_reserves, all_scored)  # ← AJOUTER all_scored
     print(f"\n  Selection finale : {[t['ticker'] for t in final_stocks]}")
 
     print("\nETAPE 3 : Sauvegarde...")
