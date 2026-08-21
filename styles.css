@@ -8,6 +8,13 @@
   --blue: #4da6ff;
   --text: #e0e0e0;
   --muted: #888;
+  
+  /* Nouvelles couleurs pour Bollinger Bands */
+  --bb-optimal: #00c853;
+  --bb-good: #76ff03;
+  --bb-acceptable: #ffd600;
+  --bb-warning: #ff6d00;
+  --bb-extreme: #ff1744;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -107,6 +114,13 @@ header p  { color: var(--muted); margin-top: .5rem; }
 
 .ind .ind-val { font-size: .9rem; font-weight: bold; }
 .ind .ind-lbl { font-size: .65rem; color: var(--muted); }
+
+/* Classes de couleurs pour Bollinger Bands */
+.ind-bb-optimal { color: var(--bb-optimal); }
+.ind-bb-good { color: var(--bb-good); }
+.ind-bb-acceptable { color: var(--bb-acceptable); }
+.ind-bb-warning { color: var(--bb-warning); }
+.ind-bb-extreme { color: var(--bb-extreme); }
 
 .section-title {
   font-size: .7rem;
