@@ -426,26 +426,27 @@ def analyze_stock(ticker: str, name: str, sector: str) -> dict | None:
     else:
         style = "NEUTRE"
 
-# Calcul entry, stop_loss, target
-entry = round(price, 2)
-stop_loss = round(support, 2)
+    # Calcul entry, stop_loss, target
+    entry = round(price, 2)
+    stop_loss = round(support, 2)
 
-# Si prix >= résistance, projette target plus haut (1.5x le risque)
-if price >= resist:
-    target_1m = round(resist * 1.05, 2)  # +5% de la résistance
-else:
-    target_1m = round(resist, 2)
+    # Si prix >= résistance, projette target plus haut
+    if price >= resist:
+        target_1m = round(resist * 1.05, 2)
+    else:
+        target_1m = round(resist, 2)
 
-# Risk-Reward (garanti >= 1:1)
-risk = entry - stop_loss
-reward = target_1m - entry
-rr = reward / risk if risk > 0 else 0
-
-# Garanti minimum 1:1
-if rr < 1.0 and risk > 0:
-    target_1m = round(entry + (risk * 1.5), 2)  # Force RR 1:1.5
+    # Risk-Reward (garanti >= 1:1)
+    risk = entry - stop_loss
     reward = target_1m - entry
-    rr = reward / risk
+    rr = reward / risk if risk > 0 else 0
+
+    # Garanti minimum 1:1
+    if rr < 1.0 and risk > 0:
+        target_1m = round(entry + (risk * 1.5), 2)
+        reward = target_1m - entry
+        rr = reward / risk
+
     rr_label = f"1:{round(rr, 2)}" if rr > 0 else "N/A"
 
     # Gain net (après frais)
