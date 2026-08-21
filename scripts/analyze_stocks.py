@@ -33,7 +33,7 @@ TR_FEE          = 1.0
 TR_FEE_TOTAL    = 2.0
 MIN_GAIN_PCT    = 3.0
 MAX_PRICE       = 250.0
-MIN_SCORE_ACHAT = 55
+MIN_SCORE_ACHAT = 50
 
 # ============================================================
 # UNIVERS PEA
