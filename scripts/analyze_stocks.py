@@ -389,7 +389,11 @@ def score_stock(ticker: str, name: str, sector: str) -> dict | None:
     resist  = float(hist3m["High"].max())
 
     # ── Niveaux de trading basés sur l'ATR ───────────────────────────
-    entry       = round(price - (0.2 * atr), 2)
+    entry_discount = price - (0.5 * atr)
+    entry          = max(entry_discount, support) if support is not None else entry_discount
+    if entry >= price:
+        entry = price - (0.3 * atr)
+    entry       = round(entry, 2)
     support_20j = float(hist["Low"].rolling(20).min().iloc[-1])
     stop_loss   = round(min(entry - (2 * atr), support_20j * 0.99), 2)
     risque      = entry - stop_loss
@@ -856,7 +860,7 @@ def save_results(stocks: list[dict], ai_map: dict, all_scored: list[dict]):
     output.sort(key=lambda x: x["score"], reverse=True)
 
     result = {
-        "updated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
         "date":       date.today().isoformat(),
         "count":      len(output),
         "stocks":     output,
