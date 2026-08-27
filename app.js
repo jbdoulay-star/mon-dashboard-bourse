@@ -160,12 +160,8 @@ function buildCard(s, rank) {
 
   // Gain net
   const netGain = (s.net_gain !== undefined && s.net_gain !== null && !isNaN(s.net_gain))
-    ? s.net_gain
-    : (s.net_gain_pct !== undefined && s.net_gain_pct !== null && !isNaN(s.net_gain_pct))
-      ? s.net_gain_pct
-      : (s.target_1m && s.entry)
-        ? parseFloat((((s.target_1m - s.entry) / s.entry * 100) - 2).toFixed(2))
-        : null;
+    ? Number(s.net_gain)
+    : null;
 
   const netGainHTML = netGain !== null && !isNaN(netGain)
     ? `<span class="${netGain > 0 ? 'positive' : 'negative'}">
