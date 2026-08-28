@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-28T02:18:39Z",
+  "generated_at": "2026-08-28T05:49:14Z",
   "date": "2026-08-28",
   "count": 20,
   "stocks": [
@@ -160,10 +160,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Position dominante en finance européenne avec expertise en services bancaires d'investissement.",
-      "bull_case": "Reprise économique en Europe pourrait stimuler la demande pour les services financiers.",
-      "bear_case": "Exposition élevée aux risques réglementaires et aux litiges juridiques.",
-      "chartiste": "Résistance à 10€ à surveiller pour confirmer une éventuelle reprise haussière.",
+      "resume": "Position dominante dans le secteur bancaire allemand avec une expertise en services financiers complexes.",
+      "bull_case": "Reprise économique en Europe pourrait stimuler la demande de crédit et services financiers.",
+      "bear_case": "Exposition élevée aux risques de régulation et aux litiges juridiques en cours.",
+      "chartiste": "Résistance à 11,50€ à surveiller pour confirmer un éventuel retournement haussier.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -322,11 +322,11 @@
         221.0
       ],
       "signal": "SURVEILLER",
-      "conviction": 4,
-      "resume": "Pipeline robuste en biotechnologie avec plusieurs produits innovants en phase avancée.",
-      "bull_case": "Lancement imminent de nouveaux médicaments avec potentiel de forte adoption.",
-      "bear_case": "Risque lié à l'approbation réglementaire et à la concurrence générique.",
-      "chartiste": "Consolidation autour de 75€ avec potentiel de rebond si support tient.",
+      "conviction": 3,
+      "resume": "Portefeuille robuste de médicaments innovants, notamment dans les maladies neurologiques et immunologiques.",
+      "bull_case": "Lancement prévu de nouveaux traitements pourrait renforcer les revenus à moyen terme.",
+      "bear_case": "Pression réglementaire sur les prix des médicaments en Europe pourrait limiter la croissance.",
+      "chartiste": "Consolidation autour de 75€ avec une résistance clé à 80€ pour valider une reprise.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -485,11 +485,11 @@
         16.23
       ],
       "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Leader européen en fertilisants et sels avec forte intégration verticale.",
-      "bull_case": "Hausse des prix des matières premières agricoles soutient la demande en fertilisants.",
-      "bear_case": "Volatilité des prix des matières premières pourrait peser sur les marges.",
-      "chartiste": "Support clé à 16€ à surveiller pour éviter une cassure baissière.",
+      "conviction": 2,
+      "resume": "Leader européen dans les engrais potassiques avec une forte présence sur les marchés agricoles.",
+      "bull_case": "Hausse des prix des matières premières agricoles pourrait stimuler la demande d'engrais.",
+      "bear_case": "Volatilité des prix des matières premières et pression environnementale sur le secteur.",
+      "chartiste": "Support à 17€ à surveiller pour éviter une cassure baissière significative.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -649,10 +649,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Expertise unique en arbitrage financier avec historique de rendements réguliers.",
-      "bull_case": "Volatilité accrue sur les marchés peut augmenter les opportunités d'arbitrage.",
-      "bear_case": "Faible diversification des revenus expose à une baisse des opportunités d'arbitrage.",
-      "chartiste": "Consolidation autour de 7€ avec faible momentum ; attendre un signal clair.",
+      "resume": "Expertise unique en arbitrage sur les marchés financiers avec un modèle résilient aux cycles économiques.",
+      "bull_case": "Volatilité accrue sur les marchés pourrait augmenter les opportunités d'arbitrage.",
+      "bear_case": "Faible diversification géographique limite la croissance à long terme.",
+      "chartiste": "Résistance à 7,50€ à franchir pour confirmer une dynamique haussière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -812,10 +812,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Position dominante en télécommunications en Europe avec forte base d'abonnés.",
-      "bull_case": "Expansion dans la 5G et les services numériques pourrait stimuler la croissance.",
-      "bear_case": "Pression concurrentielle et régulation stricte dans le secteur télécom.",
-      "chartiste": "Résistance à 20€ à franchir pour confirmer une dynamique haussière.",
+      "resume": "Position dominante en télécommunications en Europe avec une forte base d'abonnés et des infrastructures solides.",
+      "bull_case": "Expansion dans la 5G et services numériques pourrait accélérer la croissance.",
+      "bear_case": "Pression concurrentielle sur les prix des abonnements et coûts élevés des infrastructures.",
+      "chartiste": "Support à 18€ à surveiller pour éviter une cassure baissière prolongée.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -975,10 +975,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Banque belge solide avec diversification géographique et expertise en assurance.",
+      "resume": "Banque belge avec une forte présence en Europe centrale et une expertise en assurance.",
       "bull_case": "Hausse des taux d'intérêt pourrait améliorer les marges d'intérêt nettes.",
-      "bear_case": "Exposition aux risques macroéconomiques en Europe centrale et orientale.",
-      "chartiste": "Support à 60€ à surveiller pour éviter une cassure baissière.",
+      "bear_case": "Exposition aux risques macroéconomiques en Europe centrale pourrait peser sur les résultats.",
+      "chartiste": "Résistance à 65€ à franchir pour valider une reprise haussière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1138,10 +1138,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Acteur clé dans l'énergie avec focus sur les énergies renouvelables et le gaz naturel.",
-      "bull_case": "Transition énergétique et investissements dans les renouvelables soutiennent la croissance future.",
-      "bear_case": "Volatilité des prix du pétrole et incertitudes réglementaires dans le secteur énergétique.",
-      "chartiste": "Résistance à 12€ à surveiller pour confirmer une reprise haussière.",
+      "resume": "Acteur clé dans l'exploration pétrolière et transition énergétique avec des projets renouvelables.",
+      "bull_case": "Rebond des prix du pétrole et expansion dans les énergies renouvelables soutiennent les perspectives.",
+      "bear_case": "Volatilité des prix du pétrole et incertitudes sur les investissements dans les renouvelables.",
+      "chartiste": "Support à 11,50€ à surveiller pour éviter une cassure baissière prolongée.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1301,10 +1301,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Leader mondial en biocarburants avec technologie brevetée et forte position ESG.",
-      "bull_case": "Demande croissante pour les carburants durables soutient les perspectives de croissance.",
-      "bear_case": "Pression concurrentielle et coûts élevés liés à l'expansion des capacités.",
-      "chartiste": "Support à 40€ à défendre pour éviter une correction prolongée.",
+      "resume": "Leader mondial des biocarburants renouvelables avec une forte orientation vers la durabilité.",
+      "bull_case": "Demande croissante pour les énergies renouvelables pourrait stimuler les revenus.",
+      "bear_case": "Pression sur les marges due à l'augmentation des coûts des matières premières.",
+      "chartiste": "Résistance à 40€ à franchir pour confirmer une dynamique haussière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1464,10 +1464,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Intégration verticale dans l'énergie avec forte présence en Europe centrale.",
-      "bull_case": "Hausse des prix du pétrole pourrait améliorer les marges d'exploitation.",
-      "bear_case": "Exposition aux risques géopolitiques et volatilité des matières premières.",
-      "chartiste": "Consolidation autour de 50€ avec potentiel de rebond si support tient.",
+      "resume": "Acteur intégré dans l'énergie avec une forte présence en Europe et projets pétroliers solides.",
+      "bull_case": "Rebond des prix du pétrole pourrait améliorer les marges et les flux de trésorerie.",
+      "bear_case": "Exposition géopolitique élevée dans certaines zones de production clés.",
+      "chartiste": "Consolidation autour de 45€ avec une résistance clé à 50€ pour valider une reprise.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1627,9 +1627,9 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Leader en technologies de stockage de gaz liquéfié avec fort moat technologique.",
-      "bull_case": "Croissance de la demande mondiale en GNL soutient les commandes de nouvelles technologies.",
-      "bear_case": "Ralentissement économique mondial pourrait peser sur les investissements en infrastructures.",
+      "resume": "Leader technologique dans les systèmes de confinement pour le transport de gaz liquéfié.",
+      "bull_case": "Demande croissante pour le gaz naturel liquéfié pourrait stimuler les commandes.",
+      "bear_case": "Ralentissement potentiel des investissements dans le GNL pourrait peser sur les revenus.",
       "chartiste": "Résistance à 100€ à franchir pour confirmer une dynamique haussière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
@@ -1790,10 +1790,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Position forte dans l'édition et les médias avec des marques reconnues mondialement.",
-      "bull_case": "Recentrage stratégique sur les activités médias pourrait améliorer la rentabilité.",
-      "bear_case": "Endettement élevé et exposition aux cycles publicitaires fragilisent la visibilité.",
-      "chartiste": "Consolidation probable. Support clé à surveiller à 18€. Résistance à 22€ pour relancer la hausse.",
+      "resume": "Position forte dans l'édition et les médias avec des marques reconnues à l'international.",
+      "bull_case": "Croissance des revenus publicitaires numériques et diversification dans les contenus digitaux.",
+      "bear_case": "Pressions sur les marges dues à la baisse des revenus publicitaires traditionnels.",
+      "chartiste": "Consolidation probable. Surveiller un support à 18€ et une résistance à 22€.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -1953,10 +1953,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Leader mondial des solutions tubulaires pour l'énergie et l'industrie.",
-      "bull_case": "Hausse des investissements dans l'énergie verte et le gaz naturel.",
-      "bear_case": "Faible visibilité sur les commandes dans un contexte macroéconomique incertain.",
-      "chartiste": "Support technique à 10€. Résistance à 12.50€ à franchir pour confirmer un retournement haussier.",
+      "resume": "Leader mondial des solutions tubulaires pour l'énergie et l'industrie, expertise technique reconnue.",
+      "bull_case": "Hausse des prix des matières premières et reprise des projets pétroliers et gaziers.",
+      "bear_case": "Volatilité des prix de l'acier et dépendance aux cycles énergétiques.",
+      "chartiste": "Support clé à 10€. Résistance à 13€ pour confirmer une reprise haussière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2116,10 +2116,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Acteur clé des matériaux de construction avec une présence mondiale.",
-      "bull_case": "Reprise des projets d'infrastructure en Europe et aux États-Unis.",
-      "bear_case": "Ralentissement économique pourrait peser sur la demande de matériaux.",
-      "chartiste": "Support solide à 60€. Résistance majeure à 70€ pour valider une dynamique positive.",
+      "resume": "Acteur majeur des matériaux de construction avec une forte présence mondiale.",
+      "bull_case": "Augmentation des investissements dans les infrastructures en Europe et aux États-Unis.",
+      "bear_case": "Hausse des coûts de l'énergie et des matières premières pesant sur les marges.",
+      "chartiste": "Support solide à 60€. Résistance à 70€ pour confirmer une dynamique positive.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2279,10 +2279,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Leader mondial des logiciels de conception 3D et de simulation.",
-      "bull_case": "Adoption croissante des solutions cloud dans l'industrie manufacturière.",
-      "bear_case": "Concurrence accrue dans le secteur des logiciels industriels.",
-      "chartiste": "Consolidation en cours. Support à 35€. Résistance à 40€ pour un potentiel rebond.",
+      "resume": "Leader des logiciels de conception 3D avec une base de clients diversifiée et fidèle.",
+      "bull_case": "Adoption croissante des solutions cloud et de la transformation numérique.",
+      "bear_case": "Concurrence accrue dans le secteur des logiciels et ralentissement des dépenses IT.",
+      "chartiste": "Consolidation en cours. Support à 35€, résistance à 40€ pour un breakout.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2442,10 +2442,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Expertise dans les solutions énergétiques et marines innovantes.",
-      "bull_case": "Transition énergétique stimule la demande pour des solutions marines durables.",
-      "bear_case": "Pressions sur les marges en raison de coûts élevés des matières premières.",
-      "chartiste": "Support clé à 8.50€. Résistance à 10€ pour confirmer une reprise haussière.",
+      "resume": "Expertise dans les solutions énergétiques et maritimes avec un fort focus sur l'innovation.",
+      "bull_case": "Transition énergétique et demande accrue pour des solutions maritimes durables.",
+      "bear_case": "Ralentissement des commandes dans le secteur maritime et incertitudes macroéconomiques.",
+      "chartiste": "Support à 8€. Résistance à 10€ pour valider une reprise haussière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2605,10 +2605,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Leader dans les diagnostics médicaux avec un portefeuille diversifié de tests innovants.",
-      "bull_case": "Augmentation des besoins en diagnostics post-pandémie et vieillissement de la population.",
-      "bear_case": "Concurrence accrue et pression sur les prix dans le secteur des diagnostics.",
-      "chartiste": "Support à 90€. Résistance à 100€ pour valider un retournement haussier.",
+      "resume": "Leader en diagnostics médicaux avec un portefeuille diversifié et une forte innovation.",
+      "bull_case": "Croissance des besoins en diagnostics et nouvelles solutions pour les maladies infectieuses.",
+      "bear_case": "Pressions sur les prix dans le secteur de la santé et concurrence accrue.",
+      "chartiste": "Support à 90€. Résistance à 100€ pour confirmer un potentiel de hausse.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2768,10 +2768,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 2,
-      "resume": "Leader européen des services de location et d'entretien de textiles.",
-      "bull_case": "Reprise post-COVID dans l'hôtellerie et la restauration booste la demande.",
-      "bear_case": "Inflation des coûts de l'énergie et des matières premières pèse sur les marges.",
-      "chartiste": "Support à 12€. Résistance à 14€ pour un potentiel retournement haussier.",
+      "resume": "Leader européen des services textiles et d'hygiène avec un modèle récurrent.",
+      "bull_case": "Reprise post-COVID dans l'hôtellerie et la restauration boostant la demande.",
+      "bear_case": "Hausse des coûts énergétiques impactant les marges opérationnelles.",
+      "chartiste": "Support à 12€. Résistance à 14€ pour valider une dynamique positive.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -2931,10 +2931,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 3,
-      "resume": "Acteur majeur des concessions et de la construction avec une présence mondiale.",
-      "bull_case": "Reprise des projets d'infrastructure en Europe soutient la croissance.",
-      "bear_case": "Exposition aux cycles économiques et hausse des coûts de construction.",
-      "chartiste": "Support à 95€. Résistance à 105€ pour confirmer une reprise technique.",
+      "resume": "Acteur clé des concessions et de la construction avec une diversification géographique forte.",
+      "bull_case": "Investissements massifs dans les infrastructures en Europe et en Asie.",
+      "bear_case": "Ralentissement économique pesant sur les nouveaux projets de construction.",
+      "chartiste": "Support à 100€. Résistance à 110€ pour confirmer une reprise technique.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -3093,11 +3093,11 @@
         20.3
       ],
       "signal": "SURVEILLER",
-      "conviction": 3,
-      "resume": "Leader des loisirs de montagne avec une offre diversifiée et intégrée.",
-      "bull_case": "Reprise du tourisme post-COVID et forte demande pour les activités de plein air.",
-      "bear_case": "Dépendance aux conditions climatiques et hausse des coûts énergétiques.",
-      "chartiste": "Support à 15€. Résistance à 18€ pour valider un potentiel rebond.",
+      "conviction": 2,
+      "resume": "Leader européen des parcs de loisirs et des stations de ski avec une clientèle fidèle.",
+      "bull_case": "Reprise du tourisme international et hausse des réservations post-pandémie.",
+      "bear_case": "Impact du réchauffement climatique sur les activités hivernales.",
+      "chartiste": "Support à 15€. Résistance à 18€ pour valider une reprise haussière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     },
     {
@@ -3257,10 +3257,10 @@
       ],
       "signal": "SURVEILLER",
       "conviction": 4,
-      "resume": "Marque iconique avec un portefeuille diversifié dans les cosmétiques et le luxe.",
-      "bull_case": "Reprise du luxe en Chine et forte demande pour les produits premium.",
-      "bear_case": "Ralentissement économique global pourrait peser sur la consommation discrétionnaire.",
-      "chartiste": "Support à 350€. Résistance à 380€ pour confirmer la poursuite de la tendance haussière.",
+      "resume": "Marque iconique avec un pricing power fort et une distribution mondiale difficile à répliquer.",
+      "bull_case": "Croissance soutenue en Asie et innovation dans les produits de beauté premium.",
+      "bear_case": "Ralentissement de la consommation en Europe et pressions sur les marges.",
+      "chartiste": "Support à 350€. Résistance à 380€ pour confirmer une dynamique haussière.",
       "conseil": "Attendre confirmation : entree sur repli ou cassure."
     }
   ]
